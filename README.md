@@ -18,7 +18,7 @@ $ git clone https://github.com/corradosantoro/phidias
 $ python setup.py install
 ```
 
-### Natural Language toolkit
+### Natural Language Toolkit
 ```sh
 $ python -m pip install nltk
 ```
