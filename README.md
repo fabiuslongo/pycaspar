@@ -9,7 +9,6 @@ For running Caspar you need to install the following packages:
 * [Phidias](https://github.com/corradosantoro/phidias) 
 * Natural Language Toolkit
 * SpaCy
-* WordNet
 
 
 ### Phidias
