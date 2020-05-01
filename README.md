@@ -194,19 +194,183 @@ Location: living room
 Parameters: off
 ```
 ### Conceptual Reasoning
-In order to distinguish working contexts, this reasoning will be triggered by two specific
+In order to distinguish working contexts, conceptual reasoning will be triggered by two specific
 hotwords (after the agent is awakened):
 * _listen_: the agent will wait (until timeout) for utterances in natural language to be converted in definite clauses
 and asserted in the Clauses Knowledge Base.
-* _reson_: the agent will wait (until timeout) for one utterance in natural language to be converted in a
+* _resson_: the agent will wait (until timeout) for one utterance in natural language to be converted in a
 single positive literal for querying the Clauses Knowledge Base.
 
-Next the Clauses Knowledge base will be fed with the following utterances:
+Next the Clauses Knowledge base will be fed by the following utterances:
 * _Nono is an hostile nation_
 * _Colonel West is American_
 * _missiles are weapons_
 * _Colonel West sells missiles to Nono_
 * _When an American sells weapons to a hostile nation, that American is a criminal_
+
+and queried by:
+* _Colonel West is a criminal?_
+
+We will show (by the command s()) the Clauses Knowlegde Base content after every assertion simulation:
+* _Nono is an hostile nation_
+```sh
+eShell: main > l()
+eShell: main > 
+Waiting for knowledge...
+
+eShell: main > c1()
+Got it.
+
+------------- All generalizations asserted.
+
+
+eShell: main > s()
+eShell: main > 
+4 clauses in fol kb:
+
+Be(Nono(x1), Nation(x2))
+Be(Nono(x1), Hostile(Nation(x2)))
+(Nono(x) ==> Nation(x))
+(Nono(x) ==> Hostile(Nation(x)))
+```
+* _Colonel West is American_
+```sh
+eShell: main > c2()
+Got it.
+
+------------- All generalizations asserted.
+
+
+eShell: main > s()
+6 clauses in fol kb:
+
+Be(Nono(x1), Nation(x2))
+Be(Nono(x1), Hostile(Nation(x2)))
+(Nono(x) ==> Nation(x))
+(Nono(x) ==> Hostile(Nation(x)))
+Be(Colonel_West(x1), American(x2))
+(Colonel_West(x) ==> American(x))
+```
+* _missiles are weapons_
+```sh
+eShell: main > c3()
+Got it.
+
+------------- All generalizations asserted.
+
+
+eShell: main > s()
+6 clauses in fol kb:
+
+Be(Nono(x1), Nation(x2))
+Be(Nono(x1), Hostile(Nation(x2)))
+(Nono(x) ==> Nation(x))
+(Nono(x) ==> Hostile(Nation(x)))
+Be(Colonel_West(x1), American(x2))
+(Colonel_West(x) ==> American(x))
+Be(Missile(x1), Weapon(x2))
+(Missile(x) ==> Weapon(x))
+```
+* _Colonel West sells missiles to Nono_
+```sh
+eShell: main > c4()
+Got it.
+
+------------- All generalizations asserted.
+
+
+eShell: main > s()
+6 clauses in fol kb:
+
+Be(Nono(x1), Nation(x2))
+Be(Nono(x1), Hostile(Nation(x2)))
+(Nono(x) ==> Nation(x))
+(Nono(x) ==> Hostile(Nation(x)))
+Be(Colonel_West(x1), American(x2))
+(Colonel_West(x) ==> American(x))
+Be(Missile(x1), Weapon(x2))
+(Missile(x) ==> Weapon(x))
+(Sell(Colonel_West(x1), Missile(x2)) ==> Sell(American(x), Missile(x2)))
+(Sell(Colonel_West(x1), Missile(x2)) ==> Sell(American(x), Weapon(x)))
+(Sell(Colonel_West(x1), Missile(x2)) ==> Sell(Colonel_West(x1), Weapon(x)))
+Sell(Colonel_West(x1), Missile(x2))
+(To(Sell(Colonel_West(x1), Missile(x2)), Nono(x3)) ==> To(Sell(Colonel_West(x1), Missile(x2)), Nation(x)))
+(To(Sell(Colonel_West(x1), Missile(x2)), Nono(x3)) ==> To(Sell(American(x), Missile(x2)), Nation(x)))
+(To(Sell(Colonel_West(x1), Missile(x2)), Nono(x3)) ==> To(Sell(American(x), Weapon(x)), Nation(x)))
+(To(Sell(Colonel_West(x1), Missile(x2)), Nono(x3)) ==> To(Sell(Colonel_West(x1), Weapon(x)), Nation(x)))
+(To(Sell(Colonel_West(x1), Missile(x2)), Nono(x3)) ==> To(Sell(Colonel_West(x1), Missile(x2)), Hostile(Nation(x))))
+(To(Sell(Colonel_West(x1), Missile(x2)), Nono(x3)) ==> To(Sell(American(x), Missile(x2)), Hostile(Nation(x))))
+(To(Sell(Colonel_West(x1), Missile(x2)), Nono(x3)) ==> To(Sell(American(x), Weapon(x)), Hostile(Nation(x))))
+(To(Sell(Colonel_West(x1), Missile(x2)), Nono(x3)) ==> To(Sell(Colonel_West(x1), Weapon(x)), Hostile(Nation(x))))
+(To(Sell(Colonel_West(x1), Missile(x2)), Nono(x3)) ==> To(Sell(American(x), Missile(x2)), Nono(x3)))
+(To(Sell(Colonel_West(x1), Missile(x2)), Nono(x3)) ==> To(Sell(American(x), Weapon(x)), Nono(x3)))
+(To(Sell(Colonel_West(x1), Missile(x2)), Nono(x3)) ==> To(Sell(Colonel_West(x1), Weapon(x)), Nono(x3)))
+To(Sell(Colonel_West(x1), Missile(x2)), Nono(x3))
+```
+* _When an American sells weapons to a hostile nation, that American is a criminal_
+```sh
+eShell: main > c5()
+Got it.
+
+------------- All generalizations asserted.
+
+
+eShell: main > s()
+6 clauses in fol kb:
+
+Be(Nono(x1), Nation(x2))
+Be(Nono(x1), Hostile(Nation(x2)))
+(Nono(x) ==> Nation(x))
+(Nono(x) ==> Hostile(Nation(x)))
+Be(Colonel_West(x1), American(x2))
+(Colonel_West(x) ==> American(x))
+Be(Missile(x1), Weapon(x2))
+(Missile(x) ==> Weapon(x))
+(Sell(Colonel_West(x1), Missile(x2)) ==> Sell(American(x), Missile(x2)))
+(Sell(Colonel_West(x1), Missile(x2)) ==> Sell(American(x), Weapon(x)))
+(Sell(Colonel_West(x1), Missile(x2)) ==> Sell(Colonel_West(x1), Weapon(x)))
+Sell(Colonel_West(x1), Missile(x2))
+(To(Sell(Colonel_West(x1), Missile(x2)), Nono(x3)) ==> To(Sell(Colonel_West(x1), Missile(x2)), Nation(x)))
+(To(Sell(Colonel_West(x1), Missile(x2)), Nono(x3)) ==> To(Sell(American(x), Missile(x2)), Nation(x)))
+(To(Sell(Colonel_West(x1), Missile(x2)), Nono(x3)) ==> To(Sell(American(x), Weapon(x)), Nation(x)))
+(To(Sell(Colonel_West(x1), Missile(x2)), Nono(x3)) ==> To(Sell(Colonel_West(x1), Weapon(x)), Nation(x)))
+(To(Sell(Colonel_West(x1), Missile(x2)), Nono(x3)) ==> To(Sell(Colonel_West(x1), Missile(x2)), Hostile(Nation(x))))
+(To(Sell(Colonel_West(x1), Missile(x2)), Nono(x3)) ==> To(Sell(American(x), Missile(x2)), Hostile(Nation(x))))
+(To(Sell(Colonel_West(x1), Missile(x2)), Nono(x3)) ==> To(Sell(American(x), Weapon(x)), Hostile(Nation(x))))
+(To(Sell(Colonel_West(x1), Missile(x2)), Nono(x3)) ==> To(Sell(Colonel_West(x1), Weapon(x)), Hostile(Nation(x))))
+(To(Sell(Colonel_West(x1), Missile(x2)), Nono(x3)) ==> To(Sell(American(x), Missile(x2)), Nono(x3)))
+(To(Sell(Colonel_West(x1), Missile(x2)), Nono(x3)) ==> To(Sell(American(x), Weapon(x)), Nono(x3)))
+(To(Sell(Colonel_West(x1), Missile(x2)), Nono(x3)) ==> To(Sell(Colonel_West(x1), Weapon(x)), Nono(x3)))
+To(Sell(Colonel_West(x1), Missile(x2)), Nono(x3))
+(To(Sell(American(x1), Weapon(x2)), Hostile(Nation(x3))) ==> Be(American(x4), Criminal(x5)))
+```
+now it is time to query the Clauses Knowledge Base with the following utterance:
+* _Colonel West is a criminal?_
+
+```sh
+eShell: main > r()
+Waiting for query...
+
+eShell: main > q()
+Got it.
+
+Reasoning...............
+
+Query: Be(Colonel_West(x1), Criminal(x2))
+
+ ---- NOMINAL REASONING ---
+
+Result: False
+
+
+ ---- NESTED REASONING ---
+
+Result:  {v_353: v_83, v_354: x2, v_405: v_350, v_350: v_351, v_351: v_352, v_473: v_402, v_474: v_403, v_475: v_404}
+```
+Above are showed both results of Nominal Reasoning by the Backward-Chaining argorithm and Nested Reasoning.
+
+
+
 
 
 
