@@ -50,6 +50,8 @@ class produce_routine(Procedure): pass
 class aggr_ent_rt(Procedure): pass
 class produce_mod_rt(Procedure): pass
 
+# start agent command
+class go(Procedure): pass
 
 # STT Front-End procedures
 class w(Procedure): pass
@@ -68,9 +70,6 @@ class LISTEN(Belief): pass
 class REASON(Belief): pass
 class RETRACT(Belief): pass
 class IS_RULE(Belief): pass
-
-# start agent command
-class go(Procedure): pass
 
 # domotic reactive routines
 class r1(Procedure): pass
