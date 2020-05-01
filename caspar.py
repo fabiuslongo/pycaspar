@@ -1284,7 +1284,7 @@ class feed_precross(Action):
 
 class show_fol_kb(Action):
     def execute(self):
-        print("\n"+str(len(kb_fol.clauses))+" clauses in fol kb:\n")
+        print("\n"+str(len(kb_fol.clauses))+" clauses in Clauses kb:\n")
         for cls in kb_fol.clauses:
                 print(cls)
 

@@ -226,7 +226,7 @@ Got it.
 
 eShell: main > s()
 eShell: main > 
-4 clauses in fol kb:
+4 clauses in Clauses kb:
 
 Be(Nono(x1), Nation(x2))
 Be(Nono(x1), Hostile(Nation(x2)))
@@ -242,7 +242,7 @@ Got it.
 
 
 eShell: main > s()
-6 clauses in fol kb:
+6 clauses in Clauses kb:
 
 Be(Nono(x1), Nation(x2))
 Be(Nono(x1), Hostile(Nation(x2)))
@@ -260,7 +260,7 @@ Got it.
 
 
 eShell: main > s()
-6 clauses in fol kb:
+8 clauses in Clauses kb:
 
 Be(Nono(x1), Nation(x2))
 Be(Nono(x1), Hostile(Nation(x2)))
@@ -280,7 +280,7 @@ Got it.
 
 
 eShell: main > s()
-6 clauses in fol kb:
+24 clauses in Clauses kb:
 
 Be(Nono(x1), Nation(x2))
 Be(Nono(x1), Hostile(Nation(x2)))
@@ -316,7 +316,7 @@ Got it.
 
 
 eShell: main > s()
-6 clauses in fol kb:
+25 clauses in Clauses kb:
 
 Be(Nono(x1), Nation(x2))
 Be(Nono(x1), Hostile(Nation(x2)))
