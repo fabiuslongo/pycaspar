@@ -116,6 +116,50 @@ Object: cooler
 Location: bedroom
 Parameters: at 27 degree
 ```
-* set the cooler at 27 degrees in the bedroom
+* turn off the lights in the living room
+```sh
+eShell: main > d2()
 
+Stopping utterance detection...
+
+Processing domotic command...
+
+turn off the lights in the living room
+
+Starting Hotword detection...
+
+---- Result: execution successful
+
+Action: change_state.v.01
+Object: light
+Location: living room
+Parameters: off
+```
+Caspar is capable of parsing complex routines as it follow (the agent must be awakened):
+
+* turn off the lights in the living room, when the temperature is 25 and the time is 12
+```sh
+eShell: main > r1()
+
+Stopping utterance detection...
+
+Processing domotic command...
+
+turn off the lights in the living room, when the temperature is 25 and the time is 12
+
+Starting Hotword detection...
+
+eShell: main > 
+```
+Beliefs Knowledge Base can be view with the command _kb_:
+```sh
+eShell: main > kb
+
+COND('420548', 'be', 'temperature', '25')
+COND('420548', 'be', 'time', '12')      
+ROUTINE('420548', 'turn', 'light', 'living room', 'off')
+
+eShell: main > 
+```
+The previous routine will wait for execution until the two beliefs COND are satisfied. 
 
