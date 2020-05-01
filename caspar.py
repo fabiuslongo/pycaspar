@@ -1649,25 +1649,7 @@ produce_intent() / PRE_INTENT(V, D, X, L, T) >> [-PRE_INTENT(V, D, X, L, T), +IN
 +INTENT(V, X, L, T) >> [show_line("\n---- Result: failed to execute the command: ", V)]
 
 
-
-
-
-# please install the following packages:
-#
-# - Phidias
-#       git clone https://github.com/corradosantoro/phidias
-#       python setup.py install
-#
-# - Natural Language Tool Kit:
-#       python -m pip install nltk
-#       from console: import nltk
-#                     nltk.download()
-# - SpaCy:
-#       python install spacy
-#       python -m spacy download en_core_web_sm
-#       (or python -m spacy download en_core_web_lg)
-#
-# - WordNet?????????????
+# PHIDIAS and global vars instantiation
 
 # NLP Parser
 VERBOSE = False

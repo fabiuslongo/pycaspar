@@ -94,7 +94,7 @@ Starting Hotword detection...
 ```
 
 ### IoT commands and routines
-By the means of two testing procedure can be tested IoT direct commands, whose entities are defined
+By the means of two testing procedure IoT direct commands can be tested, whose entities are defined
  in the Smart Enviroment interface:
 * set the cooler at 27 degrees in the bedroom
 
