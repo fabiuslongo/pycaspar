@@ -882,6 +882,7 @@ class simulate_sensor(Action):
         verb = args[0]
         subject = args[1]
         object = args[2]
+        print("Assertiong SENSOR("+str(verb)+","+str(subject)+","+str(object)+")...")
         self.assert_belief(SENSOR(verb, subject, object))
 
 
@@ -1388,7 +1389,7 @@ def_vars('X', 'Y', 'Z', 'T', 'W', 'K', 'J', 'M', 'N', "D", "I", "V", "L", "O", "
 # SIMULATING EVENTS
 
 # simulating routines
-r1() >> [+STT("turn off the lights in the living room, when the temperature is 25 and the time is 12")]
+r1() >> [+STT("turn off the lights in the living room, when the temperature is 25 and the time is 12.00")]
 r2() >> [+STT("set the cooler in the bedroom to 25 degrees and cut the grass in the garden, when the time is 12.00")]
 
 # simulating direct commands

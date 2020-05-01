@@ -6,39 +6,39 @@ referred to the paper _CASPAR: towards Decision Making Helpers Agents for IoT, b
 
 # Installation
 
-For running Caspar you need to install the following packages:
+This repository has been tested with the following packages versions:
 
-* [Phidias](https://github.com/corradosantoro/phidias) 
-* SpaCy
-* Natural Language Toolkit
+* [Phidias](https://github.com/corradosantoro/phidias) (release 1.3.4.alpha) 
+* SpaCy (ver. 2.2.4)
+* Natural Language Toolkit (ver. 3.5)
 
 
 ### Phidias
 
 ##### All platforms
 ```sh
-$ git clone https://github.com/corradosantoro/phidias
-$ python setup.py install
+> git clone https://github.com/corradosantoro/phidias
+> python setup.py install
 ```
 ##### Linux
 ```sh
-$ python -pip install readline
+> python -pip install readline
 ```
 ##### Windows
 ```sh
-$ python -pip install pyreadline
+> python -pip install pyreadline
 ```
 
 ### SpaCy
 ```sh
-$ python -m pip install spacy
-$ python -m spacy download en_core_web_sm
+> python -m pip install spacy
+> python -m spacy download en_core_web_sm
 ```
 
 
 ### Natural Language Toolkit
 ```sh
-$ python -m pip install nltk
+> python -m pip install nltk
 ```
 
 
@@ -49,9 +49,7 @@ an agent itself.
 
 ### Starting Phidias Shell
 ```sh
-$ python caspar.py
-
-NLP engine instantiating...
+> python caspar.py
 
           PHIDIAS Release 1.3.4.alpha (deepcopy-->clone,micropython,py3)
           Autonomous and Robotic Systems Laboratory
@@ -161,5 +159,39 @@ ROUTINE('420548', 'turn', 'light', 'living room', 'off')
 
 eShell: main > 
 ```
-The previous routine will wait for execution until the two beliefs COND are satisfied. 
+The previous routine will wait for execution until the two beliefs COND are satisfied.
+Let's simulate CONSs satisfaction by simulating two Sensors...
+```sh
+eShell: main > kb
+
+COND('420548', 'be', 'temperature', '25')
+COND('420548', 'be', 'time', '12')      
+ROUTINE('420548', 'turn', 'light', 'living room', 'off')
+
+eShell: main > 
+```
+Let's simulate CONSs satisfaction by simulating two Sensors...
+ ```sh
+eShell: main > s1()
+eShell: main > Assertiong SENSOR('be','time','12.00')...
+
+conditional triggered by a sensor...
+
+Result: not all routine's conditionals are currently met!
+
+eShell: main > s2()
+eShell: main > Assertiong SENSOR('be','temperature','25')...
+
+conditional triggered by a sensor...
+
+executing routine...
+
+---- Result: execution successful
+
+Action: change_state.v.01
+Object: light
+Location: living room
+Parameters: off
+```
+
 

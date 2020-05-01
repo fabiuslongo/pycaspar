@@ -15,9 +15,7 @@ class Parse(object):
         self.BLACK_LIST_WORDS = ['that', 'which', 'then', 'That', 'Which', 'Then']
 
         # nlp engine instantiation
-        print("\nNLP engine instantiating...")
         self.nlp = spacy.load('en_core_web_sm')  # 11mb
-        #self.nlp = spacy.load('en_core_web_lg')  # 789 mb
 
 
 
