@@ -15,16 +15,16 @@ This repository has been tested with the following packages versions:
 
 ### Phidias
 
-##### All platforms
+##### on all platforms
 ```sh
 > git clone https://github.com/corradosantoro/phidias
 > python setup.py install
 ```
-##### Linux
+##### additional package needed (Linux)
 ```sh
 > python -pip install readline
 ```
-##### Windows
+##### additional package needed (Windows)
 ```sh
 > python -pip install pyreadline
 ```
@@ -133,9 +133,9 @@ Object: light
 Location: living room
 Parameters: off
 ```
-Caspar is capable of parsing complex routines as it follow (the agent must be awakened):
+Caspar is capable of parsing complex routines as it follow (the agent must be first awakened):
 
-* turn off the lights in the living room, when the temperature is 25 and the time is 12
+* turn off the lights in the living room, when the temperature is 25 and the time is 12.00
 ```sh
 eShell: main > r1()
 
@@ -143,7 +143,7 @@ Stopping utterance detection...
 
 Processing domotic command...
 
-turn off the lights in the living room, when the temperature is 25 and the time is 12
+turn off the lights in the living room, when the temperature is 25 and the time is 12.00
 
 Starting Hotword detection...
 
@@ -154,7 +154,7 @@ Beliefs Knowledge Base can be view with the command _kb_:
 eShell: main > kb
 
 COND('420548', 'be', 'temperature', '25')
-COND('420548', 'be', 'time', '12')      
+COND('420548', 'be', 'time', '12.00')      
 ROUTINE('420548', 'turn', 'light', 'living room', 'off')
 
 eShell: main > 
@@ -165,12 +165,12 @@ Let's simulate CONSs satisfaction by simulating two Sensors...
 eShell: main > kb
 
 COND('420548', 'be', 'temperature', '25')
-COND('420548', 'be', 'time', '12')      
+COND('420548', 'be', 'time', '12.00')      
 ROUTINE('420548', 'turn', 'light', 'living room', 'off')
 
 eShell: main > 
 ```
-Let's simulate CONSs satisfaction by simulating two Sensors...
+Let's simulate CONDs satisfaction by simulating two Sensors...
  ```sh
 eShell: main > s1()
 eShell: main > Assertiong SENSOR('be','time','12.00')...
@@ -193,5 +193,23 @@ Object: light
 Location: living room
 Parameters: off
 ```
+### Conceptual Reasoning
+In order to distinguish working contexts, this reasoning will be triggered by two specific
+hotwords (after the agent is awakened):
+* _listen_: the agent will wait (until timeout) for utterances in natural language to be converted in definite clauses
+and asserted in the Clauses Knowledge Base.
+* _reson_: the agent will wait (until timeout) for one utterance in natural language to be converted in a
+single positive literal for querying the Clauses Knowledge Base.
+
+Next the Clauses Knowledge base will be fed with the following utterances:
+* _Nono is an hostile nation_
+* _Colonel West is American_
+* _missiles are weapons_
+* _Colonel West sells missiles to Nono_
+* _When an American sells weapons to a hostile nation, that American is a criminal_
+
+
+
+
 
 
