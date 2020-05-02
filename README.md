@@ -45,7 +45,7 @@ This repository has been tested with the following packages versions:
 
 # Testing
 This cognitive architecture is designed for implemention of more intelligent agents and also 
-is an agent itself. Before starting the agent Entities and Speech-To-Text Interfaces must be defined.
+is an agent itself. Before starting the agent, Entities and Speech-To-Text Interfaces must be defined.
 
 ### Entities definition
 Entities involved in reasoning must be defined in the Smart Environment Interface 
@@ -76,7 +76,7 @@ Starting Hotword detection...
 
 eShell: main >
 ```
-Even without entities and Speech-To-Text interfaces definition, a testing can be done as it follows by
+Even without entities and Speech-To-Text interfaces definition, an agent's testing can be done as it follows by
 simulating vocal events:
 
 ### Waking agent
@@ -158,7 +158,7 @@ Starting Hotword detection...
 
 eShell: main > 
 ```
-Beliefs Knowledge Base can be view with the command _kb_:
+Now routines related beliefs are stored into Beliefs Knowledge Base, which can be view with the command _kb_:
 ```sh
 eShell: main > kb
 
@@ -169,7 +169,6 @@ ROUTINE('420548', 'turn', 'light', 'living room', 'off')
 eShell: main > 
 ```
 The previous routine will wait for execution until the two beliefs COND are satisfied.
-Let's simulate CONSs satisfaction by simulating two Sensors...
 ```sh
 eShell: main > kb
 
@@ -179,7 +178,7 @@ ROUTINE('420548', 'turn', 'light', 'living room', 'off')
 
 eShell: main > 
 ```
-Let's simulate CONDs satisfaction by simulating two Sensors, which let the agent decide on routine execution...
+Let's simulate CONDs satisfaction by simulating two Sensor detections, which let the agent decide on routine execution...
  ```sh
 eShell: main > s1()
 
@@ -188,7 +187,18 @@ asserting SENSOR('be','time','12.00')...
 conditional triggered by a sensor...
 
 Result: not all routine's conditionals are currently met!
+```
+The time-related COND is satisfied, but it isn't enough for routine execution:
+```sh
+eShell: main > kb
 
+COND('420548', 'be', 'temperature', '25')
+ROUTINE('420548', 'turn', 'light', 'living room', 'off')
+
+eShell: main > 
+```
+as another Sensor detection met the temperature-related COND as well, the routine can be executed:
+```sh
 eShell: main > s2()
 
 asserting SENSOR('be','temperature','25')...
