@@ -45,7 +45,16 @@ This repository has been tested with the following packages versions:
 
 # Testing
 This cognitive architecture is designed for implemention of more intelligent agents and also 
-is an agent itself. 
+is an agent itself. Before starting the agent Entities and Speech-To-Text Interfaces must be defined.
+
+### Entities definition
+Entities involved in reasoning must be defined in the Smart Environment Interface 
+(line 1622 of caspar.py).
+
+### Speech-To-Text Interfaces
+SST Interfaces (for both hotwords and utterances) must be defined inside the Instances Sensors 
+(line 1319 and 1337 of caspar.py).
+ 
 
 ### Starting Phidias Shell
 ```sh
@@ -67,7 +76,7 @@ Starting Hotword detection...
 
 eShell: main >
 ```
-Even without entities and I/O interface definition, a testing can be done as it follows by
+Even without entities and Speech-To-Text interfaces definition, a testing can be done as it follows by
 simulating vocal events:
 
 ### Waking agent
@@ -170,17 +179,19 @@ ROUTINE('420548', 'turn', 'light', 'living room', 'off')
 
 eShell: main > 
 ```
-Let's simulate CONDs satisfaction by simulating two Sensors...
+Let's simulate CONDs satisfaction by simulating two Sensors, which let the agent decide on routine execution...
  ```sh
 eShell: main > s1()
-eShell: main > Assertiong SENSOR('be','time','12.00')...
+
+assertiong SENSOR('be','time','12.00')...
 
 conditional triggered by a sensor...
 
 Result: not all routine's conditionals are currently met!
 
 eShell: main > s2()
-eShell: main > Assertiong SENSOR('be','temperature','25')...
+
+assertiong SENSOR('be','temperature','25')...
 
 conditional triggered by a sensor...
 

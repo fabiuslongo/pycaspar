@@ -882,7 +882,7 @@ class simulate_sensor(Action):
         verb = args[0]
         subject = args[1]
         object = args[2]
-        print("Assertiong SENSOR("+str(verb)+","+str(subject)+","+str(object)+")...")
+        print("\n\nasserting SENSOR("+str(verb)+","+str(subject)+","+str(object)+")...")
         self.assert_belief(SENSOR(verb, subject, object))
 
 
