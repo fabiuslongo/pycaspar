@@ -209,7 +209,7 @@ In order to distinguish working contexts, conceptual reasoning will be triggered
 hotwords (after the agent is awakened):
 * _listen_: the agent will wait (until timeout) for utterances in natural language to be converted in definite clauses
 and asserted in the Clauses Knowledge Base.
-* _resson_: the agent will wait (until timeout) for one utterance in natural language to be converted in a
+* _reason_: the agent will wait (until timeout) for one utterance in natural language to be converted in a
 single positive literal for querying the Clauses Knowledge Base.
 
 Next the Clauses Knowledge base will be fed by the following utterances:
