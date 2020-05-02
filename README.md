@@ -44,7 +44,7 @@ This repository has been tested with the following packages versions:
 
 
 # Testing
-This cognitive architecture is designed for implemention of more intelligent agents and also 
+This cognitive architecture is designed to implement more intelligent agents and also 
 is an agent itself. Before starting the agent, Entities and Speech-To-Text Interfaces must be defined.
 
 ### Entities definition
