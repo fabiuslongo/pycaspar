@@ -44,8 +44,8 @@ This repository has been tested with the following packages versions:
 
 
 # Testing
-This cognitive architecture is designed for implement more intelligent agents and also 
-an agent itself. 
+This cognitive architecture is designed for implemention of more intelligent agents and also 
+is an agent itself. 
 
 ### Starting Phidias Shell
 ```sh
