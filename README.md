@@ -168,17 +168,8 @@ ROUTINE('420548', 'turn', 'light', 'living room', 'off')
 
 eShell: main > 
 ```
-The previous routine will wait for execution until the two beliefs COND are satisfied.
-```sh
-eShell: main > kb
-
-COND('420548', 'be', 'temperature', '25')
-COND('420548', 'be', 'time', '12.00')      
-ROUTINE('420548', 'turn', 'light', 'living room', 'off')
-
-eShell: main > 
-```
-Let's simulate CONDs satisfaction by simulating two Sensor detections, which let the agent decide on routine execution...
+The routine will wait for execution, until the two beliefs COND are satisfied. Let's simulate CONDs 
+satisfaction by simulating two Sensor detections, which let the agent decide on routine execution.
  ```sh
 eShell: main > s1()
 
@@ -188,7 +179,8 @@ conditional triggered by a sensor...
 
 Result: not all routine's conditionals are currently met!
 ```
-The time-related COND is satisfied, but it isn't enough for routine execution:
+The time-related COND is satisfied, but it isn't enough for routine execution because 
+it miss another COND satisfaction:
 ```sh
 eShell: main > kb
 
