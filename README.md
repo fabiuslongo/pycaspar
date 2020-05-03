@@ -189,7 +189,7 @@ ROUTINE('420548', 'turn', 'light', 'living room', 'off')
 
 eShell: main > 
 ```
-as another Sensor detection met the temperature-related COND as well, the routine can be executed:
+as another Sensor detection meet the temperature-related COND as well, the routine can be executed:
 ```sh
 eShell: main > s2()
 
