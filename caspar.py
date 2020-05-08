@@ -168,6 +168,7 @@ class preprocess_clause(Action):
 
         self.NEGATION_PRESENT = False
 
+        print("\n"+sentence)
         deps = parser.get_deps(sentence)
 
         for i in range(len(deps)):
@@ -1405,6 +1406,8 @@ c5() >> [+STT("When an American sells weapons to a hostile nation, that American
 
 # Query
 q() >> [+STT("Colonel West is a criminal")]
+#q() >> [+STT("Barack Obama was the first african american elected as the president of the United States")]
+#q() >> [+STT("When the air is cool, Barbara drinks wine and Robert is happy")]
 
 # simulating keywords
 w() >> [+HOTWORD_DETECTED("ON")]
@@ -1436,7 +1439,7 @@ go() >> [show_line("Starting Caspar..."), HotwordDetect().start]
 
 # Query KB
 +STT(X) / (WAKE("ON") & REASON("ON")) >> [show_line("\nGot it.\n"), +GEN_MASK("FULL"), new_def_clause(X, "ONE", "NOMINAL")]
-# Nominal clauses assertion
+# Nominal clauses assertion  # BASE, MORE
 +STT(X) / (WAKE("ON") & LISTEN("ON")) >> [show_line("\nGot it.\n"), +GEN_MASK("BASE"), new_def_clause(X, "MORE", "NOMINAL"), process_rule()]
 # processing rules
 process_rule() / IS_RULE(X) >> [show_line("\n", X, " ----> is a rule!\n"), -IS_RULE(X), +GEN_MASK("BASE"), new_def_clause(X, "MORE", "RULE")]
@@ -1656,11 +1659,11 @@ produce_intent() / PRE_INTENT(V, D, X, L, T) >> [-PRE_INTENT(V, D, X, L, T), +IN
 VERBOSE = False
 
 # Selective inclusion/exclusion of Part-of-Speech
-INCLUDE_ACT_POS = False
-INCLUDE_NOUNS_POS = False
-INCLUDE_ADJ_POS = False
-INCLUDE_PRP_POS = False
-INCLUDE_ADV_POS = False
+INCLUDE_ACT_POS = True
+INCLUDE_NOUNS_POS = True
+INCLUDE_ADJ_POS = True
+INCLUDE_PRP_POS = True
+INCLUDE_ADV_POS = True
 
 parser = Parse(VERBOSE)
 

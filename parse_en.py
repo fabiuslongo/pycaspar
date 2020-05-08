@@ -1,5 +1,6 @@
 import spacy
-
+import platform
+import os
 
 class Parse(object):
     def __init__(self, VERBOSE):
@@ -15,7 +16,18 @@ class Parse(object):
         self.BLACK_LIST_WORDS = ['that', 'which', 'then', 'That', 'Which', 'Then']
 
         # nlp engine instantiation
-        self.nlp = spacy.load('en_core_web_sm')  # 11mb
+        print("\nNLP engine initializing. Please wait...")
+
+        # python -m spacy download en_core_web_md
+        self.nlp = spacy.load('en_core_web_md')  # 91 MB
+
+        # python -m spacy download en_core_web_lg
+        # self.nlp = spacy.load('en_core_web_lg')  # 789 MB
+
+        if platform.system() == "Windows":
+            os.system('cls')
+        else:
+            os.system('clear')
 
 
 

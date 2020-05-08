@@ -207,6 +207,7 @@ Location: living room
 Parameters: off
 ```
 ### Conceptual Reasoning
+All the Caspar's expressive capabilities are summarized [here](examples.md).
 In order to distinguish working contexts, conceptual reasoning will be triggered by two specific
 hotwords (after the agent is awakened):
 * _listen_: the agent will wait (until timeout) for utterances in natural language to be converted in definite clauses
