@@ -78,7 +78,7 @@ Conditions may be also more than one.
 As we can see, the parsing works regardless the comma between "wine" and "when", but the usage is recommended to have more chances of success, especially with long sentences.
 
 #### Multi-proposition
-Since implicative definite clauses must have a single positive literal as consequent, in presence of a non-definite multi-proposition clause, it will be splitted into n=2 (n=#propositions) definite clauses like follow:
+Since implicative definite clauses must have not more of a single positive literal as consequent, in presence of a non-definite multi-proposition clause, it will be splitted into n=2 (n=#propositions) definite clauses like follow:
 * When the air is cool, Barbara drinks wine and Robert is happy
 ```sh
 > Be_VBZ(Air_NN(x1), Cool_NNP(x2)) ==> Drink_VBZ(Barbara_NNP(x3), Wine_NN(x4))
