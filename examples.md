@@ -75,7 +75,7 @@ Conditions may be also more than one.
 ```sh
 > Drink_VBZ(Barbara_NNP(x3), Wine_NN(x4)) & Be_VBZ(Robert_NNP(x1), Happy_NNP(x2))) ==> Be_VBZ(Air_NN(x5), Cool_NNP(x6))
 ```
-As we can see, the parsing works regardless the comma between "drinks" and "wine", but the usage is recommended to have more chances of success, especially with long sentences.
+As we can see, the parsing works regardless the comma between "wine" and "when", but the usage is recommended to have more chances of success, especially with long sentences.
 
 #### Multi-proposition
 Since implicative definite clauses must have a single positive literal as consequent, in presence of a non-definite multi-proposition clause, it will be splitted into n=2 (n=#propositions) definite clauses like follow:
