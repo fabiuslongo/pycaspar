@@ -295,11 +295,13 @@ class preprocess_clause(Action):
         # FLAT CASES
         else:
             mods = []
+            ent_root = self.get_ent_ROOT(m_deps)
+            dav_act = self.get_dav_rule(dclause, ent_root)
             for v in dclause:
                 if self.get_pos(v[0]) in ['JJ', 'RB', 'RBR', 'RBS', 'IN']:
                     mods.append(v[0])
                     lemma = self.get_lemma(v[0])[:-2]
-                    if self.check_neg(lemma, language): # only assertions
+                    if self.check_neg(lemma, language) and v[1] == dav_act:
                         self.NEGATION_PRESENT = True
                         self.assert_belief(RETRACT("ON"))
                         neg_index = len(mods)-1
@@ -1401,7 +1403,7 @@ d2() >> [+STT("turn off the lights in the living room")]
 c1() >> [+STT("Nono is an hostile nation")]
 c2() >> [+STT("Colonel West is American")]
 c3() >> [+STT("missiles are weapons")]
-c4() >> [+STT("Colonel West sells missiles to Nono")]
+c4() >> [+STT("Colonel West doesn't sell not good missiles to Nono")]
 c5() >> [+STT("When an American sells weapons to a hostile nation, that American is a criminal")]
 
 # Query

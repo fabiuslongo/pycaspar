@@ -41,6 +41,26 @@ Let’s apply a further modification, in order to include a verbal preposition. 
 ```sh
 > In_IN(Slowly_RB(Drink_VBZ(Robert_NNP(x1), Good_JJ(Wine_NN(x2)))), Living_NN_Room_NN(x3))
 ```
+
+### Negations
+
+In the case the main verb of the action is negated, the corrispondent clause without the nagation will be retracted.
+
+* Colonel West doesn't sell missiles to Nono
+```sh
+> RETRACTED ---> To_IN(Sell_VB(Colonel_NNP_West_NNP(x1), Missile_NNS(x2)), Nono_NNP(x3))
+```
+Other negations are preserved.
+* Colonel West doesn't sell not good missiles to Nono
+```sh
+> RETRACTED ---> To_IN(Sell_VB(Colonel_NNP_West_NNP(x1), Not_RB_Good_JJ(Missile_NNS(x2))), Nono_NNP(x3))
+```
+* Colonel West sell not good missiles to Nono
+```sh
+> To_IN(Sell_VB(Colonel_NNP_West_NNP(x1), Not_RB_Good_JJ(Missile_NNS(x2))), Nono_NNP(x3))
+```
+
+
 ### Multi-action nested definite clauses
 Here is some example with utterances containing disjoint actions: in this case, two distinct literals will be asserted.
 * Robert knows the truth and Barbara drinks wine
