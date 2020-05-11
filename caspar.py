@@ -166,7 +166,7 @@ class preprocess_clause(Action):
         else:
             Gen_mode = True
 
-        self.NEGATION_PRESENT = False
+        self.MAIN_NEG_PRESENT = False
 
         print("\n"+sentence)
         deps = parser.get_deps(sentence)
@@ -295,20 +295,33 @@ class preprocess_clause(Action):
         # FLAT CASES
         else:
             mods = []
+            nomain_negs = []
             ent_root = self.get_ent_ROOT(m_deps)
             dav_act = self.get_dav_rule(dclause, ent_root)
             for v in dclause:
                 if self.get_pos(v[0]) in ['JJ', 'RB', 'RBR', 'RBS', 'IN']:
-                    mods.append(v[0])
                     lemma = self.get_lemma(v[0])[:-2]
-                    if self.check_neg(lemma, language) and v[1] == dav_act:
-                        self.NEGATION_PRESENT = True
-                        self.assert_belief(RETRACT("ON"))
-                        neg_index = len(mods)-1
+                    if self.check_neg(lemma, language):
+                        if v[1] == dav_act:
+                            self.MAIN_NEG_PRESENT = True
+                            self.assert_belief(RETRACT("ON"))
+                            main_neg_index = len(mods)-1
+                        else:
+                            mods.append(v[0])
+                            nomain_negs.append(v)
+                    else:
+                        mods.append(v[0])
+
+            # every verb/adj will carry its non-main negative
+            negs = {}
+            for n in nomain_negs:
+                for v in dclause:
+                    if v[1] == n[1]:
+                        if v not in nomain_negs:
+                            negs.update({v[0]: n[0]})
 
             # only reason
             if gen_mask == "FULL":
-                print("\nmods: " + str(mods))
                 # creating vocabolary
                 voc = {}
                 for i in range(len(mods)):
@@ -316,12 +329,11 @@ class preprocess_clause(Action):
 
             elif gen_mask == "BASE":
 
-                print("\nmods: " + str(mods))
                 actual_mask = ""
 
-                if self.NEGATION_PRESENT:
+                if self.MAIN_NEG_PRESENT:
                     for i in range(len(mods)):
-                        if i == neg_index:
+                        if i == main_neg_index:
                             actual_mask = actual_mask + "0"
                         else:
                             actual_mask = actual_mask + "1"
@@ -340,11 +352,18 @@ class preprocess_clause(Action):
                         val = False
                     voc.update({mods[i]: val})
 
+                # voc rectification for carrying negations, other negations = True
+                for nm in nomain_negs:
+                    voc[nm[0]] = True
+                for ng in negs:
+                    if ng in voc:
+                        voc[negs[ng]] = voc[ng]
+
                 nmods = int(math.pow(2, len(mods))) - 1
                 print("\ngereralizations number: " + str(nmods))
 
                 # triggering generalizations production
-                if len(mods) > 0 and Gen_mode and not self.NEGATION_PRESENT:
+                if len(mods) > 0 and Gen_mode and not self.MAIN_NEG_PRESENT:
                     inc_mask = self.get_inc_mask(actual_mask)
                     self.assert_belief(GEN_MASK(inc_mask))
             else:
@@ -357,6 +376,13 @@ class preprocess_clause(Action):
                     else:
                         val = False
                     voc.update({mods[i]: val})
+
+                # voc rectification for carrying negations, other negations = True
+                for nm in nomain_negs:
+                    voc[nm[0]] = True
+                for ng in negs:
+                    if ng in voc:
+                        voc[negs[ng]] = voc[ng]
 
                 inc_mask = self.get_inc_mask(gen_mask)
                 if len(inc_mask) == len(gen_mask):
@@ -1407,9 +1433,10 @@ c4() >> [+STT("Colonel West doesn't sell not good missiles to Nono")]
 c5() >> [+STT("When an American sells weapons to a hostile nation, that American is a criminal")]
 
 # Query
-q() >> [+STT("Colonel West is a criminal")]
+#q() >> [+STT("Colonel West is a criminal")]
+
 #q() >> [+STT("Barack Obama was the first african american elected as the president of the United States")]
-#q() >> [+STT("When the air is cool, Barbara drinks wine and Robert is happy")]
+q() >> [+STT("Robert knows that Barbara is not a not good housewife")]
 
 # simulating keywords
 w() >> [+HOTWORD_DETECTED("ON")]
@@ -1469,6 +1496,7 @@ new_def_clause(X, M, T) >> [show_line("\n------------- All generalizations asser
 parse() >> [aggr_adj(), aggr_adv(), aggr_nouns(), mod_to_gnd(), gnd_prep_obj(), prep_to_gnd(), gnd_actions(), apply_adv(), actions_to_clauses(), finalize_gnd()]
 
 # aggregate adjectives
+aggr_adj() / (ADJ(I, X, L) & ADV(I, X, M)) >> [show_line("\naggregating adj-adv: ", L," - ", M), -ADJ(I, X, L), -ADV(I, X, M), aggregate("ADJ", I, X, L, M), aggr_adj()]
 aggr_adj() / (ADJ(I, X, L) & ADJ(I, X, M) & neq(L, M)) >> [show_line("\naggregating adjectives: ", L," - ", M), -ADJ(I, X, L), -ADJ(I, X, M), aggregate("ADJ", I, X, L, M), aggr_adj()]
 aggr_adj() / ADJ(I, X, L) >> [show_line("\nAdjectives aggregation done")]
 

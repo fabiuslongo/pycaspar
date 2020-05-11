@@ -59,6 +59,10 @@ Other negations are considered not primary modificators, thus preserved. Clauses
 ```sh
 > To_IN(Sell_VB(Colonel_NNP_West_NNP(x1), Not_RB_Good_JJ(Missile_NNS(x2))), Nono_NNP(x3))
 ```
+* Robert knows that Barbara is not a not good housewife
+```sh
+> Know_VBZ(Robert_NNP(x1), Not_RB(Be_VBZ(Barbara_NNP(x3), Not_RB_Good_JJ(Housewife_NN(x4)))))
+```
 
 
 ### Multi-action nested definite clauses
