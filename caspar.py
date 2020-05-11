@@ -1433,10 +1433,9 @@ c4() >> [+STT("Colonel West doesn't sell not good missiles to Nono")]
 c5() >> [+STT("When an American sells weapons to a hostile nation, that American is a criminal")]
 
 # Query
-#q() >> [+STT("Colonel West is a criminal")]
+q() >> [+STT("Colonel West is a criminal")]
 
 #q() >> [+STT("Barack Obama was the first african american elected as the president of the United States")]
-q() >> [+STT("Robert knows that Barbara is not a not good housewife")]
 
 # simulating keywords
 w() >> [+HOTWORD_DETECTED("ON")]
