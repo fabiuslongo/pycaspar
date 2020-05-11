@@ -1429,12 +1429,13 @@ d2() >> [+STT("turn off the lights in the living room")]
 c1() >> [+STT("Nono is an hostile nation")]
 c2() >> [+STT("Colonel West is American")]
 c3() >> [+STT("missiles are weapons")]
-c4() >> [+STT("Colonel West doesn't sell not good missiles to Nono")]
+c4() >> [+STT("Colonel West sells missiles to Nono")]
 c5() >> [+STT("When an American sells weapons to a hostile nation, that American is a criminal")]
 
 # Query
 q() >> [+STT("Colonel West is a criminal")]
 
+#q() >> [+STT("Colonel West doesn't sell not good missiles to Nono")]
 #q() >> [+STT("Barack Obama was the first african american elected as the president of the United States")]
 
 # simulating keywords

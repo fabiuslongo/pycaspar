@@ -91,15 +91,14 @@ Here is some example of utterance subordinated by specific conditions.
 ```sh
 > Strongly_RB(Shine_VBZ(Sun_NN(x1), __)) ==> Be_VBZ(Robert_NNP(x3), Happy_NNP(x4))
 ```
-when fulfilling object role, adjectives (Happy_JJ) are turned into nouns (Happy_NNP). The same result is achieved when condition is after the proposition as well, i.e. "Robert is happy, when the sun shines strongly".
-Conditions may be also more than one.
+when fulfilling object role, adjectives (Happy_JJ) are turned into nouns (Happy_NNP). Conditions may be also more than one.
 
 #### Multi-condition
-* Robert is happy and Barbara drinks wine when the air is cool
+* As the air is cool and the sun shines, Robert is happy
 ```sh
-> Drink_VBZ(Barbara_NNP(x3), Wine_NN(x4)) & Be_VBZ(Robert_NNP(x1), Happy_NNP(x2))) ==> Be_VBZ(Air_NN(x5), Cool_NNP(x6))
+> Be_VBZ(Air_NN(x1), Cool_NNP(x2)) & Shine_VBZ(Sun_NN(x3), __) ==> Be_VBZ(Robert_NNP(x5), Happy_NNP(x6))
 ```
-As we can see, the parsing works regardless the comma between "wine" and "when", but the usage is recommended to have more chances of success, especially with long sentences.
+Commas usage is recommended to have more chances of success, especially with long sentences.
 
 #### Multi-proposition
 Since implicative definite clauses must have not more of a single positive literal as consequent, in presence of a non-definite multi-proposition clause, it will be splitted into n=2 (n=#propositions) definite clauses like follow:
@@ -107,4 +106,10 @@ Since implicative definite clauses must have not more of a single positive liter
 ```sh
 > Be_VBZ(Air_NN(x1), Cool_NNP(x2)) ==> Drink_VBZ(Barbara_NNP(x3), Wine_NN(x4))
 > Be_VBZ(Air_NN(x1), Cool_NNP(x2)) ==> Be_VBZ(Robert_NNP(x5), Happy_NNP(x6))
+```
+#### Mixed
+* As the air is cool and the sun shines, Barbara drinks wine and Robert is happy
+```sh
+> Be_VBZ(Air_NN(x1), Cool_NNP(x2)) & Shine_VBZ(Sun_NN(x3), __) ==> Drink_VBZ(Barbara_NNP(x5), Wine_NN(x6))
+> Be_VBZ(Air_NN(x1), Cool_NNP(x2)) & Shine_VBZ(Sun_NN(x3), __) ==> Be_VBZ(Robert_NNP(x7), Happy_NNP(x8))
 ```
