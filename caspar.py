@@ -1435,9 +1435,8 @@ c4() >> [+STT("Colonel West sells missiles to Nono")]
 c5() >> [+STT("When an American sells weapons to a hostile nation, that American is a criminal")]
 
 # Query
-#q() >> [+STT("Colonel West is a criminal")]
+q() >> [+STT("Colonel West is a criminal")]
 
-q() >> [+STT("Robert is happy and Barbara drinks wine, when the sun shines strongly and the air is cool")]
 #q() >> [+STT("Barack Obama was the first african american elected as the president of the United States")]
 
 # simulating keywords
