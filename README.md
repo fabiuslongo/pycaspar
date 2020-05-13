@@ -80,9 +80,13 @@ Even without entities and Speech-To-Text interfaces definition, an agent's testi
 simulating vocal events:
 
 ### Waking agent
-Here we suppose the agent recognizes a proper waking word (_caspar_ for example) and exits from its idle state:
+Here we suppose the agent recognizes a proper waking word (_caspar_ for example) and exits from its idle state, by asserting the following belief:
 ```sh
-eShell: main > w()
+eShell: main > assert HOTWORD_DETECTED("ON")
+```
+Or more shortly:
+```sh
+eShell: main > +HOTWORD_DETECTED("ON")
 eShell: main > 
 
 Yes, I'm here!
@@ -91,6 +95,7 @@ Stopping Hotword detection...
 
 Starting utterance detection...
 ```
+
 after ten seconds of inactivity:
 ```sh
 Returning to idle state...
@@ -99,6 +104,7 @@ Stopping utterance detection...
 
 Starting Hotword detection...
 ```
+the amount of waiting seconds can be changed in line 1464 of caspar.py
 
 ### IoT commands and routines
 By the means of two testing procedure IoT direct commands can be tested, whose entities are defined
@@ -106,7 +112,7 @@ By the means of two testing procedure IoT direct commands can be tested, whose e
 * set the cooler at 27 degrees in the bedroom
 
 ```sh
-eShell: main > d1()
+eShell: main > +STT("set the cooler at 27 degrees in the bedroom")
 
 Stopping utterance detection...
 
@@ -125,7 +131,7 @@ Parameters: at 27 degree
 ```
 * turn off the lights in the living room
 ```sh
-eShell: main > d2()
+eShell: main > +STT("turn off the lights in the living room")
 
 Stopping utterance detection...
 
@@ -146,7 +152,7 @@ Caspar is capable of parsing complex routines as it follow (the agent must be fi
 
 * turn off the lights in the living room, when the temperature is 25 and the time is 12.00
 ```sh
-eShell: main > r1()
+eShell: main > +STT("turn off the lights in the living room, when the temperature is 25 and the time is 12.00")
 
 Stopping utterance detection...
 
@@ -171,7 +177,7 @@ eShell: main >
 The routine will wait for execution, until the two beliefs COND are satisfied. Let's simulate CONDs 
 satisfaction by simulating two Sensor detections, which let the agent decide on routine execution.
  ```sh
-eShell: main > s1()
+eShell: main > +SENSOR('be','time','12.00')
 
 asserting SENSOR('be','time','12.00')...
 
@@ -191,7 +197,7 @@ eShell: main >
 ```
 as another Sensor detection meet the temperature-related COND as well, the routine can be executed:
 ```sh
-eShell: main > s2()
+eShell: main > +SENSOR('be','temperature','25')
 
 asserting SENSOR('be','temperature','25')...
 
@@ -228,11 +234,11 @@ and queried by:
 We will show (by the command s()) the Clauses Knowlegde Base content after every assertion simulation:
 * _Nono is an hostile nation_
 ```sh
-eShell: main > l()
+eShell: main > +STT("listen")
 eShell: main > 
 Waiting for knowledge...
 
-eShell: main > c1()
+eShell: main > +STT("Nono is an hostile nation")
 Got it.
 
 ------------- All generalizations asserted.
@@ -249,7 +255,7 @@ Be(Nono(x1), Hostile(Nation(x2)))
 ```
 * _Colonel West is American_
 ```sh
-eShell: main > c2()
+eShell: main > +STT("Colonel West is American")
 Got it.
 
 ------------- All generalizations asserted.
@@ -267,7 +273,7 @@ Be(Colonel_West(x1), American(x2))
 ```
 * _missiles are weapons_
 ```sh
-eShell: main > c3()
+eShell: main > +STT("missiles are weapons")
 Got it.
 
 ------------- All generalizations asserted.
@@ -287,7 +293,7 @@ Be(Missile(x1), Weapon(x2))
 ```
 * _Colonel West sells missiles to Nono_
 ```sh
-eShell: main > c4()
+eShell: main > +STT("Colonel West sells missiles to Nono")
 Got it.
 
 ------------- All generalizations asserted.
@@ -323,7 +329,7 @@ To(Sell(Colonel_West(x1), Missile(x2)), Nono(x3))
 ```
 * _When an American sells weapons to a hostile nation, that American is a criminal_
 ```sh
-eShell: main > c5()
+eShell: main > +STT("When an American sells weapons to a hostile nation, that American is a criminal")
 Got it.
 
 ------------- All generalizations asserted.
@@ -362,10 +368,10 @@ now it is time to query the Clauses Knowledge Base with the following utterance:
 * _Colonel West is a criminal?_
 
 ```sh
-eShell: main > r()
+eShell: main > +STT("reason")
 Waiting for query...
 
-eShell: main > q()
+eShell: main > +STT("Colonel West is a criminal")
 Got it.
 
 Reasoning...............

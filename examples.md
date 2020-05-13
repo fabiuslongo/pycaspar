@@ -1,4 +1,4 @@
-# Knowledge Expression Summary
+# Knowledge Representation Summary
 
 In this file are summarized all expressive capabilities of the cognitive architecture CASPAR.
 

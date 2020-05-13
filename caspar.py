@@ -70,6 +70,7 @@ class LISTEN(Belief): pass
 class REASON(Belief): pass
 class RETRACT(Belief): pass
 class IS_RULE(Belief): pass
+class WAIT(Belief): pass
 
 # domotic reactive routines
 class r1(Procedure): pass
@@ -1434,9 +1435,9 @@ c4() >> [+STT("Colonel West sells missiles to Nono")]
 c5() >> [+STT("When an American sells weapons to a hostile nation, that American is a criminal")]
 
 # Query
-q() >> [+STT("Colonel West is a criminal")]
+#q() >> [+STT("Colonel West is a criminal")]
 
-#q() >> [+STT("Colonel West doesn't sell not good missiles to Nono")]
+q() >> [+STT("Robert is happy and Barbara drinks wine, when the sun shines strongly and the air is cool")]
 #q() >> [+STT("Barack Obama was the first african american elected as the president of the United States")]
 
 # simulating keywords
@@ -1460,12 +1461,12 @@ t() >> [go(), w(), l()]
 # Front-End STT
 
 # Start agent command
-go() >> [show_line("Starting Caspar..."), HotwordDetect().start]
+go() >> [show_line("Starting Caspar..."), +WAIT(10), HotwordDetect().start]
 
 # Hotwords processing
-+HOTWORD_DETECTED("ON") >> [show_line("\n\nYes, I'm here!\n"), HotwordDetect().stop, UtteranceDetect().start, +WAKE("ON"), Timer(10).start]
-+STT("listen") / WAKE("ON") >> [+LISTEN("ON"), show_line("\nWaiting for knowledge...\n"), Timer(10).start]
-+STT("reason") / WAKE("ON") >> [+REASON("ON"), show_line("\nWaiting for query...\n"), Timer(10).start]
++HOTWORD_DETECTED("ON") / WAIT(W) >> [show_line("\n\nYes, I'm here!\n"), HotwordDetect().stop, UtteranceDetect().start, +WAKE("ON"), Timer(W).start]
++STT("listen") / (WAKE("ON") & WAIT(W)) >> [+LISTEN("ON"), show_line("\nWaiting for knowledge...\n"), Timer(W).start]
++STT("reason") / (WAKE("ON") & WAIT(W)) >> [+REASON("ON"), show_line("\nWaiting for query...\n"), Timer(W).start]
 
 # Query KB
 +STT(X) / (WAKE("ON") & REASON("ON")) >> [show_line("\nGot it.\n"), +GEN_MASK("FULL"), new_def_clause(X, "ONE", "NOMINAL")]
@@ -1477,7 +1478,7 @@ process_rule() / IS_RULE(X) >> [show_line("\n", X, " ----> is a rule!\n"), -IS_R
 # Generalization assertion
 new_def_clause(X, M, T) / GEN_MASK("BASE") >> [-GEN_MASK("BASE"), preprocess_clause(X, "BASE", M, T), parse(), process_clause(), new_def_clause(X, M, T)]
 new_def_clause(X, M, T) / GEN_MASK(Y) >> [-GEN_MASK(Y), preprocess_clause(X, Y, M, T), parse(), process_clause(), new_def_clause(X, M, T)]
-new_def_clause(X, M, T) >> [show_line("\n------------- All generalizations asserted.\n"), Timer(10).start]
+new_def_clause(X, M, T) / WAIT(W) >> [show_line("\n------------- All generalizations asserted.\n"), Timer(W).start]
 
 
 # Reactive Reasoning
