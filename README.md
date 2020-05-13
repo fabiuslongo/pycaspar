@@ -104,7 +104,7 @@ Stopping utterance detection...
 
 Starting Hotword detection...
 ```
-the amount of waiting seconds can be changed in line 1464 of caspar.py
+the amount of waiting seconds can be changed within the belief WAIT() in line 1464 of caspar.py.
 
 ### IoT commands and routines
 By the means of two testing procedure IoT direct commands can be tested, whose entities are defined
