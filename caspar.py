@@ -1448,9 +1448,6 @@ r() >> [+STT("reason")]
 s1() >> [simulate_sensor("be", "time", "12.00")]
 s2() >> [simulate_sensor("be", "temperature", "25")]
 
-# show clauses in Fol kb
-s() >> [show_fol_kb()]
-
 # test assertions
 t() >> [go(), w(), l()]
 
@@ -1461,6 +1458,9 @@ t() >> [go(), w(), l()]
 
 # Start agent command
 go() >> [show_line("Starting Caspar..."), +WAIT(10), HotwordDetect().start]
+
+# show clauses in Fol kb
+s() >> [show_fol_kb()]
 
 # Hotwords processing
 +HOTWORD_DETECTED("ON") / WAIT(W) >> [show_line("\n\nYes, I'm here!\n"), HotwordDetect().stop, UtteranceDetect().start, +WAKE("ON"), Timer(W).start]
