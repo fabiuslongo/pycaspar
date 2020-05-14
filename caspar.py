@@ -59,6 +59,9 @@ class l(Procedure): pass
 class r(Procedure): pass
 class s(Procedure): pass
 
+# initialize Clauses Kb
+class c(Procedure): pass
+
 # test assertions
 class t(Procedure): pass
 
@@ -270,6 +273,15 @@ class preprocess_clause(Action):
                 if len(mods) > 0 and Gen_mode is True:
                     inc_mask = self.get_inc_mask(actual_mask)
                     self.assert_belief(GEN_MASK(inc_mask))
+
+            elif gen_mask == "FULL":
+                # creating vocabolary
+                voc = {}
+                full_true_voc = {}
+                for i in range(len(mods)):
+                    voc.update({mods[i]: True})
+                    full_true_voc.update({mods[i]: True})
+
             else:
 
                 # creating vocabolary
@@ -448,8 +460,8 @@ class preprocess_clause(Action):
         print(voc)
         print("----------------------\n")
 
-        # actions-crossing subj list
-        subj_crossing = []
+        # actions-crossing var list
+        var_crossing = []
 
         # nounss assertions
         for v in vect_fol:
@@ -508,11 +520,14 @@ class preprocess_clause(Action):
 
                 self.assert_belief(ACTION(str(id), lemma_nocount, v[1], v[2], v[3]))
                 print("ACTION(" + str(id) + ", " + lemma_nocount+ ", " + v[1] + ", " + v[2] + ", "+v[3]+")")
-                if v[2] in subj_crossing:
+
+                # check for var action crossing
+                if v[2] in var_crossing or v[3] in var_crossing:
                     self.assert_belief(ACT_CROSS_VAR(str(id)))
                     print("ACT_CROSS_VAR(" + str(id) + ")")
                 else:
-                    subj_crossing.append(v[2])
+                    var_crossing.append(v[2])
+                    var_crossing.append(v[3])
 
     def get_pos(self, s):
         first = s.split('_')[0]
@@ -988,9 +1003,13 @@ class ground_prep(Action):
         if pn == 0:
             new_object = label_ground + "("+var_ground+")"
         else:
-            new_object = label_ground[:-pn] + "(" + var_ground + ")"
-            for i in range(pn):
-                new_object = new_object+")"
+            ls = label_ground.split(' ')
+            if len(ls) > 1:
+                new_object = label_ground
+            else:
+                new_object = label_ground[:-pn] + "(" + var_ground + ")"
+                for i in range(pn):
+                    new_object = new_object+")"
 
         self.assert_belief(PREP(id, var, prep_label, new_object))
 
@@ -999,6 +1018,20 @@ class ground_prep(Action):
         while (s[len(s) - (count + 1)] == ")"):
             count = count + 1
         return count
+
+
+class int_preps_tognd(Action):
+    def execute(self, arg1, arg2, arg3, arg4, arg5, arg6):
+
+        id = str(arg1).split("'")[3]
+        var_ground_est = str(arg2).split("'")[3]
+        var_ground_int = str(arg3).split("'")[3]
+        prep_est_label = str(arg4).split("'")[3]
+        prep_int_object = str(arg5).split("'")[3]
+        ground_label = str(arg6).split("'")[3]
+
+        new_label = prep_est_label + "(" + ground_label + "("+var_ground_est+"), " + prep_int_object + "("+var_ground_int+"))"
+        self.assert_belief(GND(id, var_ground_est, new_label))
 
 
 class gprep_to_ground(Action):
@@ -1319,6 +1352,11 @@ class show_fol_kb(Action):
         for cls in kb_fol.clauses:
                 print(cls)
 
+class clear_clauses_kb(Action):
+    def execute(self):
+        print("\nClauses kb initialized.")
+        kb_fol.clauses = []
+
 
 class join_clauses(Action):
     def execute(self, arg1, arg2):
@@ -1454,13 +1492,18 @@ t() >> [go(), w(), l()]
 
 
 
+
+
+
 # Front-End STT
 
 # Start agent command
-go() >> [show_line("Starting Caspar..."), +WAIT(10), HotwordDetect().start]
+go() >> [show_line("Starting Caspar..."), +WAIT(15), HotwordDetect().start]
 
-# show clauses in Fol kb
+# show clauses in Clauses kb
 s() >> [show_fol_kb()]
+# delete Clauses Kb
+c() >> [clear_clauses_kb()]
 
 # Hotwords processing
 +HOTWORD_DETECTED("ON") / WAIT(W) >> [show_line("\n\nYes, I'm here!\n"), HotwordDetect().stop, UtteranceDetect().start, +WAKE("ON"), Timer(W).start]
@@ -1469,9 +1512,10 @@ s() >> [show_fol_kb()]
 
 # Query KB
 +STT(X) / (WAKE("ON") & REASON("ON")) >> [show_line("\nGot it.\n"), +GEN_MASK("FULL"), new_def_clause(X, "ONE", "NOMINAL")]
-# Nominal clauses assertion  # BASE, MORE
+
+# Nominal clauses assertion --> single: FULL", "ONE" ---  multiple: "BASE", "MORE"
 +STT(X) / (WAKE("ON") & LISTEN("ON")) >> [show_line("\nGot it.\n"), +GEN_MASK("BASE"), new_def_clause(X, "MORE", "NOMINAL"), process_rule()]
-# processing rules
+# processing rules --> single: FULL", "ONE" ---  multiple: "BASE", "MORE"
 process_rule() / IS_RULE(X) >> [show_line("\n", X, " ----> is a rule!\n"), -IS_RULE(X), +GEN_MASK("BASE"), new_def_clause(X, "MORE", "RULE")]
 
 # Generalization assertion
@@ -1510,16 +1554,20 @@ aggr_nouns() / (GND(I, X, L) & GND(I, X, M) & neq(L, M)) >> [show_line("\naggreg
 aggr_nouns() / GND(I, X, L) >> [show_line("\nNouns aggregation done.")]
 
 # applying mods to grounds
-mod_to_gnd() / (GND(I, X, L) & ADJ(I, X, M)) >> [show_line("\nadjective to grounds: ", M," to ", L), -GND(I, X, L), -ADJ(I, X, M), merge(I, X, M, L), mod_to_gnd() ]
+mod_to_gnd() / (GND(I, X, L) & ADJ(I, X, M)) >> [show_line("\nadjective to ground: ", M," to ", L), -GND(I, X, L), -ADJ(I, X, M), merge(I, X, M, L), mod_to_gnd() ]
+mod_to_gnd() / (GND(I, X, L) & PREP(I, D, W, X) & PREP(I, X, M, Y) & GND(I, Y, U)) >> [show_line("\nint preps...",M," - ",W), -GND(I, X, L), -PREP(I, X, M, Y), -GND(I, Y, U), int_preps_tognd(I, X, Y, M, U, L), mod_to_gnd()]
 mod_to_gnd() / GND(I, X, L) >> [show_line("\nAdjective applications done.")]
 
+
+
 # grounding object preps
-gnd_prep_obj() / (PREP(I, X, L, O) & ADJ(I, O, K) & GND(I, O, M)) >> [show_line("\nprep not ready to be object-grounded..."), mod_to_gnd(), gnd_prep_obj()]
 gnd_prep_obj() / (PREP(I, X, L, O) & GND(I, O, M)) >> [show_line("\ngrounding object preps: ", L," <-- ", M), -PREP(I, X, L, O), -GND(I, O, M), ground_prep(I, X, L, O, M), gnd_prep_obj()]
 gnd_prep_obj() / PREP(I, X, L, O) >> [show_line("\nPreposition ready: ", L)]
 
 # applying PREP to ground
 prep_to_gnd() / (PREP(I, X, L, O) & GND(I, X, M)) >> [show_line("\ngprep to ground: ", L," ---> ", M), -PREP(I, X, L, O), -GND(I, X, M), gprep_to_ground(I, X, L, O, M)]
+
+
 
 
 # grounding actions
@@ -1579,7 +1627,6 @@ process_clause() / (DEF_CLAUSE(X) & REASON("ON")) >> [show_line("\nReasoning....
 
 process_clause() / (DEF_CLAUSE(X) & LISTEN("ON") & RETRACT("ON")) >> [show_line("\nRetracting clause."), -DEF_CLAUSE(X), -RETRACT("ON"), retract_clause(X), process_clause()]
 process_clause() / (DEF_CLAUSE(X) & LISTEN("ON")) >> [show_line("\nAdding definite clause into Fol Kb."), -DEF_CLAUSE(X), new_clause(X), process_clause()]
-
 
 
 
