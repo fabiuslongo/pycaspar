@@ -462,18 +462,7 @@ class preprocess_clause(Action):
 
         # actions-crossing var list
         var_crossing = []
-
-        # nounss assertions
-        for v in vect_fol:
-            if len(v) == 2:
-                if self.get_pos(v[0]) in ['NNP', 'NNPS', 'PRP', 'CD', 'NN', 'NNS', 'PRP', 'PRP$']:
-                    if INCLUDE_NOUNS_POS:
-                        lemma_nocount = self.get_nocount_lemma(v[0])
-                    else:
-                        lemma_nocount = parser.get_lemma(self.get_nocount_lemma(v[0]))
-
-                    self.assert_belief(GND(str(id), v[1], lemma_nocount))
-                    print("GND(" + str(id) + ", " + v[1] + ", " + lemma_nocount + ")")
+        admissible_vars = ['x']
 
         # modificators assertions
         for v in vect_fol:
@@ -487,6 +476,10 @@ class preprocess_clause(Action):
 
                     self.assert_belief(PREP(str(id), v[1], lemma_nocount, v[2]))
                     print("PREP(" + str(id) + ", " + v[1] + ", " + lemma_nocount + ", " + v[2] + ")")
+                    if v[1] not in admissible_vars:
+                        admissible_vars.append(v[1])
+                    if v[2] not in admissible_vars:
+                        admissible_vars.append(v[2])
 
             elif len(v) == 2:
                 # adjectives
@@ -528,6 +521,24 @@ class preprocess_clause(Action):
                 else:
                     var_crossing.append(v[2])
                     var_crossing.append(v[3])
+
+                if v[2] not in admissible_vars:
+                    admissible_vars.append(v[2])
+                if v[3] not in admissible_vars:
+                    admissible_vars.append(v[3])
+
+        # nouns assertions
+        for v in vect_fol:
+            if len(v) == 2:
+                if self.get_pos(v[0]) in ['NNP', 'NNPS', 'PRP', 'CD', 'NN', 'NNS', 'PRP', 'PRP$']:
+                    if INCLUDE_NOUNS_POS:
+                        lemma_nocount = self.get_nocount_lemma(v[0])
+                    else:
+                        lemma_nocount = parser.get_lemma(self.get_nocount_lemma(v[0]))
+
+                    if v[1] in admissible_vars:
+                        self.assert_belief(GND(str(id), v[1], lemma_nocount))
+                        print("GND(" + str(id) + ", " + v[1] + ", " + lemma_nocount + ")")
 
     def get_pos(self, s):
         first = s.split('_')[0]
@@ -1498,7 +1509,7 @@ t() >> [go(), w(), l()]
 # Front-End STT
 
 # Start agent command
-go() >> [show_line("Starting Caspar..."), +WAIT(15), HotwordDetect().start]
+go() >> [show_line("Starting Caspar..."), +WAIT(100), HotwordDetect().start]
 
 # show clauses in Clauses kb
 s() >> [show_fol_kb()]
