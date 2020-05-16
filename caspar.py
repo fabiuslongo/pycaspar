@@ -207,7 +207,7 @@ class preprocess_clause(Action):
         if type == "NOMINAL":
             # NOMINAL CASE
             check_implication = m.check_implication(vect_LR_fol)
-            if check_implication is False: # existing rule are excluded
+            if check_implication is False: # existing implications are excluded
                 check_isa = m.check_for_rule(m_deps)
                 if check_isa:
                     self.assert_belief(IS_RULE(sentence))
@@ -464,9 +464,8 @@ class preprocess_clause(Action):
         var_crossing = []
         admissible_vars = ['x']
 
-        # modificators assertions
+        # prepositions
         for v in vect_fol:
-            # prepositions
             if len(v) == 3:
                 if voc[v[0]] is True:
                     if INCLUDE_PRP_POS:
@@ -481,29 +480,7 @@ class preprocess_clause(Action):
                     if v[2] not in admissible_vars:
                         admissible_vars.append(v[2])
 
-            elif len(v) == 2:
-                # adjectives
-                if self.get_pos(v[0]) in ['JJ', 'JJR', 'JJS']:
-                    if voc[v[0]] is True:
-                        if INCLUDE_ADJ_POS:
-                            lemma_nocount = self.get_nocount_lemma(v[0])
-                        else:
-                            lemma_nocount = parser.get_lemma(self.get_nocount_lemma(v[0]))
-
-                        self.assert_belief(ADJ(str(id), v[1], lemma_nocount))
-                        print("ADJ("+str(id)+", "+v[1]+", "+lemma_nocount+")")
-                # adverbs
-                elif self.get_pos(v[0]) in ['RB', 'RBR', 'RBS']:
-                    if voc[v[0]] is True:
-                        if INCLUDE_ADV_POS:
-                            lemma_nocount = self.get_nocount_lemma(v[0])
-                        else:
-                            lemma_nocount = parser.get_lemma(self.get_nocount_lemma(v[0]))
-
-                        self.assert_belief(ADV(str(id), v[1], lemma_nocount))
-                        print("ADV(" + str(id) + ", " + v[1] + ", " + lemma_nocount + ")")
-
-        # actions assertions
+        # actions
         for v in vect_fol:
             if len(v) == 4:
                 if INCLUDE_ACT_POS:
@@ -527,7 +504,7 @@ class preprocess_clause(Action):
                 if v[3] not in admissible_vars:
                     admissible_vars.append(v[3])
 
-        # nouns assertions
+        # nouns
         for v in vect_fol:
             if len(v) == 2:
                 if self.get_pos(v[0]) in ['NNP', 'NNPS', 'PRP', 'CD', 'NN', 'NNS', 'PRP', 'PRP$']:
@@ -539,6 +516,34 @@ class preprocess_clause(Action):
                     if v[1] in admissible_vars:
                         self.assert_belief(GND(str(id), v[1], lemma_nocount))
                         print("GND(" + str(id) + ", " + v[1] + ", " + lemma_nocount + ")")
+
+        # adjectives, adverbs
+        for v in vect_fol:
+            if self.get_pos(v[0]) in ['JJ', 'JJR', 'JJS']:
+                if voc[v[0]] is True:
+                    if INCLUDE_ADJ_POS:
+                        lemma_nocount = self.get_nocount_lemma(v[0])
+                    else:
+                        lemma_nocount = parser.get_lemma(self.get_nocount_lemma(v[0]))
+
+                    if v[1] in admissible_vars:
+                        self.assert_belief(ADJ(str(id), v[1], lemma_nocount))
+                        print("ADJ("+str(id)+", "+v[1]+", "+lemma_nocount+")")
+
+            elif self.get_pos(v[0]) in ['RB', 'RBR', 'RBS']:
+                if voc[v[0]] is True:
+                    if INCLUDE_ADV_POS:
+                        lemma_nocount = self.get_nocount_lemma(v[0])
+                    else:
+                        lemma_nocount = parser.get_lemma(self.get_nocount_lemma(v[0]))
+
+                    if v[1] in admissible_vars:
+                        self.assert_belief(ADV(str(id), v[1], lemma_nocount))
+                        print("ADV(" + str(id) + ", " + v[1] + ", " + lemma_nocount + ")")
+
+
+
+
 
     def get_pos(self, s):
         first = s.split('_')[0]
@@ -1509,11 +1514,11 @@ t() >> [go(), w(), l()]
 # Front-End STT
 
 # Start agent command
-go() >> [show_line("Starting Caspar..."), +WAIT(100), HotwordDetect().start]
+go() >> [show_line("Starting Caspar..."), +WAIT(15), HotwordDetect().start]
 
 # show clauses in Clauses kb
 s() >> [show_fol_kb()]
-# delete Clauses Kb
+# initialize Clauses Kb
 c() >> [clear_clauses_kb()]
 
 # Hotwords processing
@@ -1538,11 +1543,9 @@ new_def_clause(X, M, T) / WAIT(W) >> [show_line("\n------------- All generalizat
 # Reactive Reasoning
 +STT(X) / WAKE("ON") >> [UtteranceDetect().stop, -WAKE("ON"), show_line("\nProcessing domotic command...\n"), assert_command(X), parse_command(), parse_routine(), HotwordDetect().start]
 
-+TIMEOUT("ON") / (WAKE("ON") & LISTEN("ON") & REASON("ON")) >> [show_line("\nReturning to idle state...\n"), -WAKE("ON"), -LISTEN("ON"), -REASON("ON"),
-                                                                                                  UtteranceDetect().stop, HotwordDetect().start]
-+TIMEOUT("ON") / (WAKE("ON") & REASON("ON")) >> [show_line("\nReturning to idle state...\n"), -REASON("ON"), -WAKE("ON"),
-                                                                                   UtteranceDetect().stop, HotwordDetect().start]
-+TIMEOUT("ON") / (WAKE("ON") & LISTEN("ON")) >> [show_line("\nReturning to idle state...\n"), -LISTEN("ON"), -WAKE("ON"),  UtteranceDetect().stop, HotwordDetect().start]
++TIMEOUT("ON") / (WAKE("ON") & LISTEN("ON") & REASON("ON")) >> [show_line("\nReturning to idle state...\n"), -WAKE("ON"), -LISTEN("ON"), -REASON("ON"), UtteranceDetect().stop, HotwordDetect().start]
++TIMEOUT("ON") / (WAKE("ON") & REASON("ON")) >> [show_line("\nReturning to idle state...\n"), -REASON("ON"), -WAKE("ON"), UtteranceDetect().stop, HotwordDetect().start]
++TIMEOUT("ON") / (WAKE("ON") & LISTEN("ON")) >> [show_line("\nReturning to idle state...\n"), -LISTEN("ON"), -WAKE("ON"), UtteranceDetect().stop, HotwordDetect().start]
 +TIMEOUT("ON") / WAKE("ON") >> [show_line("\nReturning to idle state...\n"), -WAKE("ON"), UtteranceDetect().stop, HotwordDetect().start]
 
 
@@ -1634,6 +1637,8 @@ process_clause() / CLAUSE("FLAT", X) >> [show_line("\nGot R definite clause.\n")
 
 process_clause() / (DEF_CLAUSE(X) & LEFT_CLAUSE(Y)) >> [show_line("\nProcessing definite clause WITH LEFT..."), -LEFT_CLAUSE(Y), process_clause()]
 process_clause() / (DEF_CLAUSE(X) & CLAUSE("LEFT", Y)) >> [show_line("\nProcessing definite definite clause WITH CLAUSE LEFT..."), -CLAUSE("LEFT", Y), process_clause()]
+
+process_clause() / (DEF_CLAUSE(X) & REASON("ON") & IS_RULE(Y)) >> [show_line("\nReasoning...............\n"), -DEF_CLAUSE(X), -LISTEN('ON'), -IS_RULE(Y), reason(X), process_clause()]
 process_clause() / (DEF_CLAUSE(X) & REASON("ON")) >> [show_line("\nReasoning...............\n"), -DEF_CLAUSE(X), -LISTEN('ON'), reason(X), process_clause()]
 
 process_clause() / (DEF_CLAUSE(X) & LISTEN("ON") & RETRACT("ON")) >> [show_line("\nRetracting clause."), -DEF_CLAUSE(X), -RETRACT("ON"), retract_clause(X), process_clause()]
