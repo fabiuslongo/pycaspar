@@ -1516,7 +1516,7 @@ t() >> [go(), w(), l()]
 # Start agent command
 go() >> [show_line("Starting Caspar..."), +WAIT(15), HotwordDetect().start]
 
-# show clauses in Clauses kb
+# show Clauses kb
 s() >> [show_fol_kb()]
 # initialize Clauses Kb
 c() >> [clear_clauses_kb()]
