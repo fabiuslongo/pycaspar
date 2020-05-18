@@ -37,10 +37,11 @@ This repository has been tested on Pycharm 2019.1.2 x64 with the following packa
 
 
 ### Natural Language Toolkit
+from prompt:
 ```sh
 > python -m pip install nltk
 ```
-for python console:
+from python console:
 ```sh
 > import nltk
 > nltk.download('wordnet')
