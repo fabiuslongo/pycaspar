@@ -32,7 +32,7 @@ This repository has been tested on Pycharm 2019.1.2 x64 with the following packa
 ### SpaCy
 ```sh
 > python -m pip install spacy
-> python -m spacy download en_core_web_sm
+> python -m spacy download en_core_web_md
 ```
 
 
