@@ -6,6 +6,7 @@ referred to the paper _CASPAR: towards Decision Making Helpers Agents for IoT, b
 
 # Installation
 
+
 This repository has been tested on Pycharm 2019.1.2 x64 with the following packages versions:
 
 * [Phidias](https://github.com/corradosantoro/phidias) (release 1.3.4.alpha) 
@@ -15,6 +16,7 @@ This repository has been tested on Pycharm 2019.1.2 x64 with the following packa
 
 ### Phidias
 
+---------------
 ##### on all platforms
 ```sh
 > git clone https://github.com/corradosantoro/phidias
@@ -30,6 +32,9 @@ This repository has been tested on Pycharm 2019.1.2 x64 with the following packa
 ```
 
 ### SpaCy
+
+---------------
+
 ```sh
 > python -m pip install spacy
 > python -m spacy download en_core_web_md
@@ -37,6 +42,9 @@ This repository has been tested on Pycharm 2019.1.2 x64 with the following packa
 
 
 ### Natural Language Toolkit
+
+---------------
+
 from prompt:
 ```sh
 > python -m pip install nltk
@@ -53,15 +61,24 @@ This cognitive architecture is designed to implement more intelligent agents and
 is an agent itself. Before starting the agent, Entities and Speech-To-Text Interfaces must be defined.
 
 ### Entities definition
+
+---------------
+
 Entities involved in reasoning must be defined in the Smart Environment Interface 
 (line 1622 of caspar.py).
 
 ### Speech-To-Text Interfaces
+
+---------------
+
 SST Interfaces (for both hotwords and utterances) must be defined inside the Instances Sensors 
 (line 1319 and 1337 of caspar.py).
  
 
 ### Starting Phidias Shell
+
+---------------
+
 ```sh
 > python caspar.py
 
@@ -73,6 +90,9 @@ SST Interfaces (for both hotwords and utterances) must be defined inside the Ins
 eShell: main >
 ```
 ### Starting agent
+
+---------------
+
 ```sh
 eShell: main > go()
 eShell: main > Starting Caspar...
@@ -85,6 +105,9 @@ Even without entities and Speech-To-Text interfaces definition, an agent's testi
 simulating vocal events:
 
 ### Waking agent
+
+---------------
+
 Here we suppose the agent recognizes a proper waking word (_caspar_ for example) and exits from its idle state, by asserting the following belief:
 ```sh
 eShell: main > assert HOTWORD_DETECTED("ON")
@@ -112,6 +135,9 @@ Starting Hotword detection...
 the amount of waiting seconds can be changed within the belief WAIT() in line 1464 of caspar.py.
 
 ### IoT commands and routines
+
+---------------
+
 By the means of two testing procedure IoT direct commands can be tested, whose entities are defined
  in the Smart Enviroment interface:
 * set the cooler at 27 degrees in the bedroom
@@ -218,6 +244,9 @@ Location: living room
 Parameters: off
 ```
 ### Conceptual Reasoning
+
+---------------
+
 All the Caspar's expressive capabilities are summarized [here](examples.md).
 In order to distinguish working contexts, conceptual reasoning will be triggered by two specific
 hotwords (after the agent is awakened):

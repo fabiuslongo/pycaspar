@@ -5,6 +5,8 @@ In this file are summarized all expressive capabilities of the cognitive archite
 
 ### Mono-action nested definite clauses
 
+---------------
+
 This is the simplest case of one intransitive action/subject clause.
 
 * Robert drinks
@@ -44,6 +46,8 @@ Let’s apply a further modification, in order to include a verbal preposition. 
 
 ### Negations
 
+---------------
+
 In the case the main verb of the action is negated, the corrispondent clause without the negation will be retracted.
 
 * Colonel West doesn't sell missiles to Nono
@@ -66,6 +70,9 @@ Other negations are considered not primary modificators, thus preserved. Clauses
 
 
 ### Multi-action nested definite clauses
+
+---------------
+
 Here is some example with utterances containing disjoint actions: in this case, two distinct literals will be asserted.
 * Robert knows the truth and Barbara drinks wine
 ```sh
@@ -85,6 +92,9 @@ an artificial predicate (And_CC()) will be created to merge the two literals in 
 > And_CC(Be_VBZ(Man_NN(x1), Good_JJ(Man_NN(x2))), Call_VBN(Man_NN(x1), Robert_NNP(x3)))
 ```
 ### Implicative nested definite clauses
+
+---------------
+
 Here is some example of utterance subordinated by specific conditions. 
 #### Mono-condition
 * When the sun shines strongly, Robert is happy
