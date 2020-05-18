@@ -40,7 +40,11 @@ This repository has been tested on Pycharm 2019.1.2 x64 with the following packa
 ```sh
 > python -m pip install nltk
 ```
-
+for python console:
+```sh
+> import nltk
+> nltk.download('wordnet')
+```
 
 
 # Testing
