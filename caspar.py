@@ -95,6 +95,7 @@ class c4(Procedure): pass
 class c5(Procedure): pass
 class c6(Procedure): pass
 
+
 # Fol query utterance
 class q(Procedure): pass
 
@@ -580,24 +581,9 @@ class new_clause(Action):
         mf = parser.morph(sentence)
         def_clause = expr(mf)
 
-        if def_clause not in kb_fol.clauses:
+        kb_fol.nested_tell(def_clause)
 
-            candidates = []
-            number_of_calls = 0
-            kb_fol.produce_goals_complete(def_clause, candidates, 0, number_of_calls)
 
-            for cand in candidates:
-                if cand != def_clause and len(str(cand).split("==>")) == 1:
-                    print("\nDerived literale: ", cand)
-                    new_implication = str(def_clause) + " ==> " + str(cand)
-                    print("\nDerived implication: ", new_implication)
-                    kb_fol.tell(expr(new_implication))
-
-            kb_fol.tell(def_clause)
-
-            print("\nDone.\n")
-        else:
-            print("\nDefinite clause already present in the kb.\n")
 
 
 class reason(Action):
@@ -1486,12 +1472,12 @@ c1() >> [+STT("Nono is an hostile nation")]
 c2() >> [+STT("Colonel West is American")]
 c3() >> [+STT("missiles are weapons")]
 c4() >> [+STT("Colonel West sells missiles to Nono")]
-c5() >> [+STT("When an American sells weapons to a hostile nation, that American is a criminal")]
+c5() >> [+STT("the sky is grey")]
+c6() >> [+STT("When an American sells weapons to a hostile nation and the sky is grey, that American is a criminal")]
 
 # Query
 q() >> [+STT("Colonel West is a criminal")]
 
-#q() >> [+STT("Barack Obama was the first african american elected as the president of the United States")]
 
 # simulating keywords
 w() >> [+HOTWORD_DETECTED("ON")]

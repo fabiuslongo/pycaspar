@@ -299,6 +299,34 @@ class FolKB(KB):
     def produce_goals_sound(self, goal, candidates, depth, number_of_calls):
         return produce_goals_inner_sound(self, goal, candidates, depth, number_of_calls)
 
+    def nested_tell(self, def_clause):
+        return nested_tell_inner(self, def_clause)
+
+
+
+
+def nested_tell_inner(KB, def_clause):
+    if def_clause not in KB.clauses:
+
+        candidates = []
+        number_of_calls = 0
+        KB.produce_goals_complete(def_clause, candidates, 0, number_of_calls)
+
+        for cand in candidates:
+            if cand != def_clause and len(str(cand).split("==>")) == 1:
+                print("\nDerived literale: ", cand)
+                new_implication = str(def_clause) + " ==> " + str(cand)
+                print("\nDerived implication: ", new_implication)
+                KB.tell(expr(new_implication))
+
+        KB.tell(def_clause)
+
+        print("\nDone.\n")
+    else:
+        print("\nDefinite clause already present in the kb.\n")
+
+
+
 
 def expr_to_string(e):
     str = ""
