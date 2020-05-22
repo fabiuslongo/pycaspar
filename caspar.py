@@ -501,6 +501,8 @@ class preprocess_clause(Action):
                     var_crossing.append(v[3])
 
                 if v[2] not in admissible_vars:
+                    admissible_vars.append(v[1])
+                if v[2] not in admissible_vars:
                     admissible_vars.append(v[2])
                 if v[3] not in admissible_vars:
                     admissible_vars.append(v[3])
@@ -582,8 +584,6 @@ class new_clause(Action):
         def_clause = expr(mf)
 
         kb_fol.nested_tell(def_clause)
-
-
 
 
 class reason(Action):
@@ -1472,8 +1472,7 @@ c1() >> [+STT("Nono is an hostile nation")]
 c2() >> [+STT("Colonel West is American")]
 c3() >> [+STT("missiles are weapons")]
 c4() >> [+STT("Colonel West sells missiles to Nono")]
-c5() >> [+STT("the sky is grey")]
-c6() >> [+STT("When an American sells weapons to a hostile nation and the sky is grey, that American is a criminal")]
+c5() >> [+STT("When an American sells weapons to a hostile nation, that American is a criminal")]
 
 # Query
 q() >> [+STT("Colonel West is a criminal")]
@@ -1500,7 +1499,7 @@ t() >> [go(), w(), l()]
 # Front-End STT
 
 # Start agent command
-go() >> [show_line("Starting Caspar..."), +WAIT(15), HotwordDetect().start]
+go() >> [show_line("Starting Caspar..."), +WAIT(100), HotwordDetect().start]
 
 # show Clauses kb
 s() >> [show_fol_kb()]
