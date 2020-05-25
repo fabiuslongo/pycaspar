@@ -1791,9 +1791,9 @@ INCLUDE_PRP_POS = True
 INCLUDE_ADV_POS = True
 
 # Selective inclusion/exclusion of mods categories on generalizations
-GEN_PRED = False
-GEN_ADJ = False
-GEN_ADV = False
+GEN_PRED = True
+GEN_ADJ = True
+GEN_ADV = True
 
 parser = Parse(VERBOSE)
 
