@@ -1785,17 +1785,15 @@ produce_intent() / PRE_INTENT(V, D, X, L, T) >> [-PRE_INTENT(V, D, X, L, T), +IN
 config = configparser.ConfigParser()
 config.read('config.ini')
 
-# NLP Parser
+
 VERBOSE = config.getboolean('NL_TO_FOL', 'VERBOSE')
 
-# Selective inclusion/exclusion of Part-of-Speech
 INCLUDE_ACT_POS = config.getboolean('POS', 'INCLUDE_ACT_POS')
 INCLUDE_NOUNS_POS = config.getboolean('POS', 'INCLUDE_NOUNS_POS')
 INCLUDE_ADJ_POS = config.getboolean('POS', 'INCLUDE_ADJ_POS')
 INCLUDE_PRP_POS = config.getboolean('POS', 'INCLUDE_PRP_POS')
 INCLUDE_ADV_POS = config.getboolean('POS', 'INCLUDE_ADV_POS')
 
-# Selective inclusion/exclusion of mods categories on generalizations
 GEN_PRED = config.getboolean('GEN', 'GEN_PRED')
 GEN_ADJ = config.getboolean('GEN', 'GEN_ADJ')
 GEN_ADV = config.getboolean('GEN', 'GEN_ADV')
