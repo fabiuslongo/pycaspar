@@ -237,12 +237,17 @@ class preprocess_clause(Action):
         if dclause[1][0] == "==>":
 
             mods = []
-            for v in dclause[0]:
-                if self.get_pos(v[0]) in ['JJ', 'RB', 'RBR', 'RBS', 'IN']:
-                    mods.append(v[0])
+
             for v in dclause[2]:
-                if self.get_pos(v[0]) in ['JJ', 'RB', 'RBR', 'RBS', 'IN']:
+
+                if self.get_pos(v[0]) == "IN" and GEN_PRED is True:
                     mods.append(v[0])
+                elif self.get_pos(v[0]) == "JJ" and GEN_ADJ is True:
+                    mods.append(v[0])
+
+                elif self.get_pos(v[0]) in ['RB', 'RBR', 'RBS']:
+                    if GEN_ADV is True:
+                        mods.append(v[0])
                     lemma = self.get_lemma(v[0])[:-2]
                     if self.check_neg(lemma, language):
                         print("\nNot a definite clause!")
@@ -313,7 +318,12 @@ class preprocess_clause(Action):
             ent_root = self.get_ent_ROOT(m_deps)
             dav_act = self.get_dav_rule(dclause, ent_root)
             for v in dclause:
-                if self.get_pos(v[0]) in ['JJ', 'RB', 'RBR', 'RBS', 'IN']:
+                if self.get_pos(v[0]) == "IN" and GEN_PRED is True:
+                    mods.append(v[0])
+                elif self.get_pos(v[0]) == "JJ" and GEN_ADJ is True:
+                    mods.append(v[0])
+
+                if self.get_pos(v[0]) in ['RB', 'RBR', 'RBS']:
                     lemma = self.get_lemma(v[0])[:-2]
                     if self.check_neg(lemma, language):
                         if v[1] == dav_act:
@@ -322,10 +332,12 @@ class preprocess_clause(Action):
                             main_neg_index = len(mods)-1
                             dclause.remove(v)
                         else:
-                            mods.append(v[0])
-                            nomain_negs.append(v)
+                            if GEN_ADV is True:
+                                mods.append(v[0])
+                                nomain_negs.append(v)
                     else:
-                        mods.append(v[0])
+                        if GEN_ADV is True:
+                            mods.append(v[0])
 
             # every verb/adj will carry its non-main negative
             negs = {}
@@ -468,7 +480,20 @@ class preprocess_clause(Action):
         # prepositions
         for v in vect_fol:
             if len(v) == 3:
-                if voc[v[0]] is True:
+                if GEN_PRED is False:
+                    if INCLUDE_PRP_POS:
+                        lemma_nocount = self.get_nocount_lemma(v[0])
+                    else:
+                        lemma_nocount = parser.get_lemma(self.get_nocount_lemma(v[0]))
+
+                    self.assert_belief(PREP(str(id), v[1], lemma_nocount, v[2]))
+                    print("PREP(" + str(id) + ", " + v[1] + ", " + lemma_nocount + ", " + v[2] + ")")
+                    if v[1] not in admissible_vars:
+                        admissible_vars.append(v[1])
+                    if v[2] not in admissible_vars:
+                        admissible_vars.append(v[2])
+
+                elif v[0] in voc and voc[v[0]] is True:
                     if INCLUDE_PRP_POS:
                         lemma_nocount = self.get_nocount_lemma(v[0])
                     else:
@@ -523,7 +548,17 @@ class preprocess_clause(Action):
         # adjectives, adverbs
         for v in vect_fol:
             if self.get_pos(v[0]) in ['JJ', 'JJR', 'JJS']:
-                if voc[v[0]] is True:
+                if GEN_ADJ is False:
+                    if INCLUDE_ADJ_POS:
+                        lemma_nocount = self.get_nocount_lemma(v[0])
+                    else:
+                        lemma_nocount = parser.get_lemma(self.get_nocount_lemma(v[0]))
+
+                    if v[1] in admissible_vars:
+                        self.assert_belief(ADJ(str(id), v[1], lemma_nocount))
+                        print("ADJ(" + str(id) + ", " + v[1] + ", " + lemma_nocount + ")")
+
+                elif v[0] in voc and voc[v[0]] is True:
                     if INCLUDE_ADJ_POS:
                         lemma_nocount = self.get_nocount_lemma(v[0])
                     else:
@@ -533,8 +568,19 @@ class preprocess_clause(Action):
                         self.assert_belief(ADJ(str(id), v[1], lemma_nocount))
                         print("ADJ("+str(id)+", "+v[1]+", "+lemma_nocount+")")
 
+
             elif self.get_pos(v[0]) in ['RB', 'RBR', 'RBS']:
-                if voc[v[0]] is True:
+                if GEN_ADV is False:
+                    if INCLUDE_ADV_POS:
+                        lemma_nocount = self.get_nocount_lemma(v[0])
+                    else:
+                        lemma_nocount = parser.get_lemma(self.get_nocount_lemma(v[0]))
+
+                    if v[1] in admissible_vars:
+                        self.assert_belief(ADV(str(id), v[1], lemma_nocount))
+                        print("ADV(" + str(id) + ", " + v[1] + ", " + lemma_nocount + ")")
+
+                elif v[0] in voc and voc[v[0]] is True:
                     if INCLUDE_ADV_POS:
                         lemma_nocount = self.get_nocount_lemma(v[0])
                     else:
@@ -1743,6 +1789,11 @@ INCLUDE_NOUNS_POS = True
 INCLUDE_ADJ_POS = True
 INCLUDE_PRP_POS = True
 INCLUDE_ADV_POS = True
+
+# Selective inclusion/exclusion of mods categories on generalizations
+GEN_PRED = False
+GEN_ADJ = False
+GEN_ADV = False
 
 parser = Parse(VERBOSE)
 
