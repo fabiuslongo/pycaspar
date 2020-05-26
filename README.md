@@ -132,7 +132,7 @@ Stopping utterance detection...
 
 Starting Hotword detection...
 ```
-the amount of waiting seconds can be changed within the belief WAIT() in line 1464 of caspar.py.
+the amount of waiting seconds can be changed in the AGENT section of the config.ini file (WAIT_TIME).
 
 ### IoT commands and routines
 
