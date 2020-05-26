@@ -242,7 +242,7 @@ class preprocess_clause(Action):
 
             for v in dclause[2]:
 
-                if self.get_pos(v[0]) == "IN" and GEN_PRED is True:
+                if self.get_pos(v[0]) == "IN" and GEN_PREP is True:
                     mods.append(v[0])
                 elif self.get_pos(v[0]) == "JJ" and GEN_ADJ is True:
                     mods.append(v[0])
@@ -320,7 +320,7 @@ class preprocess_clause(Action):
             ent_root = self.get_ent_ROOT(m_deps)
             dav_act = self.get_dav_rule(dclause, ent_root)
             for v in dclause:
-                if self.get_pos(v[0]) == "IN" and GEN_PRED is True:
+                if self.get_pos(v[0]) == "IN" and GEN_PREP is True:
                     mods.append(v[0])
                 elif self.get_pos(v[0]) == "JJ" and GEN_ADJ is True:
                     mods.append(v[0])
@@ -482,7 +482,7 @@ class preprocess_clause(Action):
         # prepositions
         for v in vect_fol:
             if len(v) == 3:
-                if GEN_PRED is False:
+                if GEN_PREP is False:
                     if INCLUDE_PRP_POS:
                         lemma_nocount = self.get_nocount_lemma(v[0])
                     else:
@@ -1794,7 +1794,7 @@ INCLUDE_ADJ_POS = config.getboolean('POS', 'INCLUDE_ADJ_POS')
 INCLUDE_PRP_POS = config.getboolean('POS', 'INCLUDE_PRP_POS')
 INCLUDE_ADV_POS = config.getboolean('POS', 'INCLUDE_ADV_POS')
 
-GEN_PRED = config.getboolean('GEN', 'GEN_PRED')
+GEN_PREP = config.getboolean('GEN', 'GEN_PREP')
 GEN_ADJ = config.getboolean('GEN', 'GEN_ADJ')
 GEN_ADV = config.getboolean('GEN', 'GEN_ADV')
 
