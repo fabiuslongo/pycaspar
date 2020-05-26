@@ -1501,6 +1501,10 @@ class Timer(Sensor):
                 return
 
 
+class set_wait(Action):
+    def execute(self):
+        self.assert_belief(WAIT(WAIT_TIME))
+
 
 def_vars('X', 'Y', 'Z', 'T', 'W', 'K', 'J', 'M', 'N', "D", "I", "V", "L", "O", "E", "U")
 
@@ -1547,7 +1551,7 @@ t() >> [go(), w(), l()]
 # Front-End STT
 
 # Start agent command
-go() >> [show_line("Starting Caspar..."), +WAIT(100), HotwordDetect().start]
+go() >> [show_line("Starting Caspar..."), set_wait(), HotwordDetect().start]
 
 # show Clauses kb
 s() >> [show_fol_kb()]
@@ -1788,6 +1792,8 @@ config.read('config.ini')
 
 VERBOSE = config.getboolean('NL_TO_FOL', 'VERBOSE')
 
+WAIT_TIME = config.getint('AGENT', 'WAIT_TIME')
+
 INCLUDE_ACT_POS = config.getboolean('POS', 'INCLUDE_ACT_POS')
 INCLUDE_NOUNS_POS = config.getboolean('POS', 'INCLUDE_NOUNS_POS')
 INCLUDE_ADJ_POS = config.getboolean('POS', 'INCLUDE_ADJ_POS')
@@ -1797,6 +1803,7 @@ INCLUDE_ADV_POS = config.getboolean('POS', 'INCLUDE_ADV_POS')
 GEN_PREP = config.getboolean('GEN', 'GEN_PREP')
 GEN_ADJ = config.getboolean('GEN', 'GEN_ADJ')
 GEN_ADV = config.getboolean('GEN', 'GEN_ADV')
+
 
 parser = Parse(VERBOSE)
 
