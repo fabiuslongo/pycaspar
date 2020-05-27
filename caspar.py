@@ -208,11 +208,12 @@ class preprocess_clause(Action):
 
         if type == "NOMINAL":
             # NOMINAL CASE
-            check_implication = m.check_implication(vect_LR_fol)
-            if check_implication is False: # existing implications are excluded
-                check_isa = m.check_for_rule(m_deps)
-                if check_isa:
-                    self.assert_belief(IS_RULE(sentence))
+            CHECK_IMPLICATION = m.check_implication(vect_LR_fol)
+            if not CHECK_IMPLICATION:
+                if ASSIGN_RULES_ADMITTED:
+                    check_isa = m.check_for_rule(m_deps)
+                    if check_isa:
+                        self.assert_belief(IS_RULE(sentence))
                 dclause = vect_LR_fol[:]
             else:
                 dclause = vect_LR_fol[:]
@@ -418,7 +419,6 @@ class preprocess_clause(Action):
 
             self.process_fol(dclause, "FLAT", voc)
 
-
     def get_ent_ROOT(self, deps):
         for d in deps:
             if d[0] == "ROOT":
@@ -430,8 +430,6 @@ class preprocess_clause(Action):
                 return f[1]
         return False
 
-
-
     def check_neg(self, word, language):
         pos = wordnet.ADV
         syns = wordnet.synsets(word, pos=pos, lang=language)
@@ -439,7 +437,6 @@ class preprocess_clause(Action):
             if str(synset.name()) in ['no.r.01', 'no.r.02', 'no.r.03', 'not.r.01']:
                 return True
         return False
-
 
     def get_inc_mask(self, n):
         diff = str(bin(int(n, 2) + int("1", 2)))[2:]
@@ -455,7 +452,6 @@ class preprocess_clause(Action):
             diff = "0" + diff
         return diff
 
-
     def get_nocount_lemma(self, lemma):
         lemma_nocount = ""
         total_lemma = lemma.split("_")
@@ -466,7 +462,6 @@ class preprocess_clause(Action):
             else:
                 lemma_nocount = total_lemma[i].split(':')[0][:-2]+":"+total_lemma[i].split(':')[1] + "_" + lemma_nocount
         return lemma_nocount
-
 
     def process_fol(self, vect_fol, id, voc):
 
@@ -590,10 +585,6 @@ class preprocess_clause(Action):
                     if v[1] in admissible_vars:
                         self.assert_belief(ADV(str(id), v[1], lemma_nocount))
                         print("ADV(" + str(id) + ", " + v[1] + ", " + lemma_nocount + ")")
-
-
-
-
 
     def get_pos(self, s):
         first = s.split('_')[0]
@@ -1786,6 +1777,7 @@ config.read('config.ini')
 
 VERBOSE = config.getboolean('NL_TO_FOL', 'VERBOSE')
 LANGUAGE = config.get('NL_TO_FOL', 'LANGUAGE')
+ASSIGN_RULES_ADMITTED = config.getboolean('NL_TO_FOL', 'ASSIGN_RULES_ADMITTED')
 
 WAIT_TIME = config.getint('AGENT', 'WAIT_TIME')
 
