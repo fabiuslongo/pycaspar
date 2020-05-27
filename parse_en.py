@@ -29,8 +29,6 @@ class Parse(object):
         else:
             os.system('clear')
 
-
-
     def get_nlp_engine(self):
         return self.nlp
 
@@ -1214,7 +1212,6 @@ class Parse(object):
         return TABLE
 
 
-
     def get_first_token(self, s):
         s_list = s.split("_")
         result = s_list[0]
@@ -1251,7 +1248,6 @@ class Parse(object):
         return result
 
 
-
     def get_deps(self, input_text):
 
         nlp = self.get_nlp_engine()
@@ -1273,7 +1269,6 @@ class Parse(object):
                 new_triple.append(token.lemma_ + ':' + token.tag_)
             deps.append(new_triple)
         return deps
-
 
 
     def morph(self, sent):

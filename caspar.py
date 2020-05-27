@@ -1397,6 +1397,7 @@ class show_fol_kb(Action):
         for cls in kb_fol.clauses:
                 print(cls)
 
+
 class clear_clauses_kb(Action):
     def execute(self):
         print("\nClauses kb initialized.")
