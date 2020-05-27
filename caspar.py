@@ -1157,7 +1157,9 @@ class ground_subj_act(Action):
             for i in range(pn_token1):
                 token1 = token1 + ")"
 
-            new_subj = token1+", "+t[1][:-pn_label]
+            rem = ' '.join(t[1:])
+
+            new_subj = token1+", "+rem[:-pn_label]
 
         else:
             if pn_label == 0:
@@ -1206,7 +1208,8 @@ class ground_obj_act(Action):
             for i in range(pn_token1):
                 token1 = token1 + ")"
 
-            new_obj = token1 + ", " + t[1][:-pn_label]
+            rem = ' '.join(t[1:])
+            new_obj = token1 + ", " + rem[:-pn_label]
 
         else:
             if pn_label == 0:
@@ -1600,7 +1603,6 @@ aggr_nouns() / GND(I, X, L) >> [show_line("\nNouns aggregation done.")]
 mod_to_gnd() / (GND(I, X, L) & ADJ(I, X, M)) >> [show_line("\nadjective to ground: ", M," to ", L), -GND(I, X, L), -ADJ(I, X, M), merge(I, X, M, L), mod_to_gnd() ]
 mod_to_gnd() / (GND(I, X, L) & PREP(I, D, W, X) & PREP(I, X, M, Y) & GND(I, Y, U)) >> [show_line("\nint preps...",M," - ",W), -GND(I, X, L), -PREP(I, X, M, Y), -GND(I, Y, U), int_preps_tognd(I, X, Y, M, U, L), mod_to_gnd()]
 mod_to_gnd() / GND(I, X, L) >> [show_line("\nAdjective applications done.")]
-
 
 
 # grounding object preps
