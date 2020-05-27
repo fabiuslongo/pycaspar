@@ -311,7 +311,7 @@ def nested_tell_inner(KB, def_clause):
         candidates = []
         number_of_calls = 0
 
-        # produce_clauses only on single positive literals
+        # produce_clauses applied only to single positive literals
         if len(str(def_clause).split("==>")) == 1:
             KB.produce_goals_complete(def_clause, candidates, 0, number_of_calls)
             for cand in candidates:
