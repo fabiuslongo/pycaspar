@@ -184,8 +184,7 @@ class preprocess_clause(Action):
             deps[i] = [deps[i][0], governor, dependent]
 
         # Dependencies Uniquezation
-        language = "eng"
-        Ren = Uniquelizer(VERBOSE, language)
+        Ren = Uniquelizer(VERBOSE, LANGUAGE)
         m_deps = Ren.morph_deps(deps)
         print("\n" + str(m_deps))
 
@@ -202,7 +201,7 @@ class preprocess_clause(Action):
                     if b[0] == old_value:
                         b[0] = new_value
 
-        m = ManageFols(VERBOSE, language)
+        m = ManageFols(VERBOSE, LANGUAGE)
         vect_LR_fol = m.build_LR_fol(MST, 'e')
 
         print("\nBefore dealing case:\n" + str(vect_LR_fol))
@@ -225,7 +224,7 @@ class preprocess_clause(Action):
             positive_vect_LR_fol = []
             for v in vect_LR_fol:
                 lemma = self.get_lemma(v[0])[:-2]
-                if self.check_neg(lemma, language) and v[1] == dav_rule:
+                if self.check_neg(lemma, LANGUAGE) and v[1] == dav_rule:
                     self.assert_belief(RETRACT("ON"))
                 else:
                     positive_vect_LR_fol.append(v)
@@ -251,7 +250,7 @@ class preprocess_clause(Action):
                     if GEN_ADV is True:
                         mods.append(v[0])
                     lemma = self.get_lemma(v[0])[:-2]
-                    if self.check_neg(lemma, language):
+                    if self.check_neg(lemma, LANGUAGE):
                         print("\nNot a definite clause!")
                         return
 
@@ -266,7 +265,7 @@ class preprocess_clause(Action):
                     actual_mask = actual_mask + "0"
                 gen_mask = actual_mask
 
-                # creating vocabolary
+                # creating dictionary
                 voc = {}
                 full_true_voc = {}
                 for i in range(len(mods)):
@@ -283,7 +282,7 @@ class preprocess_clause(Action):
                     self.assert_belief(GEN_MASK(inc_mask))
 
             elif gen_mask == "FULL":
-                # creating vocabolary
+                # creating dictionary
                 voc = {}
                 full_true_voc = {}
                 for i in range(len(mods)):
@@ -292,7 +291,7 @@ class preprocess_clause(Action):
 
             else:
 
-                # creating vocabolary
+                # creating dictionary
                 voc = {}
                 full_true_voc = {}
                 for i in range(len(mods)):
@@ -327,7 +326,7 @@ class preprocess_clause(Action):
 
                 if self.get_pos(v[0]) in ['RB', 'RBR', 'RBS']:
                     lemma = self.get_lemma(v[0])[:-2]
-                    if self.check_neg(lemma, language):
+                    if self.check_neg(lemma, LANGUAGE):
                         if v[1] == dav_act:
                             self.MAIN_NEG_PRESENT = True
                             self.assert_belief(RETRACT("ON"))
@@ -351,7 +350,7 @@ class preprocess_clause(Action):
 
             # only reason
             if gen_mask == "FULL":
-                # creating vocabolary
+                # creating dictionary
                 voc = {}
                 for i in range(len(mods)):
                     voc.update({mods[i]: True})
@@ -471,7 +470,7 @@ class preprocess_clause(Action):
 
     def process_fol(self, vect_fol, id, voc):
 
-        print("\n------VOCABOLARY------")
+        print("\n------DICTIONARY------")
         print(voc)
         print("----------------------\n")
 
@@ -674,23 +673,16 @@ class assert_command(Action):
 
         print(sentence)
 
-        VERBOSE = False
-        language = "eng"
-
         deps = parser.get_deps(sentence)
 
-        #print("\n"+str(deps))
-
         # Dependencies Uniquezation
-        Ren = Uniquelizer(VERBOSE, language)
+        Ren = Uniquelizer(VERBOSE, LANGUAGE)
         m_deps = Ren.morph_deps(deps)
 
         TABLE = parser.create_MST(m_deps, 'd', 'x')
 
-        m = ManageFols(VERBOSE, language)
+        m = ManageFols(VERBOSE, LANGUAGE)
         vect_LR_fol = m.build_LR_fol(TABLE, 'd')
-
-        #print("\n"+str(vect_LR_fol))
 
         # getting fol's type
         check_isa = False
@@ -1789,8 +1781,8 @@ produce_intent() / PRE_INTENT(V, D, X, L, T) >> [-PRE_INTENT(V, D, X, L, T), +IN
 config = configparser.ConfigParser()
 config.read('config.ini')
 
-
 VERBOSE = config.getboolean('NL_TO_FOL', 'VERBOSE')
+LANGUAGE = config.get('NL_TO_FOL', 'LANGUAGE')
 
 WAIT_TIME = config.getint('AGENT', 'WAIT_TIME')
 
