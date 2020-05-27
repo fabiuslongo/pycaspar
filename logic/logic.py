@@ -310,14 +310,16 @@ def nested_tell_inner(KB, def_clause):
 
         candidates = []
         number_of_calls = 0
-        KB.produce_goals_complete(def_clause, candidates, 0, number_of_calls)
 
-        for cand in candidates:
-            if cand != def_clause and len(str(cand).split("==>")) == 1:
-                print("\nDerived literale: ", cand)
-                new_implication = str(def_clause) + " ==> " + str(cand)
-                print("\nDerived implication: ", new_implication)
-                KB.tell(expr(new_implication))
+        # produce_clauses only on single positive literals
+        if len(str(def_clause).split("==>")) == 1:
+            KB.produce_goals_complete(def_clause, candidates, 0, number_of_calls)
+            for cand in candidates:
+                if cand != def_clause:
+                    print("\nDerived literale: ", cand)
+                    new_implication = str(def_clause) + " ==> " + str(cand)
+                    print("\nDerived implication: ", new_implication)
+                    KB.tell(expr(new_implication))
 
         KB.tell(def_clause)
 
