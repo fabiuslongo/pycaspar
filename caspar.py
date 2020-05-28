@@ -640,7 +640,7 @@ class reason(Action):
         candidates = []
         number_of_calls = 0
 
-        result = kb_fol.produce_goals_sound(expr(q), candidates, 0, number_of_calls)
+        result = kb_fol.nested_ask(expr(q), candidates)
         if result is None:
             print("\nClause present in kb. No substitutions needed.")
         else:

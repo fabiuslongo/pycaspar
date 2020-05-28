@@ -293,16 +293,14 @@ class FolKB(KB):
     def fetch_rules(self):
         return self.clauses
 
-    def produce_goals_complete(self, goal, candidates, depth, number_of_calls):
-        return produce_goals_inner_complete(self, goal, candidates, depth, number_of_calls)
+    def produce_clauses(self, clause, derived):
+        return produce_clauses_inner(self, clause, derived)
 
-    def produce_goals_sound(self, goal, candidates, depth, number_of_calls):
-        return produce_goals_inner_sound(self, goal, candidates, depth, number_of_calls)
+    def nested_ask(self, goal, candidates):
+        return nested_ask_inner(self, goal, candidates)
 
     def nested_tell(self, def_clause):
         return nested_tell_inner(self, def_clause)
-
-
 
 
 def nested_tell_inner(KB, def_clause):
@@ -313,7 +311,7 @@ def nested_tell_inner(KB, def_clause):
 
         # produce_clauses applied only to single positive literals
         if str(def_clause).find("==>") == -1:
-            KB.produce_goals_complete(def_clause, candidates, 0, number_of_calls)
+            KB.produce_clauses(def_clause, candidates)
             for cand in candidates:
                 if cand != def_clause:
                     print("\nDerived literale: ", cand)
@@ -340,89 +338,49 @@ def expr_to_string(e):
     return str
 
 
-def produce_goals_inner_complete(KB, goal, candidates, depth, number_of_calls):
-
-    print("\n\n")
-    print("My goal is ", goal)
-    print("My candidates is ", candidates)
-    print("My depth is ", depth)
-    number_of_calls = number_of_calls + 1
-    print("Number of calls till now ", number_of_calls)
-
-    if goal not in KB.clauses:
-        print("\n")
-
-        print("Goal not in KB!")
-        for q in KB.clauses:
-            print("\nConsidering clause ", q)
-            lhs, rhs = parse_definite_clause(q)
-            print("\twhose lhs is ", lhs)
-            print("\twhose rhs is ", rhs)
-            print("\t\tGoal is", goal)
-            args_list = list(goal.args)
+def produce_clauses_inner(KB, clause, derived):
+    """ Produces a set of single positive literals derived from an initial clause, 
+    accordingly to a specific knowledge base."""
+    if clause not in KB.clauses:
+        for kb_clause in KB.clauses:
+            lhs, rhs = parse_definite_clause(kb_clause)
+            args_list = list(clause.args)
             for n, arg in enumerate(args_list):
-                print("\t\t\tConsidering argument ", arg)
                 lhs_str = expr_to_string(lhs)
                 if unify(lhs_str, arg) is not None:
-                    print("\t\t\t\tUnify with", lhs_str, "is not None")
                     args_list[n] = rhs
-                    new_goal = copy.deepcopy(goal)
-                    new_goal.args = tuple(args_list)
-                    print("\t\t\t\t\tNew goal is ", new_goal)
-                    print("\t\t\t\t\tCandidates is ", candidates)
-                    if new_goal not in candidates:
-                        print("\t\t\t\t\tNew goal", new_goal, "is not in candidates")
-                        candidates.append(new_goal)
-                        print("\t\t\t\t\tNow candidates is ", candidates)
-                        produce_goals_inner_complete(KB, new_goal, candidates, depth + 1, number_of_calls)
-                else:
-                    print("\t\t\t\tUnify is None.")
-        print("All clauses analyzed!")
+                    new_clause = copy.deepcopy(clause)
+                    new_clause.args = tuple(args_list)
+                    if new_clause not in derived:
+                        derived.append(new_clause)
+                        produce_clauses_inner(KB, new_clause, derived)
 
 
-def produce_goals_inner_sound(KB, goal, candidates, depth, number_of_calls):
-
-    print("\n\n")
-    print("My goal is ", goal)
-    print("My candidates is ", candidates)
-    print("My depth is ", depth)
-    number_of_calls = number_of_calls + 1
-    print("Number of calls till now ", number_of_calls)
-
+def nested_ask_inner(KB, goal, candidates):
+    """Checks if a single positive literal taken as query can be considered true 
+    accordingly to the clauses contained in a knowledge base also 
+    taking into consideration all the possible candidates that can be derived from 
+    the original query through unifications and substitutions."""
     if goal not in KB.clauses:
-        print("\n")
-
-        print("Goal not in KB!")
-        for q in KB.clauses:
-            print("\nConsidering clause ", q)
-            lhs, rhs = parse_definite_clause(standardize_variables(q))
-            print("\twhose lhs is ", lhs)
-            print("\twhose rhs is ", rhs)
-            print("\t\tGoal is", goal)
+        for clause in KB.clauses:
+            lhs, rhs = parse_definite_clause(standardize_variables(clause))
             args_list = list(goal.args)
             for n, arg in enumerate(args_list):
-                print("\t\t\tConsidering argument ", arg)
                 lhs_str = expr_to_string(lhs)
                 if unify(lhs_str, arg) is not None:
-                    print("\t\t\t\tUnify with", lhs_str, "is not None")
                     args_list[n] = rhs
-                    new_goal = copy.deepcopy(goal)
-                    new_goal.args = tuple(args_list)
-                    print("\t\t\t\t\tNew goal is ", new_goal)
-                    print("\t\t\t\t\tCandidates is ", candidates)
-                    if new_goal not in candidates:
-                        print("\t\t\t\t\tNew goal", new_goal, "is not in candidates")
-                        candidates.append(new_goal)
-                        print("\t\t\t\t\tNow candidates is ", candidates)
-                        if (KB.ask(expr(new_goal)) != False):
-                            return str(KB.ask(expr(new_goal)))
+                    candidate = copy.deepcopy(goal)
+                    candidate.args = tuple(args_list)
+                    if candidate not in candidates:
+                        candidates.append(candidate)
+                        result = KB.ask(expr(candidate))
+                        if (result != False):
+                            return str(result)
                         else:
-                            return produce_goals_inner_sound(KB, new_goal, candidates, depth + 1,
-                                                                     number_of_calls)
-                else:
-                    print("\t\t\t\tUnify is None.")
-        print("All clauses analyzed!")
+                            return nested_ask_inner(KB, candidate, candidates)
         return False;
+    else:
+        return(KB.ask(expr(goal)))
 
 
 
