@@ -299,33 +299,20 @@ class FolKB(KB):
     def nested_ask(self, goal, candidates):
         return nested_ask_inner(self, goal, candidates)
 
-    def nested_tell(self, def_clause):
-        return nested_tell_inner(self, def_clause)
+    def nested_tell(self, clause):
+        return nested_tell_inner(self, clause)
 
 
-def nested_tell_inner(KB, def_clause):
-    if def_clause not in KB.clauses:
-
-        candidates = []
-        number_of_calls = 0
-
-        # produce_clauses applied only to single positive literals
-        if str(def_clause).find("==>") == -1:
-            KB.produce_clauses(def_clause, candidates)
-            for cand in candidates:
-                if cand != def_clause:
-                    print("\nDerived literale: ", cand)
-                    new_implication = str(def_clause) + " ==> " + str(cand)
-                    print("\nDerived implication: ", new_implication)
-                    KB.tell(expr(new_implication))
-
-        KB.tell(def_clause)
-
-        print("\nDone.\n")
-    else:
-        print("\nDefinite clause already present in the kb.\n")
-
-
+def nested_tell_inner(KB, clause):
+    if clause not in KB.clauses:
+        if str(clause).find("==>") == -1:
+            derived = []
+            KB.produce_clauses(clause, derived)
+            for derived_clause in derived:
+                if derived_clause != clause:
+                    new_clause = str(clause) + " ==> " + str(derived_clause)
+                    KB.tell(expr(new_clause))
+        KB.tell(clause)
 
 
 def expr_to_string(e):
