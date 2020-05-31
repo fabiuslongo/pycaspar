@@ -306,11 +306,11 @@ class FolKB(KB):
 def nested_tell_inner(KB, clause):
     if clause not in KB.clauses:
         if str(clause).find("==>") == -1:
+            history = []
             derived = []
-            derived_std = []
-            KB.produce_clauses(clause, derived, derived_std)
-            for derived_clause in derived_std:
-                new_clause = str(clause) + " ==> " + str(standardize_variables(derived_clause))
+            KB.produce_clauses(clause, history, derived)
+            for derived_clause in derived:
+                new_clause = str(clause) + " ==> " + str(derived_clause)
                 KB.tell(expr(new_clause))
         KB.tell(clause)
 
@@ -325,7 +325,7 @@ def expr_to_string(e):
     return str
 
 
-def produce_clauses_inner(KB, clause, derived, derived_std):
+def produce_clauses_inner(KB, clause, history, derived):
     """ Produces a set of single positive literals derived from an initial clause, 
     accordingly to a specific knowledge base."""
     for kb_clause in KB.clauses:
@@ -341,10 +341,10 @@ def produce_clauses_inner(KB, clause, derived, derived_std):
                 new_clause_std = copy.deepcopy(clause)
                 new_clause.args = tuple(args_list)
                 new_clause_std.args = tuple(args_list_std)
-                if new_clause not in derived:
-                    derived.append(new_clause)
-                    derived_std.append(new_clause_std)
-                    produce_clauses_inner(KB, new_clause, derived, derived_std)
+                if new_clause not in history:
+                    history.append(new_clause)
+                    derived.append(new_clause_std)
+                    produce_clauses_inner(KB, new_clause, history, derived)
 
 
 def nested_ask_inner(KB, goal, candidates):
