@@ -293,8 +293,8 @@ class FolKB(KB):
     def fetch_rules(self):
         return self.clauses
 
-    def produce_clauses(self, clause, derived):
-        return produce_clauses_inner(self, clause, derived)
+    def produce_clauses(self, clause, derived, derived_std):
+        return produce_clauses_inner(self, clause, derived, derived_std)
 
     def nested_ask(self, goal, candidates):
         return nested_ask_inner(self, goal, candidates)
@@ -307,11 +307,11 @@ def nested_tell_inner(KB, clause):
     if clause not in KB.clauses:
         if str(clause).find("==>") == -1:
             derived = []
-            KB.produce_clauses(clause, derived)
-            for derived_clause in derived:
-                if derived_clause != clause:
-                    new_clause = str(clause) + " ==> " + str(derived_clause)
-                    KB.tell(expr(new_clause))
+            derived_std = []
+            KB.produce_clauses(clause, derived, derived_std)
+            for derived_clause in derived_std:
+                new_clause = str(clause) + " ==> " + str(standardize_variables(derived_clause))
+                KB.tell(expr(new_clause))
         KB.tell(clause)
 
 
@@ -325,22 +325,26 @@ def expr_to_string(e):
     return str
 
 
-def produce_clauses_inner(KB, clause, derived):
+def produce_clauses_inner(KB, clause, derived, derived_std):
     """ Produces a set of single positive literals derived from an initial clause, 
     accordingly to a specific knowledge base."""
-    if clause not in KB.clauses:
-        for kb_clause in KB.clauses:
-            lhs, rhs = parse_definite_clause(kb_clause)
-            args_list = list(clause.args)
-            for n, arg in enumerate(args_list):
-                lhs_str = expr_to_string(lhs)
-                if unify(lhs_str, arg) is not None:
-                    args_list[n] = rhs
-                    new_clause = copy.deepcopy(clause)
-                    new_clause.args = tuple(args_list)
-                    if new_clause not in derived:
-                        derived.append(new_clause)
-                        produce_clauses_inner(KB, new_clause, derived)
+    for kb_clause in KB.clauses:
+        lhs, rhs = parse_definite_clause(kb_clause)
+        args_list = list(clause.args)
+        args_list_std = list(clause.args)
+        for n, arg in enumerate(args_list):
+            lhs_str = expr_to_string(lhs)
+            if unify(lhs_str, arg) is not None:
+                args_list[n] = rhs
+                args_list_std[n] = standardize_variables(rhs)
+                new_clause = copy.deepcopy(clause)
+                new_clause_std = copy.deepcopy(clause)
+                new_clause.args = tuple(args_list)
+                new_clause_std.args = tuple(args_list_std)
+                if new_clause not in derived:
+                    derived.append(new_clause)
+                    derived_std.append(new_clause_std)
+                    produce_clauses_inner(KB, new_clause, derived, derived_std)
 
 
 def nested_ask_inner(KB, goal, candidates):
@@ -372,8 +376,6 @@ def nested_ask_inner(KB, goal, candidates):
 
 
 def fol_bc_ask(KB, query):
-    """A simple backward-chaining algorithm for first-order logic. [Figure 9.6]
-    KB should be an instance of FolKB, and query an atomic sentence."""
     return fol_bc_or(KB, query, {})
 
 

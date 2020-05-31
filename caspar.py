@@ -268,14 +268,12 @@ class preprocess_clause(Action):
 
                 # creating dictionary
                 voc = {}
-                full_true_voc = {}
                 for i in range(len(mods)):
                     if gen_mask[i] == '1':
                         val = True
                     else:
                         val = False
                     voc.update({mods[i]: val})
-                    full_true_voc.update({mods[i]: True})
 
                 # triggering generalizations production
                 if len(mods) > 0 and Gen_mode is True:
@@ -285,10 +283,8 @@ class preprocess_clause(Action):
             elif gen_mask == "FULL":
                 # creating dictionary
                 voc = {}
-                full_true_voc = {}
                 for i in range(len(mods)):
                     voc.update({mods[i]: True})
-                    full_true_voc.update({mods[i]: True})
 
             else:
 
@@ -308,7 +304,7 @@ class preprocess_clause(Action):
                     self.assert_belief(GEN_MASK(inc_mask))
 
             print("\nPROCESSING LEFT HAND-SIDE...")
-            self.process_fol(dclause[0], "LEFT", full_true_voc)
+            self.process_fol(dclause[0], "LEFT", voc)
 
             print("\nPROCESSING RIGHT HAND-SIDE...")
             self.process_fol(dclause[2], "RIGHT", voc)
@@ -476,7 +472,7 @@ class preprocess_clause(Action):
         # prepositions
         for v in vect_fol:
             if len(v) == 3:
-                if GEN_PREP is False:
+                if GEN_PREP is False or id == "LEFT":
                     if INCLUDE_PRP_POS:
                         lemma_nocount = self.get_nocount_lemma(v[0])
                     else:
@@ -544,7 +540,7 @@ class preprocess_clause(Action):
         # adjectives, adverbs
         for v in vect_fol:
             if self.get_pos(v[0]) in ['JJ', 'JJR', 'JJS']:
-                if GEN_ADJ is False:
+                if GEN_ADJ is False or id == "LEFT":
                     if INCLUDE_ADJ_POS:
                         lemma_nocount = self.get_nocount_lemma(v[0])
                     else:
@@ -566,7 +562,7 @@ class preprocess_clause(Action):
 
 
             elif self.get_pos(v[0]) in ['RB', 'RBR', 'RBS']:
-                if GEN_ADV is False:
+                if GEN_ADV is False or id == "LEFT":
                     if INCLUDE_ADV_POS:
                         lemma_nocount = self.get_nocount_lemma(v[0])
                     else:
