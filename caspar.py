@@ -472,14 +472,20 @@ class preprocess_clause(Action):
         # prepositions
         for v in vect_fol:
             if len(v) == 3:
+
+                if UNIQUE_PRP:
+                    label = v[0]
+                else:
+                    label = self.get_nocount_lemma(v[0])
+
                 if GEN_PREP is False or id == "LEFT":
                     if INCLUDE_PRP_POS:
-                        lemma_nocount = self.get_nocount_lemma(v[0])
+                        lemma = label
                     else:
-                        lemma_nocount = parser.get_lemma(self.get_nocount_lemma(v[0]))
+                        lemma = parser.get_lemma(label)
 
-                    self.assert_belief(PREP(str(id), v[1], lemma_nocount, v[2]))
-                    print("PREP(" + str(id) + ", " + v[1] + ", " + lemma_nocount + ", " + v[2] + ")")
+                    self.assert_belief(PREP(str(id), v[1], lemma, v[2]))
+                    print("PREP(" + str(id) + ", " + v[1] + ", " + lemma + ", " + v[2] + ")")
                     if v[1] not in admissible_vars:
                         admissible_vars.append(v[1])
                     if v[2] not in admissible_vars:
@@ -487,12 +493,12 @@ class preprocess_clause(Action):
 
                 elif v[0] in voc and voc[v[0]] is True:
                     if INCLUDE_PRP_POS:
-                        lemma_nocount = self.get_nocount_lemma(v[0])
+                        lemma = label
                     else:
-                        lemma_nocount = parser.get_lemma(self.get_nocount_lemma(v[0]))
+                        lemma = parser.get_lemma(label)
 
-                    self.assert_belief(PREP(str(id), v[1], lemma_nocount, v[2]))
-                    print("PREP(" + str(id) + ", " + v[1] + ", " + lemma_nocount + ", " + v[2] + ")")
+                    self.assert_belief(PREP(str(id), v[1], lemma, v[2]))
+                    print("PREP(" + str(id) + ", " + v[1] + ", " + lemma + ", " + v[2] + ")")
                     if v[1] not in admissible_vars:
                         admissible_vars.append(v[1])
                     if v[2] not in admissible_vars:
@@ -501,13 +507,19 @@ class preprocess_clause(Action):
         # actions
         for v in vect_fol:
             if len(v) == 4:
-                if INCLUDE_ACT_POS:
-                    lemma_nocount = self.get_nocount_lemma(v[0])
-                else:
-                    lemma_nocount = parser.get_lemma(self.get_nocount_lemma(v[0]))
 
-                self.assert_belief(ACTION(str(id), lemma_nocount, v[1], v[2], v[3]))
-                print("ACTION(" + str(id) + ", " + lemma_nocount+ ", " + v[1] + ", " + v[2] + ", "+v[3]+")")
+                if UNIQUE_ACT:
+                    label = v[0]
+                else:
+                    label = self.get_nocount_lemma(v[0])
+
+                if INCLUDE_ACT_POS:
+                    lemma = label
+                else:
+                    lemma = parser.get_lemma(label)
+
+                self.assert_belief(ACTION(str(id), lemma, v[1], v[2], v[3]))
+                print("ACTION(" + str(id) + ", " + lemma + ", " + v[1] + ", " + v[2] + ", "+v[3]+")")
 
                 # check for var action crossing
                 if v[2] in var_crossing or v[3] in var_crossing:
@@ -528,59 +540,77 @@ class preprocess_clause(Action):
         for v in vect_fol:
             if len(v) == 2:
                 if self.get_pos(v[0]) in ['NNP', 'NNPS', 'PRP', 'CD', 'NN', 'NNS', 'PRP', 'PRP$']:
-                    if INCLUDE_NOUNS_POS:
-                        lemma_nocount = self.get_nocount_lemma(v[0])
+                    if UNIQUE_NOUNS:
+                        label = v[0]
                     else:
-                        lemma_nocount = parser.get_lemma(self.get_nocount_lemma(v[0]))
+                        label = self.get_nocount_lemma(v[0])
+
+                    if INCLUDE_NOUNS_POS:
+                        lemma = label
+                    else:
+                        lemma = parser.get_lemma(label)
 
                     if v[1] in admissible_vars:
-                        self.assert_belief(GND(str(id), v[1], lemma_nocount))
-                        print("GND(" + str(id) + ", " + v[1] + ", " + lemma_nocount + ")")
+                        self.assert_belief(GND(str(id), v[1], lemma))
+                        print("GND(" + str(id) + ", " + v[1] + ", " + lemma + ")")
 
         # adjectives, adverbs
         for v in vect_fol:
             if self.get_pos(v[0]) in ['JJ', 'JJR', 'JJS']:
+
+                if UNIQUE_ADJ:
+                    label = v[0]
+                else:
+                    label = self.get_nocount_lemma(v[0])
+
                 if GEN_ADJ is False or id == "LEFT":
+
                     if INCLUDE_ADJ_POS:
-                        lemma_nocount = self.get_nocount_lemma(v[0])
+                        lemma = label
                     else:
-                        lemma_nocount = parser.get_lemma(self.get_nocount_lemma(v[0]))
+                        lemma = parser.get_lemma(label)
 
                     if v[1] in admissible_vars:
-                        self.assert_belief(ADJ(str(id), v[1], lemma_nocount))
-                        print("ADJ(" + str(id) + ", " + v[1] + ", " + lemma_nocount + ")")
+                        self.assert_belief(ADJ(str(id), v[1], lemma))
+                        print("ADJ(" + str(id) + ", " + v[1] + ", " + lemma + ")")
 
                 elif v[0] in voc and voc[v[0]] is True:
                     if INCLUDE_ADJ_POS:
-                        lemma_nocount = self.get_nocount_lemma(v[0])
+                        lemma = label
                     else:
-                        lemma_nocount = parser.get_lemma(self.get_nocount_lemma(v[0]))
+                        lemma = parser.get_lemma(label)
 
                     if v[1] in admissible_vars:
-                        self.assert_belief(ADJ(str(id), v[1], lemma_nocount))
-                        print("ADJ("+str(id)+", "+v[1]+", "+lemma_nocount+")")
+                        self.assert_belief(ADJ(str(id), v[1], lemma))
+                        print("ADJ("+str(id)+", "+v[1]+", "+lemma+")")
 
 
             elif self.get_pos(v[0]) in ['RB', 'RBR', 'RBS']:
+
+                if UNIQUE_ADV:
+                    label = v[0]
+                else:
+                    label = self.get_nocount_lemma(v[0])
+
                 if GEN_ADV is False or id == "LEFT":
                     if INCLUDE_ADV_POS:
-                        lemma_nocount = self.get_nocount_lemma(v[0])
+                        lemma = label
                     else:
-                        lemma_nocount = parser.get_lemma(self.get_nocount_lemma(v[0]))
+                        lemma = parser.get_lemma(label)
 
                     if v[1] in admissible_vars:
-                        self.assert_belief(ADV(str(id), v[1], lemma_nocount))
-                        print("ADV(" + str(id) + ", " + v[1] + ", " + lemma_nocount + ")")
+                        self.assert_belief(ADV(str(id), v[1], lemma))
+                        print("ADV(" + str(id) + ", " + v[1] + ", " + lemma + ")")
 
                 elif v[0] in voc and voc[v[0]] is True:
                     if INCLUDE_ADV_POS:
-                        lemma_nocount = self.get_nocount_lemma(v[0])
+                        lemma = label
                     else:
-                        lemma_nocount = parser.get_lemma(self.get_nocount_lemma(v[0]))
+                        lemma = parser.get_lemma(label)
 
                     if v[1] in admissible_vars:
-                        self.assert_belief(ADV(str(id), v[1], lemma_nocount))
-                        print("ADV(" + str(id) + ", " + v[1] + ", " + lemma_nocount + ")")
+                        self.assert_belief(ADV(str(id), v[1], lemma))
+                        print("ADV(" + str(id) + ", " + v[1] + ", " + lemma + ")")
 
     def get_pos(self, s):
         first = s.split('_')[0]
@@ -613,11 +643,17 @@ class new_clause(Action):
     def execute(self, *args):
         sentence = args[0]()
 
+        start_time = time.time()
+
         print("\n"+sentence)
         mf = parser.morph(sentence)
         def_clause = expr(mf)
 
         kb_fol.nested_tell(def_clause)
+
+        end_time = time.time()
+        assert_time = end_time - start_time
+        print("\nAssert time: ", assert_time)
 
 
 class reason(Action):
@@ -625,22 +661,32 @@ class reason(Action):
     def execute(self, *args):
         definite_clause = args[0]()
 
+        start_time = time.time()
+
         q = parser.morph(definite_clause)
         print("Query: "+q)
+        print("OCCUR_CHECK: ", exec_occur_check)
 
         print("\n ---- NOMINAL REASONING ---\n")
         print("Result: " + str(kb_fol.ask(expr(q))))
 
+        end_time1 = time.time()
+        query_time1 = end_time1 - start_time
+        print("Backward-Chaining Query time: ", query_time1)
+
         print("\n\n ---- NESTED REASONING ---")
 
         candidates = []
-        number_of_calls = 0
 
         result = kb_fol.nested_ask(expr(q), candidates)
         if result is None:
             print("\nClause present in kb. No substitutions needed.")
         else:
             print("\nResult: ", result)
+
+        end_time2 = time.time()
+        query_time2 = end_time2 - start_time
+        print("\nQuery time: ", query_time2)
 
 
 class assert_command(Action):
@@ -1774,6 +1820,11 @@ config.read('config.ini')
 VERBOSE = config.getboolean('NL_TO_FOL', 'VERBOSE')
 LANGUAGE = config.get('NL_TO_FOL', 'LANGUAGE')
 ASSIGN_RULES_ADMITTED = config.getboolean('NL_TO_FOL', 'ASSIGN_RULES_ADMITTED')
+UNIQUE_NOUNS = config.getboolean('NL_TO_FOL', 'UNIQUE_NOUNS')
+UNIQUE_ACT = config.getboolean('NL_TO_FOL', 'UNIQUE_ACT')
+UNIQUE_ADJ = config.getboolean('NL_TO_FOL', 'UNIQUE_ADJ')
+UNIQUE_PRP = config.getboolean('NL_TO_FOL', 'UNIQUE_PRP')
+UNIQUE_ADV = config.getboolean('NL_TO_FOL', 'UNIQUE_ADV')
 
 WAIT_TIME = config.getint('AGENT', 'WAIT_TIME')
 

@@ -6,6 +6,7 @@ from utils import (
 
 import itertools
 import copy
+import configparser
 
 # ______________________________________________________________________________
 
@@ -21,6 +22,10 @@ class KB:
     such as {x: Cain, y: Abel}, {x: Abel, y: Cain}, {x: George, y: Jeb}, etc.
     So ask_generator generates these one at a time, and ask either returns the
     first one or returns False."""
+
+    def __init__(self, exec_occur_check):
+        self.exec_occurr_check = exec_occur_check
+
 
     def __init__(self, sentence=None):
         raise NotImplementedError
@@ -195,7 +200,7 @@ def unify_var(var, x, s):
         return unify(s[var], x, s)
     elif x in s:
         return unify(var, s[x], s)
-    elif occur_check(var, x, s):
+    elif exec_occur_check and occur_check(var, x, s):
         return None
     else:
         return extend(s, var, x)
@@ -264,6 +269,10 @@ def standardize_variables(sentence, dic=None):
 
 standardize_variables.counter = itertools.count()
 
+config = configparser.ConfigParser()
+config.read('config.ini')
+exec_occur_check = config.getboolean('AGENT', 'OCCUR_CHECK')
+
 # ______________________________________________________________________________
 
 
@@ -323,6 +332,35 @@ def expr_to_string(e):
         else:
             str = str + ", " + e[i]
     return str
+
+
+def produce2_clauses_inner(KB, clause, history, derived):
+    """ Produces a set of single positive literals derived from an initial clause,
+    accordingly to a specific knowledge base."""
+    UNIFIED = False
+    for kb_clause in KB.clauses:
+        lhs, rhs = parse_definite_clause(kb_clause)
+        args_list = list(clause.args)
+        args_list_std = list(clause.args)
+        for n, arg in enumerate(args_list):
+            lhs_str = expr_to_string(lhs)
+            if unify(lhs_str, arg) is not None:
+                args_list[n] = rhs
+                args_list_std[n] = standardize_variables(rhs)
+                new_clause = copy.deepcopy(clause)
+                new_clause_std = copy.deepcopy(clause)
+                new_clause.args = tuple(args_list)
+                new_clause_std.args = tuple(args_list_std)
+
+                for der in derived:
+                    if unify(der, new_clause_std):
+                        UNIFIED = True
+                        break
+                if UNIFIED is False:
+                    history.append(new_clause)
+                    derived.append(new_clause_std)
+                    produce_clauses_inner(KB, new_clause, history, derived)
+
 
 
 def produce_clauses_inner(KB, clause, history, derived):
