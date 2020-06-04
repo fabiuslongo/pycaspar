@@ -302,8 +302,11 @@ class FolKB(KB):
     def fetch_rules(self):
         return self.clauses
 
-    def produce_clauses(self, clause, derived, derived_std):
-        return produce_clauses_inner(self, clause, derived, derived_std)
+    def produce_clauses(self, clause, history, derived):
+        return produce_clauses_inner(self, clause, history, derived)
+
+    def produce2_clauses(self, clause, derived):
+        return produce2_clauses_inner(self, clause, derived)
 
     def nested_ask(self, goal, candidates):
         return nested_ask_inner(self, goal, candidates)
@@ -317,7 +320,8 @@ def nested_tell_inner(KB, clause):
         if str(clause).find("==>") == -1:
             history = []
             derived = []
-            KB.produce_clauses(clause, history, derived)
+            #KB.produce_clauses(clause, history, derived)
+            KB.produce2_clauses(clause, derived)
             for derived_clause in derived:
                 new_clause = str(clause) + " ==> " + str(derived_clause)
                 KB.tell(expr(new_clause))
@@ -334,7 +338,7 @@ def expr_to_string(e):
     return str
 
 
-def produce2_clauses_inner(KB, clause, history, derived):
+def produce2_clauses_inner(KB, clause, derived):
     """ Produces a set of single positive literals derived from an initial clause,
     accordingly to a specific knowledge base."""
     UNIFIED = False
@@ -345,11 +349,8 @@ def produce2_clauses_inner(KB, clause, history, derived):
         for n, arg in enumerate(args_list):
             lhs_str = expr_to_string(lhs)
             if unify(lhs_str, arg) is not None:
-                args_list[n] = rhs
                 args_list_std[n] = standardize_variables(rhs)
-                new_clause = copy.deepcopy(clause)
                 new_clause_std = copy.deepcopy(clause)
-                new_clause.args = tuple(args_list)
                 new_clause_std.args = tuple(args_list_std)
 
                 for der in derived:
@@ -357,9 +358,8 @@ def produce2_clauses_inner(KB, clause, history, derived):
                         UNIFIED = True
                         break
                 if UNIFIED is False:
-                    history.append(new_clause)
                     derived.append(new_clause_std)
-                    produce_clauses_inner(KB, new_clause, history, derived)
+                    produce2_clauses_inner(KB, new_clause_std, derived)
 
 
 
