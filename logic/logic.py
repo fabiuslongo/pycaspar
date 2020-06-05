@@ -271,7 +271,7 @@ standardize_variables.counter = itertools.count()
 
 config = configparser.ConfigParser()
 config.read('config.ini')
-exec_occur_check = config.getboolean('AGENT', 'OCCUR_CHECK')
+exec_occur_check = config.getboolean('REASONING', 'OCCUR_CHECK')
 
 # ______________________________________________________________________________
 
@@ -320,8 +320,8 @@ def nested_tell_inner(KB, clause):
         if str(clause).find("==>") == -1:
             history = []
             derived = []
-            #KB.produce_clauses(clause, history, derived)
-            KB.produce2_clauses(clause, derived)
+            KB.produce_clauses(clause, history, derived)
+            #KB.produce2_clauses(clause, derived)
             for derived_clause in derived:
                 new_clause = str(clause) + " ==> " + str(derived_clause)
                 KB.tell(expr(new_clause))
