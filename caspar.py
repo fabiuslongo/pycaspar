@@ -667,26 +667,28 @@ class reason(Action):
         print("Query: "+q)
         print("OCCUR_CHECK: ", exec_occur_check)
 
+        bc_result = kb_fol.ask(expr(q))
         print("\n ---- NOMINAL REASONING ---\n")
-        print("Result: " + str(kb_fol.ask(expr(q))))
+        print("Result: " + str(bc_result))
 
         end_time1 = time.time()
         query_time1 = end_time1 - start_time
         print("Backward-Chaining Query time: ", query_time1)
 
-        print("\n\n ---- NESTED REASONING ---")
+        if bc_result is False:
 
-        candidates = []
+            print("\n\n ---- NESTED REASONING ---")
+            candidates = []
 
-        result = kb_fol.nested_ask(expr(q), candidates)
-        if result is None:
-            print("\nClause present in kb. No substitutions needed.")
-        else:
-            print("\nResult: ", result)
+            nested_result = kb_fol.nested_ask(expr(q), candidates)
+            if nested_result is None:
+                print("\nClause present in kb. No substitutions needed.")
+            else:
+                print("\nResult: ", nested_result)
 
-        end_time2 = time.time()
-        query_time2 = end_time2 - start_time
-        print("\nQuery time: ", query_time2)
+            end_time2 = time.time()
+            query_time2 = end_time2 - start_time
+            print("\nQuery time: ", query_time2)
 
 
 class assert_command(Action):
@@ -1603,7 +1605,7 @@ process_rule() / IS_RULE(X) >> [show_line("\n", X, " ----> is a rule!\n"), -IS_R
 # Generalization assertion
 new_def_clause(X, M, T) / GEN_MASK("BASE") >> [-GEN_MASK("BASE"), preprocess_clause(X, "BASE", M, T), parse(), process_clause(), new_def_clause(X, M, T)]
 new_def_clause(X, M, T) / GEN_MASK(Y) >> [-GEN_MASK(Y), preprocess_clause(X, Y, M, T), parse(), process_clause(), new_def_clause(X, M, T)]
-new_def_clause(X, M, T) / WAIT(W) >> [show_line("\n------------- All generalizations asserted.\n"), Timer(W).start]
+new_def_clause(X, M, T) / WAIT(W) >> [show_line("\n------------- Done.\n"), Timer(W).start]
 
 
 # Reactive Reasoning

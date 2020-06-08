@@ -302,11 +302,8 @@ class FolKB(KB):
     def fetch_rules(self):
         return self.clauses
 
-    def produce_clauses(self, clause, history, derived):
-        return produce_clauses_inner(self, clause, history, derived)
-
-    def produce2_clauses(self, clause, derived):
-        return produce2_clauses_inner(self, clause, derived)
+    def produce_clauses(self, clause, derived):
+        return produce_clauses_inner(self, clause, derived)
 
     def nested_ask(self, goal, candidates):
         return nested_ask_inner(self, goal, candidates)
@@ -318,13 +315,12 @@ class FolKB(KB):
 def nested_tell_inner(KB, clause):
     if clause not in KB.clauses:
         if str(clause).find("==>") == -1:
-            history = []
             derived = []
-            KB.produce_clauses(clause, history, derived)
-            #KB.produce2_clauses(clause, derived)
+            KB.produce_clauses(clause, derived)
             for derived_clause in derived:
-                new_clause = str(clause) + " ==> " + str(derived_clause)
-                KB.tell(expr(new_clause))
+                if unify(clause, derived_clause) is None:
+                    new_clause = str(clause) + " ==> " + str(derived_clause)
+                    KB.tell(expr(new_clause))
         KB.tell(clause)
 
 
@@ -338,10 +334,9 @@ def expr_to_string(e):
     return str
 
 
-def produce2_clauses_inner(KB, clause, derived):
+def produce_clauses_inner(KB, clause, derived):
     """ Produces a set of single positive literals derived from an initial clause,
     accordingly to a specific knowledge base."""
-    UNIFIED = False
     for kb_clause in KB.clauses:
         lhs, rhs = parse_definite_clause(kb_clause)
         args_list = list(clause.args)
@@ -352,37 +347,18 @@ def produce2_clauses_inner(KB, clause, derived):
                 args_list_std[n] = standardize_variables(rhs)
                 new_clause_std = copy.deepcopy(clause)
                 new_clause_std.args = tuple(args_list_std)
+                CLAUSE_UNIFIED = False
 
                 for der in derived:
-                    if unify(der, new_clause_std):
-                        UNIFIED = True
+                    if unify(der, new_clause_std) is not None:
+                        CLAUSE_UNIFIED = True
                         break
-                if UNIFIED is False:
+                if CLAUSE_UNIFIED is False:
                     derived.append(new_clause_std)
-                    produce2_clauses_inner(KB, new_clause_std, derived)
+                    produce_clauses_inner(KB, new_clause_std, derived)
 
 
 
-def produce_clauses_inner(KB, clause, history, derived):
-    """ Produces a set of single positive literals derived from an initial clause, 
-    accordingly to a specific knowledge base."""
-    for kb_clause in KB.clauses:
-        lhs, rhs = parse_definite_clause(kb_clause)
-        args_list = list(clause.args)
-        args_list_std = list(clause.args)
-        for n, arg in enumerate(args_list):
-            lhs_str = expr_to_string(lhs)
-            if unify(lhs_str, arg) is not None:
-                args_list[n] = rhs
-                args_list_std[n] = standardize_variables(rhs)
-                new_clause = copy.deepcopy(clause)
-                new_clause_std = copy.deepcopy(clause)
-                new_clause.args = tuple(args_list)
-                new_clause_std.args = tuple(args_list_std)
-                if new_clause not in history:
-                    history.append(new_clause)
-                    derived.append(new_clause_std)
-                    produce_clauses_inner(KB, new_clause, history, derived)
 
 
 def nested_ask_inner(KB, goal, candidates):
@@ -392,24 +368,31 @@ def nested_ask_inner(KB, goal, candidates):
     the original query through unifications and substitutions."""
     if goal not in KB.clauses:
         for clause in KB.clauses:
-            lhs, rhs = parse_definite_clause(standardize_variables(clause))
+            lhs, rhs = parse_definite_clause(clause)
             args_list = list(goal.args)
             for n, arg in enumerate(args_list):
                 lhs_str = expr_to_string(lhs)
                 if unify(lhs_str, arg) is not None:
-                    args_list[n] = rhs
-                    candidate = copy.deepcopy(goal)
-                    candidate.args = tuple(args_list)
-                    if candidate not in candidates:
-                        candidates.append(candidate)
-                        result = KB.ask(expr(candidate))
+                    args_list[n] = standardize_variables(rhs)
+                    new_candidate = copy.deepcopy(goal)
+                    new_candidate.args = tuple(args_list)
+                    CANDIDATE_UNIFIED = False
+
+                    for cand in candidates:
+                        if unify(cand, new_candidate) is not None:
+                            CANDIDATE_UNIFIED = True
+                            break
+
+                    if CANDIDATE_UNIFIED is False:
+                        candidates.append(new_candidate)
+                        result = KB.ask(new_candidate)
                         if (result != False):
                             return str(result)
                         else:
-                            return nested_ask_inner(KB, candidate, candidates)
-        return False;
+                            return nested_ask_inner(KB, new_candidate, candidates)
+        return False
     else:
-        return(KB.ask(expr(goal)))
+        return None
 
 
 
