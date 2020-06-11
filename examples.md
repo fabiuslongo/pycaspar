@@ -85,11 +85,9 @@ Utterances containing interactive actions can also be expressed: in this case th
 ```sh
 > Know_VBZ(Robert_NNP(x1), Drink_VBZ(Barbara_NNP(x3), Wine_NN(x4)))
 ```
-Utterances containing interactive entities. In such cases, having interacting variables, the two literals cannot be asserted separaly without lost the interaction. To avoid this,
-an artificial predicate (And_CC()) will be created to merge the two literals in one. 
 * The man called Robert is a good man
 ```sh
-> And_CC(Be_VBZ(Man_NN(x1), Good_JJ(Man_NN(x2))), Call_VBN(Man_NN(x1), Robert_NNP(x3)))
+> Be_VBZ(Call_VBN(Man_NN(x1), Robert_NNP(x3)), Good_JJ(Man_NN(x2)))
 ```
 ### Implicative nested definite clauses
 

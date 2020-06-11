@@ -17,6 +17,7 @@ import datetime
 import time
 
 import configparser
+from difflib import SequenceMatcher
 
 # FOl Reasoning procedures
 class aggr_adj(Procedure): pass
@@ -522,11 +523,16 @@ class preprocess_clause(Action):
                 print("ACTION(" + str(id) + ", " + lemma + ", " + v[1] + ", " + v[2] + ", "+v[3]+")")
 
                 # check for var action crossing
-                if v[2] in var_crossing or v[3] in var_crossing:
-                    self.assert_belief(ACT_CROSS_VAR(str(id)))
+                if v[2] in var_crossing:
+                    self.assert_belief(ACT_CROSS_VAR(str(id), v[2], lemma))
                     print("ACT_CROSS_VAR(" + str(id) + ")")
                 else:
                     var_crossing.append(v[2])
+
+                if v[3] in var_crossing:
+                    self.assert_belief(ACT_CROSS_VAR(str(id), v[3], lemma))
+                    print("ACT_CROSS_VAR(" + str(id) + ")")
+                else:
                     var_crossing.append(v[3])
 
                 if v[2] not in admissible_vars:
@@ -1440,12 +1446,24 @@ class clear_clauses_kb(Action):
 
 
 class join_clauses(Action):
-    def execute(self, arg1, arg2):
+    def execute(self, arg1, arg2, arg3):
 
         clause1 = str(arg1).split("'")[3]
         clause2 = str(arg2).split("'")[3]
+        verb = str(arg3).split("'")[3]
 
-        new_clause = "And:CC("+clause1+", "+clause2+")"
+        match = SequenceMatcher(None, clause1, clause2).find_longest_match(0, len(clause1), 0, len(clause2))
+        common = clause1[match.a: match.a + match.size]
+
+        while common[0] == "(":
+            common = common[1:]
+        while common[-1] != ")":
+            common = common[:len(common) - 1]
+
+        if str(clause1).find(verb) == -1:
+            new_clause = clause1.replace(common, clause2)
+        else:
+            new_clause = clause2.replace(common, clause1)
 
         self.assert_belief(DEF_CLAUSE(new_clause))
 
@@ -1694,8 +1712,10 @@ finalize_gnd() / REMAIN(I, K) >> [show_line("\nturning remain in half clause..."
 finalize_gnd() / GND(I, X, L) >> [show_line("\ncreating remain...", L), -GND(I, X, L), create_remain(I, X, L), finalize_gnd()]
 finalize_gnd() >> [show_line("\nremains finalization done.")]
 
+# creating merged definite clauses driven by subj-obj
+process_clause() / (CLAUSE(I, X) & CLAUSE(I, Y) & neq(X, Y) & ACT_CROSS_VAR(I, Z, V)) >> [show_line("\njoining clauses with...", Z, " and ", V), -CLAUSE(I, X), -CLAUSE(I, Y), -ACT_CROSS_VAR(I, Z, V), join_clauses(X, Y, V), process_clause()]
+
 # creating definite clauses with common left hand-side
-process_clause() / (CLAUSE(I, X) & CLAUSE(I, Y) & neq(X, Y) & ACT_CROSS_VAR(I)) >> [show_line("\njoining clauses..."), -CLAUSE(I, X), -CLAUSE(I, Y), -ACT_CROSS_VAR(I), join_clauses(X, Y), process_clause()]
 process_clause() / (CLAUSE("RIGHT", X) & LEFT_CLAUSE(Y)) >> [show_line("\ncreating multiple definite clause..."), -CLAUSE("RIGHT", X), join_hand_sides(Y, X), process_clause()]
 
 # create normal definite clauses
