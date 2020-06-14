@@ -55,7 +55,6 @@ class produce_mod_rt(Procedure): pass
 
 # check for routines execution
 class check_conds(Procedure): pass
-class check_routines(Procedure): pass
 
 # start agent command
 class go(Procedure): pass
