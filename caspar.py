@@ -53,6 +53,10 @@ class produce_routine(Procedure): pass
 class aggr_ent_rt(Procedure): pass
 class produce_mod_rt(Procedure): pass
 
+# check for routines execution
+class check_conds(Procedure): pass
+class check_routines(Procedure): pass
+
 # start agent command
 class go(Procedure): pass
 
@@ -124,7 +128,7 @@ class COND(Belief): pass
 class COND_GROUND(Belief): pass
 class COND_PRE_MOD(Belief): pass
 
-class SENSOR(Reactor): pass
+class SENSOR(Belief): pass
 class START_ROUTINE(Reactor): pass
 class TIMEOUT(Reactor): pass
 
@@ -1805,9 +1809,13 @@ produce_intent() / PRE_INTENT(V, D, X, L, T) >> [-PRE_INTENT(V, D, X, L, T), +IN
 
 # SMART ENVIRONMENT INTERFACE
 
-+SENSOR(V, X, Y) / (COND(I, V, X, Y) & ROUTINE(I, K, J, L, T)) >> [show_line("\nconditional triggered by a sensor..."), -COND(I, V, X, Y), +START_ROUTINE(I)]
-+START_ROUTINE(I) / (COND(I, V, X, Y) & ROUTINE(I, K, J, L, T))  >> [show_line("\nResult: not all routine's conditionals are currently met!")]
-+START_ROUTINE(I) / ROUTINE(I, V, X, L, T) >> [show_line("\nexecuting routine..."), -ROUTINE(I, V, X, L, T), +INTENT(V, X, L, T), +START_ROUTINE(I)]
++SENSOR(V, X, Y) >> [check_conds()]
+check_conds() / (SENSOR(V, X, Y) & COND(I, V, X, Y) & ROUTINE(I, K, J, L, T)) >> [show_line("\nconditional met!"), -COND(I, V, X, Y), +START_ROUTINE(I), check_conds()]
+check_conds() / SENSOR(V, X, Y) >> [show_line("\nbelief sensor not more needed..."), -SENSOR(V, X, Y)]
+
++START_ROUTINE(I) / (COND(I, V, X, Y) & ROUTINE(I, K, J, L, T)) >> [show_line("\nroutines not ready!")]
++START_ROUTINE(I) / ROUTINE(I, K, J, L, T) >> [show_line("\nexecuting routine..."), -ROUTINE(I, K, J, L, T), +INTENT(K, J, L, T), +START_ROUTINE(I)]
+
 
 # turn off
 +INTENT(X, "light", "living room", T) / lemma_in_syn(X, "change_state.v.01") >> [execute_command("change_state.v.01", "light", "living room", T)]
