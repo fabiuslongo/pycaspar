@@ -976,7 +976,7 @@ class append_routine_mods(Action):
         return s[3]
 
 
-class execute_command(Action):
+class exec(Action):
     def execute(self, *args):
 
         command = self.get_arg(str(args[0]))
@@ -1487,6 +1487,33 @@ class lemma_in_syn(ActiveBelief):
         return False
 
 
+class eval_cls(ActiveBelief):
+    def evaluate(self, arg1):
+
+        utterance = str(arg1).split("'")[1]
+
+        bc_result = kb_fol.ask(expr(utterance))
+        print("\n ---- NOMINAL REASONING ---\n")
+        print("Result: " + str(bc_result))
+
+        if bc_result is False:
+
+            print("\n\n ---- NESTED REASONING ---")
+            candidates = []
+
+            nested_result = kb_fol.nested_ask(expr(utterance), candidates)
+            if nested_result is None:
+                return True
+            elif nested_result is False:
+                return False
+            else:
+                return True
+        else:
+            return True
+
+
+
+
 class HotwordDetect(Sensor):
 
     def on_start(self):
@@ -1711,6 +1738,7 @@ finalize_clause() / (LEFT_CLAUSE(X) & CLAUSE("LEFT", Y)) >> [show_line("\nleft c
 
 # remains management
 finalize_gnd() / (GND(I, X, L) & CLAUSE(I, Y)) >> [show_line("\nretract unuseful grounds...", L), -GND(I, X, L), finalize_gnd()]
+finalize_gnd() / (PREP(I, D, L, O) & CLAUSE(I, Y)) >> [show_line("\nretract unuseful preps...", L), -PREP(I, D, L, O), finalize_gnd()]
 finalize_gnd() / REMAIN(I, K) >> [show_line("\nturning remain in half clause..."), -REMAIN(I, K), +CLAUSE(I, K), finalize_gnd()]
 finalize_gnd() / GND(I, X, L) >> [show_line("\ncreating remain...", L), -GND(I, X, L), create_remain(I, X, L), finalize_gnd()]
 finalize_gnd() >> [show_line("\nremains finalization done.")]
@@ -1727,6 +1755,7 @@ process_clause() / CLAUSE("FLAT", X) >> [show_line("\nGot R definite clause.\n")
 
 process_clause() / (DEF_CLAUSE(X) & LEFT_CLAUSE(Y)) >> [show_line("\nProcessing definite clause WITH LEFT..."), -LEFT_CLAUSE(Y), process_clause()]
 process_clause() / (DEF_CLAUSE(X) & CLAUSE("LEFT", Y)) >> [show_line("\nProcessing definite definite clause WITH CLAUSE LEFT..."), -CLAUSE("LEFT", Y), process_clause()]
+process_clause() / CLAUSE("LEFT", Y) >> [show_line("\nRetracting unuseful LEFT clause..."), -CLAUSE("LEFT", Y), process_clause()]
 
 process_clause() / (DEF_CLAUSE(X) & REASON("ON") & IS_RULE(Y)) >> [show_line("\nReasoning...............\n"), -DEF_CLAUSE(X), -LISTEN('ON'), -IS_RULE(Y), reason(X), process_clause()]
 process_clause() / (DEF_CLAUSE(X) & REASON("ON")) >> [show_line("\nReasoning...............\n"), -DEF_CLAUSE(X), -LISTEN('ON'), reason(X), process_clause()]
@@ -1817,24 +1846,24 @@ check_conds() / SENSOR(V, X, Y) >> [show_line("\nbelief sensor not more needed..
 
 
 # turn off
-+INTENT(X, "light", "living room", T) / lemma_in_syn(X, "change_state.v.01") >> [execute_command("change_state.v.01", "light", "living room", T)]
-+INTENT(X, "light", Y, T) / lemma_in_syn(X, "change_state.v.01") >> [show_line("\n---- Result: failed to execute the command in the specified location")]
++INTENT(X, "light", "living room", T) / lemma_in_syn(X, "change_state.v.01") >> [exec("change_state.v.01", "light", "living room", T)]
++INTENT(X, "alarm", "garage", T) / (lemma_in_syn(X, "change_state.v.01") & eval_cls("At_IN(Be_VBP(I_PRP(x1), __), Home_NN(x2))")) >> [exec("change_state.v.01", "alarm", "garage", T)]
 
 # turn on
-+INTENT(X, "light", "living room", T) / lemma_in_syn(X, "switch.v.03") >> [execute_command("switch.v.03", "light", "living room", T)]
++INTENT(X, "light", "living room", T) / lemma_in_syn(X, "switch.v.03") >> [exec("switch.v.03", "light", "living room", T)]
 +INTENT(X, "light", Y, T) / lemma_in_syn(X, "switch.v.03") >> [show_line("\n---- Result: failed to execute the command in the specified location")]
 
 # open
-+INTENT(X, "door", "living room", T) / lemma_in_syn(X, "open.v.01") >> [execute_command("open.v.01", "door", "living room", T)]
-+INTENT(X, "door", "kitchen", T) / lemma_in_syn(X, "open.v.01") >> [execute_command("open.v.01", "door", "kitchen", T)]
++INTENT(X, "door", "living room", T) / lemma_in_syn(X, "open.v.01") >> [exec("open.v.01", "door", "living room", T)]
++INTENT(X, "door", "kitchen", T) / lemma_in_syn(X, "open.v.01") >> [exec("open.v.01", "door", "kitchen", T)]
 +INTENT(X, "door", Y, T) / lemma_in_syn(X, "open.v.01") >> [show_line("\n---- Result: failed to execute the command in the specified location")]
 
 # specify, set, determine, define, fix, limit
-+INTENT(X, "cooler", "bedroom", T) / lemma_in_syn(X, "specify.v.02") >> [execute_command("specify.v.02", "cooler", "bedroom", T)]
++INTENT(X, "cooler", "bedroom", T) / lemma_in_syn(X, "specify.v.02") >> [exec("specify.v.02", "cooler", "bedroom", T)]
 +INTENT(X, "cooler", Y, T) / lemma_in_syn(X, "specify.v.02") >> [show_line("\n---- Result: failed to execute the command in the specified location")]
 
 # cut
-+INTENT(X, "grass", "garden", T) / lemma_in_syn(X, "cut.v.01",) >> [execute_command("cut.v.01", "grass", "garden", T)]
++INTENT(X, "grass", "garden", T) / lemma_in_syn(X, "cut.v.01",) >> [exec("cut.v.01", "grass", "garden", T)]
 +INTENT(X, "cut.v.01", "grass", Y, T) / lemma_in_syn(X, "cut.v.01",) >> [show_line("\n---- Result: failed to execute the command in the specified location")]
 
 # any other commands
