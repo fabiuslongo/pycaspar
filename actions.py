@@ -30,6 +30,8 @@ INCLUDE_ADV_POS = config.getboolean('POS', 'INCLUDE_ADV_POS')
 GEN_PREP = config.getboolean('GEN', 'GEN_PREP')
 GEN_ADJ = config.getboolean('GEN', 'GEN_ADJ')
 GEN_ADV = config.getboolean('GEN', 'GEN_ADV')
+GEN_EXTRA = config.getboolean('GEN', 'GEN_EXTRA')
+GEN_EXTRA_POS = config.get('GEN', 'EXTRA_GEN_POS').split(", ")
 
 parser = Parse(VERBOSE)
 
@@ -295,7 +297,7 @@ class preprocess_clause(Action):
             CHECK_IMPLICATION = m.check_implication(vect_LR_fol)
             if not CHECK_IMPLICATION:
                 if ASSIGN_RULES_ADMITTED:
-                    check_isa = m.check_for_rule(m_deps)
+                    check_isa = m.check_for_rule(m_deps, vect_LR_fol)
                     if check_isa:
                         self.assert_belief(IS_RULE(sentence))
                 dclause = vect_LR_fol[:]
@@ -325,7 +327,8 @@ class preprocess_clause(Action):
             mods = []
 
             for v in dclause[2]:
-
+                if self.get_pos(v[0]) in GEN_EXTRA_POS and GEN_EXTRA is True:
+                    mods.append(v[0])
                 if self.get_pos(v[0]) == "IN" and GEN_PREP is True:
                     mods.append(v[0])
                 elif self.get_pos(v[0]) == "JJ" and GEN_ADJ is True:
@@ -400,7 +403,9 @@ class preprocess_clause(Action):
             ent_root = self.get_ent_ROOT(m_deps)
             dav_act = self.get_dav_rule(dclause, ent_root)
             for v in dclause:
-                if self.get_pos(v[0]) == "IN" and GEN_PREP is True:
+                if self.get_pos(v[0]) in GEN_EXTRA_POS and GEN_EXTRA is True:
+                    mods.append(v[0])
+                elif self.get_pos(v[0]) == "IN" and GEN_PREP is True:
                     mods.append(v[0])
                 elif self.get_pos(v[0]) == "JJ" and GEN_ADJ is True:
                     mods.append(v[0])
@@ -591,40 +596,50 @@ class preprocess_clause(Action):
 
         # actions
         for v in vect_fol:
+            ACTION_ASSERTED = False
             if len(v) == 4:
 
                 if UNIQUE_ACT:
                     label = v[0]
                 else:
                     label = self.get_nocount_lemma(v[0])
+                    pos = self.get_pos(v[0])
 
                 if INCLUDE_ACT_POS:
                     lemma = label
                 else:
                     lemma = parser.get_lemma(label)
 
-                self.assert_belief(ACTION(str(id), lemma, v[1], v[2], v[3]))
-                print("ACTION(" + str(id) + ", " + lemma + ", " + v[1] + ", " + v[2] + ", " + v[3] + ")")
-
-                # check for var action crossing
-                if v[2] in var_crossing:
-                    self.assert_belief(ACT_CROSS_VAR(str(id), v[2], lemma))
-                    print("ACT_CROSS_VAR(" + str(id) + ")")
+                if GEN_EXTRA is True and pos in GEN_EXTRA_POS:
+                    if (v[0] in voc and voc[v[0]] is True):
+                        self.assert_belief(ACTION(str(id), lemma, v[1], v[2], v[3]))
+                        print("ACTION(" + str(id) + ", " + lemma + ", " + v[1] + ", " + v[2] + ", " + v[3] + ")")
+                        ACTION_ASSERTED = True
                 else:
-                    var_crossing.append(v[2])
+                    self.assert_belief(ACTION(str(id), lemma, v[1], v[2], v[3]))
+                    print("ACTION(" + str(id) + ", " + lemma + ", " + v[1] + ", " + v[2] + ", " + v[3] + ")")
+                    ACTION_ASSERTED = True
 
-                if v[3] in var_crossing:
-                    self.assert_belief(ACT_CROSS_VAR(str(id), v[3], lemma))
-                    print("ACT_CROSS_VAR(" + str(id) + ")")
-                else:
-                    var_crossing.append(v[3])
+                if ACTION_ASSERTED:
+                    # check for var action crossing
+                    if v[2] in var_crossing:
+                        self.assert_belief(ACT_CROSS_VAR(str(id), v[2], lemma))
+                        print("ACT_CROSS_VAR(" + str(id) + ")")
+                    else:
+                        var_crossing.append(v[2])
 
-                if v[2] not in admissible_vars:
-                    admissible_vars.append(v[1])
-                if v[2] not in admissible_vars:
-                    admissible_vars.append(v[2])
-                if v[3] not in admissible_vars:
-                    admissible_vars.append(v[3])
+                    if v[3] in var_crossing:
+                        self.assert_belief(ACT_CROSS_VAR(str(id), v[3], lemma))
+                        print("ACT_CROSS_VAR(" + str(id) + ")")
+                    else:
+                        var_crossing.append(v[3])
+
+                    if v[1] not in admissible_vars:
+                        admissible_vars.append(v[1])
+                    if v[2] not in admissible_vars:
+                        admissible_vars.append(v[2])
+                    if v[3] not in admissible_vars:
+                        admissible_vars.append(v[3])
 
         # nouns
         for v in vect_fol:
@@ -673,7 +688,6 @@ class preprocess_clause(Action):
                     if v[1] in admissible_vars:
                         self.assert_belief(ADJ(str(id), v[1], lemma))
                         print("ADJ(" + str(id) + ", " + v[1] + ", " + lemma + ")")
-
 
             elif self.get_pos(v[0]) in ['RB', 'RBR', 'RBS']:
 
@@ -1049,7 +1063,7 @@ class append_routine_mods(Action):
         return s[3]
 
 
-class exec(Action):
+class exec_cmd(Action):
     def execute(self, *args):
 
         command = self.get_arg(str(args[0]))

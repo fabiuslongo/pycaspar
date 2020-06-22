@@ -25,10 +25,12 @@ This repository has been tested on Pycharm 2019.1.2 x64 with the following packa
 ##### additional package needed (Linux)
 ```sh
 > python -pip install readline
+> python -pip install parse
 ```
 ##### additional package needed (Windows)
 ```sh
-> python -pip install pyreadline
+> python -m pip install pyreadline
+> python -m pip install parse
 ```
 
 ### SpaCy

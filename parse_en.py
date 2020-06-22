@@ -645,6 +645,8 @@ class Parse(object):
                     # looking for pending agents...
 
                     VAR_CHANGED = False
+                    subj = "UNASSIGNED"
+                    obj = "UNASSIGNED"
 
                     if len(pending_agent) > 0:
                         # retriving related pending var

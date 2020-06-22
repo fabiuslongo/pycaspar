@@ -624,13 +624,16 @@ class ManageFols(object):
         return False
 
 
-    def check_for_rule(self, deps):
+    def check_for_rule(self, deps, fol):
         for d in deps:
             if d[0] == 'ROOT':
                 lemma = self.get_lemma(d[1])
                 pos = self.get_pos(d[1])
                 if self.check_be(lemma[:-2]) and pos in ['VBZ', 'VBP']:
-                        return True
+                    for f in fol:
+                        if d[1] in f:
+                            if f[3] != "__":
+                                return True
         return False
 
 
