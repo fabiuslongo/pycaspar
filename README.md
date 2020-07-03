@@ -67,14 +67,14 @@ is an agent itself. Before starting the agent, Entities and Speech-To-Text Inter
 ---------------
 
 Entities involved in reasoning must be defined in the Smart Environment Interface 
-(line 1622 of caspar.py).
+(line 256 of caspar.py).
 
 ### Speech-To-Text Interfaces
 
 ---------------
 
 SST Interfaces (for both hotwords and utterances) must be defined inside the Instances Sensors 
-(line 1319 and 1337 of caspar.py).
+(lines 8 and 26 of sensors.py).
  
 
 ### Starting Phidias Shell
