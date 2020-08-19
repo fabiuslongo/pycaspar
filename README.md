@@ -2,7 +2,7 @@
 
 This is the repository of the Python (3.7+) implementation of CASPAR (Cognitive Architecture System Planned and Reactive)
 referred to the paper _CASPAR: towards Decision Making Helpers Agents for IoT, based on Natural Language and First Order
- Logic Reasoning.
+ Logic Reasoning_.
 
 ![Image 1](images\Caspar.JPG)
 
