@@ -1440,10 +1440,8 @@ def main():
     MST = parser.create_MST(deps, 'e', 'x')
     print("\nMST: \n" + str(MST))
 
-
 if __name__ == "__main__":
     main()
-
 
 
 
