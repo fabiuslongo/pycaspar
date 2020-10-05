@@ -1441,7 +1441,6 @@ def main():
     print("\nMST: \n" + str(MST))
 
 
-
 if __name__ == "__main__":
     main()
 
