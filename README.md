@@ -329,9 +329,9 @@ Be(Colonel_West(x1), American(x2))
 Be(Missile(x1), Weapon(x2))
 (Missile(x) ==> Weapon(x))
 ```
-* _Colonel West sells missiles to Nono_
+* _Colonel West sells missiles to Cuba_
 ```sh
-eShell: main > +STT("Colonel West sells missiles to Nono")
+eShell: main > +STT("Colonel West sells missiles to Cuba")
 Got it.
 
 ------------- All generalizations asserted.
