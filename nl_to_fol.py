@@ -1,4 +1,3 @@
-from uniquelizer import *
 from nltk.corpus import wordnet
 
 

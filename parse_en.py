@@ -1,11 +1,13 @@
 import spacy
 import platform
 import os
+from collections import Counter
+
 
 class Parse(object):
     def __init__(self, VERBOSE):
 
-        self.FILTER = ['det', 'punct', 'aux', 'ROOT', 'auxpass', 'cc', 'advcl', 'case', 'intj', 'dep', 'predet']
+        self.FILTER = ['det', 'punct', 'aux', 'ROOT', 'auxpass', 'cc', 'case', 'intj', 'dep', 'predet', 'advcl']
 
         self.adv_adj_POS = ['RB', 'UH', 'RP', 'PRP', 'RBS', 'JJ', 'NN', 'RBR', 'DT']
 
@@ -19,15 +21,79 @@ class Parse(object):
         print("\nNLP engine initializing. Please wait...")
 
         # python -m spacy download en_core_web_md
-        self.nlp = spacy.load('en_core_web_md')  # 91 MB
+        #self.nlp = spacy.load('en_core_web_md')  # 91 MB
 
         # python -m spacy download en_core_web_lg
-        # self.nlp = spacy.load('en_core_web_lg')  # 789 MB
+        self.nlp = spacy.load('en_core_web_lg')  # 789 MB
 
         if platform.system() == "Windows":
             os.system('cls')
         else:
             os.system('clear')
+
+        # enable cache usage
+        self.FLUSH = True
+
+        # last dependencies
+        self.last_deps = []
+
+        # last uniquezed dependencies
+        self.last_m_deps = []
+
+        # last detected entities
+        self.ner = []
+
+        # last processed sentence
+        self.last_sentence = None
+
+        # last processed sentence
+        self.pending_root_tense_debt = None
+
+
+    def get_pending_root_tense_debt(self):
+        return self.pending_root_tense_debt
+
+    def set_pending_root_tense_debt(self, d):
+        self.pending_root_tense_debt = d
+
+    def get_last_sentence(self):
+        return self.last_sentence
+
+
+    def get_last_ner(self):
+        return self.ner
+
+
+    def set_last_m_deps(self, m_deps):
+        self.last_m_deps = m_deps
+
+
+    def get_last_m_deps(self):
+        return self.last_m_deps
+
+
+    def set_last_deps(self, deps):
+        self.last_deps = deps
+
+
+    def get_last_deps(self):
+        return self.last_deps
+
+
+    def get_flush(self):
+        return self.FLUSH
+
+
+    def flush(self):
+        self.FLUSH = True
+        self.last_deps = []
+        self.last_m_deps = []
+        self.ner = []
+
+
+    def no_flush(self):
+        self.FLUSH = False
+
 
     def get_nlp_engine(self):
         return self.nlp
@@ -226,6 +292,7 @@ class Parse(object):
 
                     davidsonian_found = "UNASSIGNED"
                     PENDING_FOUND = False
+                    DOBJECT_FOUND = False
 
                     # retriving dependent-related davidsonian
                     for p in pendings:
@@ -233,7 +300,20 @@ class Parse(object):
                             davidsonian_found = p[1]
                             PENDING_FOUND = True
 
-                    if PENDING_FOUND:
+                        # accomodation for dealing with "What", "When" questions
+                        if self.get_first_token(p[0]) == triple[1] and triple[2][:-5] in ["What", "When", "Who"]:
+                            DOBJECT_FOUND = True
+                            assignment = []
+                            assignment.append(var + str(index_args_counter))
+                            assignment.append(triple[2])
+                            var_list.append(assignment)
+                            p[3] = var + str(index_args_counter)
+                            index_args_counter = index_args_counter + 1
+
+                    if DOBJECT_FOUND:
+                       pass
+
+                    elif PENDING_FOUND:
                         # retriving governor pending for setting davidsonian as object
                         for p in pendings:
                             if self.get_first_token(p[0]) == triple[1]:
@@ -518,7 +598,6 @@ class Parse(object):
 
                     # searching triple[1] in pendings
 
-
                     for p in pendings:
                         if self.get_first_token(p[0]) == triple[1] or self.get_first_token(p[0]) == found_mod:
                             davidsonian_found = p[1]
@@ -586,6 +665,13 @@ class Parse(object):
                         for p in pendings:
                             if p[3] == found_var or p[2] == found_var:
                                 davidsonian_found = p[1]
+
+
+                    # retriving from parent prep
+                    if d_found is False:
+                        for prep in preps:
+                            if triple[1] == prep[0]:
+                                found_var = prep[1]
 
                     # case example: of:IN(e1, x5)
                     if found_var == 'UNASSIGNED':
@@ -677,7 +763,7 @@ class Parse(object):
                         print('pending_agent: ' + str(pending_agent))
                         print('adv_adj: ' + str(adv_adj))
 
-                elif triple[0] == "xcomp":
+                elif triple[0] == "xcomp" or triple[0] == "advcl":
 
                     PENDING_FOUND = False
                     PAST_PART_CASE = False
@@ -756,7 +842,7 @@ class Parse(object):
                                     v[0] = dav + str(davidsonian_index)
 
                     if self.VERBOSE is True:
-                        print('--------- xcomp ----------')
+                        print('--------- xcomp/advcl? ----------')
                         print('pendings: ' + str(pendings))
                         print('pending_prep: ' + str(pending_prep))
                         print('preps: ' + str(preps))
@@ -1250,10 +1336,32 @@ class Parse(object):
         return result
 
 
-    def get_deps(self, input_text):
+    def get_deps(self, input_text, LEMMATIZED):
 
         nlp = self.get_nlp_engine()
-        doc = nlp(input_text[0:len(input_text)])
+        doc = nlp(input_text)
+        self.last_sentence = input_text
+
+        for X in doc.ents:
+            ent = "("+X.label_ + ", " + X.text + ")"
+            self.ner.append(ent)
+
+        words_list = input_text.split(" ")
+        counter = Counter(words_list)
+        #print("\ncounter: ", counter)
+
+        offset_dict = {}
+        offset_dict_lemmatized = {}
+
+        for token in reversed(doc):
+            index = str(counter[token.text])
+            offset_dict[token.idx] = token.text+"0"+index+":"+token.tag_
+            offset_dict_lemmatized[token.idx] = token.lemma_+"0"+index+":"+token.tag_
+
+            counter[token.text] = counter[token.text] - 1
+
+        #print("\noffset_dict: ", offset_dict)
+
 
         deps = []
         for token in doc:
@@ -1261,15 +1369,29 @@ class Parse(object):
             new_triple.append(token.dep_)
 
             if token.head.lemma_ == '-PRON-':
-                new_triple.append(token.head.text + ':' + token.head.tag_)
+                new_triple.append(offset_dict[token.head.idx])
             else:
-                new_triple.append(token.head.lemma_ + ':' + token.head.tag_)
+                if LEMMATIZED:
+                    new_triple.append(offset_dict_lemmatized[token.head.idx])
+                else:
+                    new_triple.append(offset_dict[token.head.idx])
 
             if token.lemma_ == '-PRON-':
-                new_triple.append(token.text + ':' + token.tag_)
+                new_triple.append(offset_dict[token.idx])
             else:
-                new_triple.append(token.lemma_ + ':' + token.tag_)
+                if LEMMATIZED:
+                    new_triple.append(offset_dict_lemmatized[token.idx])
+                else:
+                    new_triple.append(offset_dict[token.idx])
+
             deps.append(new_triple)
+
+        # query accomodation
+        if LEMMATIZED:
+            for d in deps:
+                if d[2][0:5].lower() == "dummy":
+                    d[2] = "Dummy:DM"
+
         return deps
 
 
@@ -1297,8 +1419,31 @@ class Parse(object):
         return final_sent_changed
 
 
+def main():
+    VERBOSE = True
+    LEMMMATIZED = False
+
+    sentence = "The Rocky Montains are located in Nevada"
+    parser = Parse(VERBOSE)
+    deps = parser.get_deps(sentence, LEMMMATIZED)
+    parser.set_last_deps(deps)
+    ner = parser.get_last_ner()
+    print("\nner: ", ner)
+
+    for i in range(len(deps)):
+        governor = parser.get_lemma(deps[i][1]).capitalize() + ":" + parser.get_pos(deps[i][1])
+        dependent = parser.get_lemma(deps[i][2]).capitalize() + ":" + parser.get_pos(deps[i][2])
+        deps[i] = [deps[i][0], governor, dependent]
+
+    print("\n" + str(deps))
+
+    MST = parser.create_MST(deps, 'e', 'x')
+    print("\nMST: \n" + str(MST))
 
 
+
+if __name__ == "__main__":
+    main()
 
 
 

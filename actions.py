@@ -262,19 +262,17 @@ class preprocess_clause(Action):
         self.MAIN_NEG_PRESENT = False
 
         print("\n" + sentence)
-        deps = parser.get_deps(sentence)
+        LEMMATIZED = True
+        deps = parser.get_deps(sentence, LEMMATIZED)
 
         for i in range(len(deps)):
             governor = self.get_lemma(deps[i][1]).capitalize() + ":" + self.get_pos(deps[i][1])
             dependent = self.get_lemma(deps[i][2]).capitalize() + ":" + self.get_pos(deps[i][2])
             deps[i] = [deps[i][0], governor, dependent]
 
-        # Dependencies Uniquezation
-        Ren = Uniquelizer(VERBOSE, LANGUAGE)
-        m_deps = Ren.morph_deps(deps)
-        print("\n" + str(m_deps))
+        print("\n" + str(deps))
 
-        MST = parser.create_MST(m_deps, 'e', 'x')
+        MST = parser.create_MST(deps, 'e', 'x')
         print("\nMST: \n" + str(MST))
 
         # MST varlist correction on cases of adj-obj
@@ -297,7 +295,7 @@ class preprocess_clause(Action):
             CHECK_IMPLICATION = m.check_implication(vect_LR_fol)
             if not CHECK_IMPLICATION:
                 if ASSIGN_RULES_ADMITTED:
-                    check_isa = m.check_for_rule(m_deps, vect_LR_fol)
+                    check_isa = m.check_for_rule(deps, vect_LR_fol)
                     if check_isa:
                         self.assert_belief(IS_RULE(sentence))
                 dclause = vect_LR_fol[:]
@@ -306,7 +304,7 @@ class preprocess_clause(Action):
                 dclause[1] = ["==>"]
         else:
             # RULE CASE
-            ent_root = self.get_ent_ROOT(m_deps)
+            ent_root = self.get_ent_ROOT(deps)
             dav_rule = self.get_dav_rule(vect_LR_fol, ent_root)
             positive_vect_LR_fol = []
             for v in vect_LR_fol:
@@ -316,7 +314,7 @@ class preprocess_clause(Action):
                 else:
                     positive_vect_LR_fol.append(v)
 
-            vect_LR_fol_plus_isa = m.build_isa_fol(positive_vect_LR_fol, m_deps)
+            vect_LR_fol_plus_isa = m.build_isa_fol(positive_vect_LR_fol, deps)
             dclause = m.isa_fol_to_clause(vect_LR_fol_plus_isa)
 
         print("\nAfter dealing case:\n" + str(dclause))
@@ -400,7 +398,7 @@ class preprocess_clause(Action):
         else:
             mods = []
             nomain_negs = []
-            ent_root = self.get_ent_ROOT(m_deps)
+            ent_root = self.get_ent_ROOT(deps)
             dav_act = self.get_dav_rule(dclause, ent_root)
             for v in dclause:
                 if self.get_pos(v[0]) in GEN_EXTRA_POS and GEN_EXTRA is True:
@@ -812,13 +810,10 @@ class assert_command(Action):
 
         print(sentence)
 
-        deps = parser.get_deps(sentence)
+        LEMMMATIZED = True
+        deps = parser.get_deps(sentence, LEMMMATIZED)
 
-        # Dependencies Uniquezation
-        Ren = Uniquelizer(VERBOSE, LANGUAGE)
-        m_deps = Ren.morph_deps(deps)
-
-        TABLE = parser.create_MST(m_deps, 'd', 'x')
+        TABLE = parser.create_MST(deps, 'd', 'x')
 
         m = ManageFols(VERBOSE, LANGUAGE)
         vect_LR_fol = m.build_LR_fol(TABLE, 'd')
@@ -827,9 +822,9 @@ class assert_command(Action):
         check_isa = False
         check_implication = m.check_implication(vect_LR_fol)
         if check_implication is False:
-            check_isa = m.check_isa(vect_LR_fol, m_deps)
+            check_isa = m.check_isa(vect_LR_fol, deps)
 
-        gentle_LR_fol = m.vect_LR_to_gentle_LR(vect_LR_fol, m_deps, check_implication, check_isa)
+        gentle_LR_fol = m.vect_LR_to_gentle_LR(vect_LR_fol, deps, check_implication, check_isa)
         print(str(gentle_LR_fol))
 
         if vect_LR_fol[1][0] == "==>":
@@ -841,6 +836,8 @@ class assert_command(Action):
             self.process_routine(vect_LR_fol[2], id_routine)
         else:
             self.process(vect_LR_fol)
+
+
 
     def process_conditions(self, vect_fol, id_routine):
         dateTimeObj = datetime.datetime.now()

@@ -260,10 +260,10 @@ and asserted in the Clauses Knowledge Base.
 single positive literal for querying the Clauses Knowledge Base.
 
 Next the Clauses Knowledge base will be fed by the following utterances:
-* _Nono is an hostile nation_
+* _Cuba is an hostile nation_
 * _Colonel West is American_
 * _missiles are weapons_
-* _Colonel West sells missiles to Nono_
+* _Colonel West sells missiles to Cuba_
 * _When an American sells weapons to a hostile nation, that American is a criminal_
 
 and queried by:
@@ -286,10 +286,10 @@ eShell: main > s()
 eShell: main > 
 4 clauses in Clauses kb:
 
-Be(Nono(x1), Nation(x2))
-Be(Nono(x1), Hostile(Nation(x2)))
-(Nono(x) ==> Nation(x))
-(Nono(x) ==> Hostile(Nation(x)))
+Be(Cuba(x1), Nation(x2))
+Be(Cuba(x1), Hostile(Nation(x2)))
+(Cuba(x) ==> Nation(x))
+(Cuba(x) ==> Hostile(Nation(x)))
 ```
 * _Colonel West is American_
 ```sh
@@ -302,10 +302,10 @@ Got it.
 eShell: main > s()
 6 clauses in Clauses kb:
 
-Be(Nono(x1), Nation(x2))
-Be(Nono(x1), Hostile(Nation(x2)))
-(Nono(x) ==> Nation(x))
-(Nono(x) ==> Hostile(Nation(x)))
+Be(Cuba(x1), Nation(x2))
+Be(Cuba(x1), Hostile(Nation(x2)))
+(Cuba(x) ==> Nation(x))
+(Cuba(x) ==> Hostile(Nation(x)))
 Be(Colonel_West(x1), American(x2))
 (Colonel_West(x) ==> American(x))
 ```
@@ -320,10 +320,10 @@ Got it.
 eShell: main > s()
 8 clauses in Clauses kb:
 
-Be(Nono(x1), Nation(x2))
-Be(Nono(x1), Hostile(Nation(x2)))
-(Nono(x) ==> Nation(x))
-(Nono(x) ==> Hostile(Nation(x)))
+Be(Cuba(x1), Nation(x2))
+Be(Cuba(x1), Hostile(Nation(x2)))
+(Cuba(x) ==> Nation(x))
+(Cuba(x) ==> Hostile(Nation(x)))
 Be(Colonel_West(x1), American(x2))
 (Colonel_West(x) ==> American(x))
 Be(Missile(x1), Weapon(x2))
@@ -340,10 +340,10 @@ Got it.
 eShell: main > s()
 24 clauses in Clauses kb:
 
-Be(Nono(x1), Nation(x2))
-Be(Nono(x1), Hostile(Nation(x2)))
-(Nono(x) ==> Nation(x))
-(Nono(x) ==> Hostile(Nation(x)))
+Be(Cuba(x1), Nation(x2))
+Be(Cuba(x1), Hostile(Nation(x2)))
+(Cuba(x) ==> Nation(x))
+(Cuba(x) ==> Hostile(Nation(x)))
 Be(Colonel_West(x1), American(x2))
 (Colonel_West(x) ==> American(x))
 Be(Missile(x1), Weapon(x2))
@@ -352,18 +352,18 @@ Be(Missile(x1), Weapon(x2))
 (Sell(Colonel_West(x1), Missile(x2)) ==> Sell(American(x), Weapon(v_1)))
 (Sell(Colonel_West(x1), Missile(x2)) ==> Sell(Colonel_West(x1), Weapon(v_2)))
 Sell(Colonel_West(x1), Missile(x2))
-(To(Sell(Colonel_West(x1), Missile(x2)), Nono(x3)) ==> To(Sell(Colonel_West(x1), Missile(x2)), Nation(v_4)))
-(To(Sell(Colonel_West(x1), Missile(x2)), Nono(x3)) ==> To(Sell(American(v_5), Missile(v_6)), Nation(x)))
-(To(Sell(Colonel_West(x1), Missile(x2)), Nono(x3)) ==> To(Sell(American(v_7), Weapon(v_8)), Nation(x)))
-(To(Sell(Colonel_West(x1), Missile(x2)), Nono(x3)) ==> To(Sell(Colonel_West(v_9), Weapon(v_10)), Nation(x)))
-(To(Sell(Colonel_West(x1), Missile(x2)), Nono(x3)) ==> To(Sell(Colonel_West(x1), Missile(x2)), Hostile(Nation(v_11))))
-(To(Sell(Colonel_West(x1), Missile(x2)), Nono(x3)) ==> To(Sell(American(v_12), Missile(v_13)), Hostile(Nation(x))))
-(To(Sell(Colonel_West(x1), Missile(x2)), Nono(x3)) ==> To(Sell(American(v_14), Weapon(v_15)), Hostile(Nation(x))))
-(To(Sell(Colonel_West(x1), Missile(x2)), Nono(x3)) ==> To(Sell(Colonel_West(v_16), Weapon(v_17)), Hostile(Nation(x))))
-(To(Sell(Colonel_West(x1), Missile(x2)), Nono(x3)) ==> To(Sell(American(v_18), Missile(v_19)), Nono(x3)))
-(To(Sell(Colonel_West(x1), Missile(x2)), Nono(x3)) ==> To(Sell(American(v_22), Weapon(v_23)), Nono(x3)))
-(To(Sell(Colonel_West(x1), Missile(x2)), Nono(x3)) ==> To(Sell(Colonel_West(v_26), Weapon(v_27)), Nono(x3)))
-To(Sell(Colonel_West(x1), Missile(x2)), Nono(x3))
+(To(Sell(Colonel_West(x1), Missile(x2)), Cuba(x3)) ==> To(Sell(Colonel_West(x1), Missile(x2)), Nation(v_4)))
+(To(Sell(Colonel_West(x1), Missile(x2)), Cuba(x3)) ==> To(Sell(American(v_5), Missile(v_6)), Nation(x)))
+(To(Sell(Colonel_West(x1), Missile(x2)), Cuba(x3)) ==> To(Sell(American(v_7), Weapon(v_8)), Nation(x)))
+(To(Sell(Colonel_West(x1), Missile(x2)), Cuba(x3)) ==> To(Sell(Colonel_West(v_9), Weapon(v_10)), Nation(x)))
+(To(Sell(Colonel_West(x1), Missile(x2)), Cuba(x3)) ==> To(Sell(Colonel_West(x1), Missile(x2)), Hostile(Nation(v_11))))
+(To(Sell(Colonel_West(x1), Missile(x2)), Cuba(x3)) ==> To(Sell(American(v_12), Missile(v_13)), Hostile(Nation(x))))
+(To(Sell(Colonel_West(x1), Missile(x2)), Cuba(x3)) ==> To(Sell(American(v_14), Weapon(v_15)), Hostile(Nation(x))))
+(To(Sell(Colonel_West(x1), Missile(x2)), Cuba(x3)) ==> To(Sell(Colonel_West(v_16), Weapon(v_17)), Hostile(Nation(x))))
+(To(Sell(Colonel_West(x1), Missile(x2)), Cuba(x3)) ==> To(Sell(American(v_18), Missile(v_19)), Nono(x3)))
+(To(Sell(Colonel_West(x1), Missile(x2)), Cuba(x3)) ==> To(Sell(American(v_22), Weapon(v_23)), Nono(x3)))
+(To(Sell(Colonel_West(x1), Missile(x2)), Cuba(x3)) ==> To(Sell(Colonel_West(v_26), Weapon(v_27)), Nono(x3)))
+To(Sell(Colonel_West(x1), Missile(x2)), Cuba(x3))
 ```
 * _When an American sells weapons to a hostile nation, that American is a criminal_
 ```sh
@@ -376,10 +376,10 @@ Got it.
 eShell: main > s()
 25 clauses in Clauses kb:
 
-Be(Nono(x1), Nation(x2))
-Be(Nono(x1), Hostile(Nation(x2)))
-(Nono(x) ==> Nation(x))
-(Nono(x) ==> Hostile(Nation(x)))
+Be(Cuba(x1), Nation(x2))
+Be(Cuba(x1), Hostile(Nation(x2)))
+(Cuba(x) ==> Nation(x))
+(Cuba(x) ==> Hostile(Nation(x)))
 Be(Colonel_West(x1), American(x2))
 (Colonel_West(x) ==> American(x))
 Be(Missile(x1), Weapon(x2))
@@ -388,18 +388,18 @@ Be(Missile(x1), Weapon(x2))
 (Sell(Colonel_West(x1), Missile(x2)) ==> Sell(American(x), Weapon(v_1)))
 (Sell(Colonel_West(x1), Missile(x2)) ==> Sell(Colonel_West(x1), Weapon(v_2)))
 Sell(Colonel_West(x1), Missile(x2))
-(To(Sell(Colonel_West(x1), Missile(x2)), Nono(x3)) ==> To(Sell(Colonel_West(x1), Missile(x2)), Nation(v_4)))
-(To(Sell(Colonel_West(x1), Missile(x2)), Nono(x3)) ==> To(Sell(American(v_5), Missile(v_6)), Nation(x)))
-(To(Sell(Colonel_West(x1), Missile(x2)), Nono(x3)) ==> To(Sell(American(v_7), Weapon(v_8)), Nation(x)))
-(To(Sell(Colonel_West(x1), Missile(x2)), Nono(x3)) ==> To(Sell(Colonel_West(v_9), Weapon(v_10)), Nation(x)))
-(To(Sell(Colonel_West(x1), Missile(x2)), Nono(x3)) ==> To(Sell(Colonel_West(x1), Missile(x2)), Hostile(Nation(v_11))))
-(To(Sell(Colonel_West(x1), Missile(x2)), Nono(x3)) ==> To(Sell(American(v_12), Missile(v_13)), Hostile(Nation(x))))
-(To(Sell(Colonel_West(x1), Missile(x2)), Nono(x3)) ==> To(Sell(American(v_14), Weapon(v_15)), Hostile(Nation(x))))
-(To(Sell(Colonel_West(x1), Missile(x2)), Nono(x3)) ==> To(Sell(Colonel_West(v_16), Weapon(v_17)), Hostile(Nation(x))))
-(To(Sell(Colonel_West(x1), Missile(x2)), Nono(x3)) ==> To(Sell(American(v_18), Missile(v_19)), Nono(x3)))
-(To(Sell(Colonel_West(x1), Missile(x2)), Nono(x3)) ==> To(Sell(American(v_22), Weapon(v_23)), Nono(x3)))
-(To(Sell(Colonel_West(x1), Missile(x2)), Nono(x3)) ==> To(Sell(Colonel_West(v_26), Weapon(v_27)), Nono(x3)))
-To(Sell(Colonel_West(x1), Missile(x2)), Nono(x3))
+(To(Sell(Colonel_West(x1), Missile(x2)), Cuba(x3)) ==> To(Sell(Colonel_West(x1), Missile(x2)), Nation(v_4)))
+(To(Sell(Colonel_West(x1), Missile(x2)), Cuba(x3)) ==> To(Sell(American(v_5), Missile(v_6)), Nation(x)))
+(To(Sell(Colonel_West(x1), Missile(x2)), Cuba(x3)) ==> To(Sell(American(v_7), Weapon(v_8)), Nation(x)))
+(To(Sell(Colonel_West(x1), Missile(x2)), Cuba(x3)) ==> To(Sell(Colonel_West(v_9), Weapon(v_10)), Nation(x)))
+(To(Sell(Colonel_West(x1), Missile(x2)), Cuba(x3)) ==> To(Sell(Colonel_West(x1), Missile(x2)), Hostile(Nation(v_11))))
+(To(Sell(Colonel_West(x1), Missile(x2)), Cuba(x3)) ==> To(Sell(American(v_12), Missile(v_13)), Hostile(Nation(x))))
+(To(Sell(Colonel_West(x1), Missile(x2)), Cuba(x3)) ==> To(Sell(American(v_14), Weapon(v_15)), Hostile(Nation(x))))
+(To(Sell(Colonel_West(x1), Missile(x2)), Cuba(x3)) ==> To(Sell(Colonel_West(v_16), Weapon(v_17)), Hostile(Nation(x))))
+(To(Sell(Colonel_West(x1), Missile(x2)), Cuba(x3)) ==> To(Sell(American(v_18), Missile(v_19)), Nono(x3)))
+(To(Sell(Colonel_West(x1), Missile(x2)), Cuba(x3)) ==> To(Sell(American(v_22), Weapon(v_23)), Nono(x3)))
+(To(Sell(Colonel_West(x1), Missile(x2)), Cuba(x3)) ==> To(Sell(Colonel_West(v_26), Weapon(v_27)), Nono(x3)))
+To(Sell(Colonel_West(x1), Missile(x2)), Cuba(x3))
 (To(Sell(American(x1), Weapon(x2)), Hostile(Nation(x3))) ==> Be(American(x4), Criminal(x5)))
 ```
 now it is time to query the Clauses Knowledge Base with the following utterance:
