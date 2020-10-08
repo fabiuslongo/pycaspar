@@ -64,14 +64,6 @@ class Parse(object):
         return self.ner
 
 
-    def set_last_m_deps(self, m_deps):
-        self.last_m_deps = m_deps
-
-
-    def get_last_m_deps(self):
-        return self.last_m_deps
-
-
     def set_last_deps(self, deps):
         self.last_deps = deps
 
@@ -589,8 +581,8 @@ class Parse(object):
 
                 elif triple[0] == "prep":
 
-                    davidsonian_found = "UNASSIGNED"
-                    found_var = "UNASSIGNED"
+                    davidsonian_found = triple[1]
+                    found_var = triple[1]
                     found_mod = "UNASSIGNED"
                     d_found = False
 
@@ -1188,6 +1180,12 @@ class Parse(object):
 
                     print('\nDEPENDENCY NOT HANDLED: '+triple[0])
 
+                # correcting davidsonian prep preceding unvalued actions
+                for pr in preps:
+                    for p in pendings:
+                        if pr[1] in p:
+                            pr[1] = p[1]
+
         if len(adv_adj) > 0:
 
             ADVERB_PROCESSED = []
@@ -1346,22 +1344,21 @@ class Parse(object):
             ent = "("+X.label_ + ", " + X.text + ")"
             self.ner.append(ent)
 
-        words_list = input_text.split(" ")
+        words_list = []
+        for token in doc:
+            words_list.append(token.text)
+
         counter = Counter(words_list)
-        #print("\ncounter: ", counter)
+        # print("\ncounter: ", counter)
 
         offset_dict = {}
-        offset_dict_lemmatized = {}
-
         for token in reversed(doc):
-            index = str(counter[token.text])
-            offset_dict[token.idx] = token.text+"0"+index+":"+token.tag_
-            offset_dict_lemmatized[token.idx] = token.lemma_+"0"+index+":"+token.tag_
+            index = counter[token.text]
+            offset_dict[token.idx] = token.text+"0"+str(index)+":"+token.tag_
+            counter[token.text] = index - 1
 
-            counter[token.text] = counter[token.text] - 1
-
-        #print("\noffset_dict: ", offset_dict)
-
+        # print("\ncounter: ", counter)
+        # print("\noffset_dict: ", offset_dict)
 
         deps = []
         for token in doc:
@@ -1372,7 +1369,7 @@ class Parse(object):
                 new_triple.append(offset_dict[token.head.idx])
             else:
                 if LEMMATIZED:
-                    new_triple.append(offset_dict_lemmatized[token.head.idx])
+                    new_triple.append(offset_dict[token.head.idx])
                 else:
                     new_triple.append(offset_dict[token.head.idx])
 
@@ -1380,7 +1377,7 @@ class Parse(object):
                 new_triple.append(offset_dict[token.idx])
             else:
                 if LEMMATIZED:
-                    new_triple.append(offset_dict_lemmatized[token.idx])
+                    new_triple.append(offset_dict[token.idx])
                 else:
                     new_triple.append(offset_dict[token.idx])
 
@@ -1423,7 +1420,8 @@ def main():
     VERBOSE = True
     LEMMMATIZED = False
 
-    sentence = "The Rocky Montains are located in Nevada"
+    sentence = "When an American sells weapons to a hostile nation, that American is a criminal"
+
     parser = Parse(VERBOSE)
     deps = parser.get_deps(sentence, LEMMMATIZED)
     parser.set_last_deps(deps)
@@ -1439,6 +1437,7 @@ def main():
 
     MST = parser.create_MST(deps, 'e', 'x')
     print("\nMST: \n" + str(MST))
+
 
 
 if __name__ == "__main__":
