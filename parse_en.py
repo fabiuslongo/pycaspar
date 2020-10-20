@@ -49,6 +49,12 @@ class Parse(object):
         # last processed sentence
         self.pending_root_tense_debt = None
 
+        # novel deps usage
+        self.last_enc_deps = []
+
+        # offset dictionary
+        self.offset_dict = {}
+
 
     def get_pending_root_tense_debt(self):
         return self.pending_root_tense_debt
@@ -1398,6 +1404,38 @@ class Parse(object):
         return result
 
 
+
+    def get_enc_deps(self, input_text):
+
+        nlp = self.get_nlp_engine()
+        doc = nlp(input_text)
+        self.last_sentence = input_text
+
+        enc_deps = []
+        offset_dict = {}
+
+        for token in doc:
+            enc_dep = []
+            enc_dep.append(token.dep_)
+            #enc_dep.append(token.head.idx)
+            enc_dep.append(token.head.text)
+
+            offset_dict[token.idx] = token.head.text
+
+            #enc_dep.append(token.idx)
+            enc_dep.append(token.text)
+
+            offset_dict[token.idx] = token.text
+
+            enc_deps.append(enc_dep)
+
+        self.offset_dict = offset_dict
+
+        return enc_deps
+
+
+
+
     def get_deps(self, input_text, LEMMATIZED):
 
         nlp = self.get_nlp_engine()
@@ -1411,6 +1449,12 @@ class Parse(object):
         words_list = []
         for token in doc:
             words_list.append(token.text)
+
+            enc_dep = []
+            enc_dep.append(token.dep_)
+            enc_dep.append(token.head.idx)
+            enc_dep.append(token.idx)
+
 
         counter = Counter(words_list)
         # print("\ncounter: ", counter)
@@ -1487,9 +1531,10 @@ def main():
     VERBOSE = True
     LEMMMATIZED = True
 
-    sentence = "The beast drunk his meal"
+    sentence = "Rocky Balboa is the best president of Boxing club"
 
     parser = Parse(VERBOSE)
+
     deps = parser.get_deps(sentence, LEMMMATIZED)
     parser.set_last_deps(deps)
     ner = parser.get_last_ner()
@@ -1504,6 +1549,10 @@ def main():
 
     MST = parser.create_MST(deps, 'e', 'x')
     print("\nMST: \n" + str(MST))
+
+
+    last_enc_deps = parser.get_enc_deps(sentence)
+    print(last_enc_deps)
 
 
 

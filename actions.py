@@ -13,6 +13,10 @@ from difflib import SequenceMatcher
 config = configparser.ConfigParser()
 config.read('config.ini')
 
+cnt = itertools.count(1)
+dav = itertools.count(1)
+
+
 VERBOSE = config.getboolean('NL_TO_FOL', 'VERBOSE')
 LANGUAGE = config.get('NL_TO_FOL', 'LANGUAGE')
 ASSIGN_RULES_ADMITTED = config.getboolean('NL_TO_FOL', 'ASSIGN_RULES_ADMITTED')
@@ -170,6 +174,24 @@ class PRE_CROSS(Belief): pass
 class GEN_MASK(Belief): pass
 # Actions crossing var
 class ACT_CROSS_VAR(Belief): pass
+
+# parse rule beliefs
+class DEP(Belief): pass
+class MST_ACT(Belief): pass
+class MST_VAR(Belief): pass
+class MST_PREP(Belief): pass
+class MST_BIND(Belief): pass
+class MST_COMP(Belief): pass
+class MST_COND(Belief): pass
+class parse_deps(Procedure): pass
+
+
+
+
+
+
+
+
 
 
 class set_wait(Action):
@@ -1519,3 +1541,57 @@ class clear_clauses_kb(Action):
     def execute(self):
         print("\nClauses kb initialized.")
         kb_fol.clauses = []
+
+
+
+class parse_rules(Action):
+    def execute(self, arg):
+        sent = str(arg).split("'")[3]
+        print("\n", sent)
+        enc_deps = parser.get_enc_deps(sent)
+        print("\n", enc_deps)
+        offset_dict = parser.offset_dict
+        print("\n", offset_dict)
+
+        for dep in enc_deps:
+            self.assert_belief(DEP(dep[0], str(dep[1]), str(dep[2])))
+
+
+
+class create_MST_ACT(Action):
+    def execute(self, arg1, arg2):
+
+        verb = str(arg1).split("'")[3]
+        subj = str(arg2).split("'")[3]
+
+        davidsonian = "e"+str(next(dav))
+        subj_var = "x"+str(next(cnt))
+        obj_var = "x"+str(next(cnt))
+
+        self.assert_belief(MST_ACT(verb, davidsonian, subj_var, obj_var))
+        self.assert_belief(MST_VAR(subj_var, subj))
+        self.assert_belief(MST_VAR(obj_var, "?"))
+
+
+class create_MST_ACT_PASS(Action):
+    def execute(self, arg1, arg2):
+        verb = str(arg1).split("'")[3]
+        subj = str(arg2).split("'")[3]
+
+        subj_var = "x"+str(next(cnt))
+        obj_var = "x"+str(next(cnt))
+
+        self.assert_belief(MST_ACT(verb, obj_var, subj_var))
+        self.assert_belief(MST_VAR(subj_var, subj))
+        self.assert_belief(MST_VAR(obj_var, "?"))
+
+
+class create_MST_PREP(Action):
+    def execute(self, arg1, arg2):
+        dav = str(arg1).split("'")[3]
+        prep = str(arg2).split("'")[3]
+
+        obj_var = "x"+str(next(cnt))
+
+        self.assert_belief(MST_PREP(prep, dav, obj_var))
+        self.assert_belief(MST_VAR(obj_var, "?"))
