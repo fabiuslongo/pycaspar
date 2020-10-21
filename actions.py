@@ -184,6 +184,8 @@ class MST_BIND(Belief): pass
 class MST_COMP(Belief): pass
 class MST_COND(Belief): pass
 class parse_deps(Procedure): pass
+class feed_mst(Procedure): pass
+
 
 
 
@@ -1545,20 +1547,22 @@ class clear_clauses_kb(Action):
 
 
 class parse_rules(Action):
+    """Asserting dependencies related beliefs."""
     def execute(self, arg):
         sent = str(arg).split("'")[3]
         print("\n", sent)
-        enc_deps = parser.get_enc_deps(sent)
-        print("\n", enc_deps)
+        deps = parser.get_deps(sent, True)
+        print("\n", deps)
         offset_dict = parser.offset_dict
         print("\n", offset_dict)
 
-        for dep in enc_deps:
+        for dep in deps:
             self.assert_belief(DEP(dep[0], str(dep[1]), str(dep[2])))
 
 
 
 class create_MST_ACT(Action):
+    """Asserting an MST  Action."""
     def execute(self, arg1, arg2):
 
         verb = str(arg1).split("'")[3]
@@ -1574,6 +1578,7 @@ class create_MST_ACT(Action):
 
 
 class create_MST_ACT_PASS(Action):
+    """Asserting an MST PASSIVE Action."""
     def execute(self, arg1, arg2):
         verb = str(arg1).split("'")[3]
         subj = str(arg2).split("'")[3]
@@ -1587,6 +1592,7 @@ class create_MST_ACT_PASS(Action):
 
 
 class create_MST_PREP(Action):
+    """Asserting an MST preposition."""
     def execute(self, arg1, arg2):
         dav = str(arg1).split("'")[3]
         prep = str(arg2).split("'")[3]
@@ -1595,3 +1601,111 @@ class create_MST_PREP(Action):
 
         self.assert_belief(MST_PREP(prep, dav, obj_var))
         self.assert_belief(MST_VAR(obj_var, "?"))
+
+
+class COND_WORD(ActiveBelief):
+    """Checking for conditionals related words."""
+    def evaluate(self, x):
+
+        word = str(x).split("'")[3]
+        # Check for conditional word
+        if word.upper()[0:4] == "WHEN":
+            return True
+        else:
+            return False
+
+
+class NBW(ActiveBelief):
+    """Checking for not blacklisted words."""
+    def evaluate(self, x):
+
+        word = str(x).split("'")[3]
+
+        # Check for conditional word
+        if self.get_lemma(word)[:-2].lower() not in ["that"]:
+            return True
+        else:
+            return False
+
+    def get_lemma(self, s):
+        s_list = s.split(':')
+        return s_list[0]
+
+
+class feed_mst_actions_parser(Action):
+    """Feed MST actions parser"""
+    def execute(self, arg1, arg2, arg3, arg4):
+        dav = str(arg1).split("'")[3]
+        verb = str(arg2).split("'")[3]
+        subj = str(arg3).split("'")[3]
+        obj = str(arg4).split("'")[3]
+
+        action = []
+        action.append(dav)
+        action.append(verb)
+        action.append(subj)
+        action.append(obj)
+
+        parser.feed_MST(action, 0)
+
+
+class feed_mst_vars_parser(Action):
+    """Feed MST actions parser"""
+    def execute(self, arg1, arg2):
+        var = str(arg1).split("'")[3]
+        val = str(arg2).split("'")[3]
+
+        variable = []
+        variable.append(var)
+        variable.append(val)
+
+        parser.feed_MST(variable, 1)
+
+
+class feed_mst_preps_parser(Action):
+    """Feed MST preps parser"""
+    def execute(self, arg1, arg2, arg3):
+        label = str(arg1).split("'")[3]
+        var = str(arg2).split("'")[3]
+        var_obj = str(arg2).split("'")[3]
+
+        prep = []
+        prep.append(label)
+        prep.append(var)
+        prep.append(var_obj)
+
+        parser.feed_MST(prep, 2)
+
+
+class feed_mst_binds_parser(Action):
+    """Feed MST binds parser"""
+    def execute(self, arg1, arg2):
+        related = str(arg1).split("'")[3]
+        relating = str(arg2).split("'")[3]
+
+        bind = []
+        bind.append(related)
+        bind.append(relating)
+
+        parser.feed_MST(bind, 3)
+
+
+class feed_mst_comps_parser(Action):
+    """Feed MST comps parser"""
+    def execute(self, arg1, arg2):
+        related = str(arg1).split("'")[3]
+        relating = str(arg2).split("'")[3]
+
+        comp = []
+        comp.append(related)
+        comp.append(relating)
+
+        parser.feed_MST(comp, 4)
+
+
+class feed_mst_conds_parser(Action):
+    """Feed MST actions parser"""
+    def execute(self, arg1):
+        cond = str(arg1).split("'")[3]
+
+        parser.feed_MST(cond, 5)

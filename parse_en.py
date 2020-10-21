@@ -55,6 +55,17 @@ class Parse(object):
         # offset dictionary
         self.offset_dict = {}
 
+        # Macro Semantic Table
+        self.MST = [[], [], [], [], [], []]
+
+
+    def feed_MST(self, component, index):
+        self.MST[index].append(component)
+
+
+    def get_last_MST(self):
+        return self.MST
+
 
     def get_pending_root_tense_debt(self):
         return self.pending_root_tense_debt
@@ -1531,7 +1542,7 @@ def main():
     VERBOSE = True
     LEMMMATIZED = True
 
-    sentence = "Rocky Balboa is the best president of Boxing club"
+    sentence = "Rocky Balboa drink water slowly in the dark"
 
     parser = Parse(VERBOSE)
 
