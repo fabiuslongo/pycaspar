@@ -37,9 +37,6 @@ class Parse(object):
         # last dependencies
         self.last_deps = []
 
-        # last uniquezed dependencies
-        self.last_m_deps = []
-
         # last detected entities
         self.ner = []
 
@@ -96,8 +93,8 @@ class Parse(object):
     def flush(self):
         self.FLUSH = True
         self.last_deps = []
-        self.last_m_deps = []
         self.ner = []
+        self.MST = [[], [], [], [], [], []]
 
 
     def no_flush(self):
@@ -1511,6 +1508,11 @@ class Parse(object):
                 if d[2][0:5].lower() == "dummy":
                     d[2] = "Dummy:DM"
 
+        for i in range(len(deps)):
+            governor = self.get_lemma(deps[i][1]).capitalize() + ":" + self.get_pos(deps[i][1])
+            dependent = self.get_lemma(deps[i][2]).capitalize() + ":" + self.get_pos(deps[i][2])
+            deps[i] = [deps[i][0], governor, dependent]
+
         return deps
 
 
@@ -1550,11 +1552,6 @@ def main():
     parser.set_last_deps(deps)
     ner = parser.get_last_ner()
     print("\nner: ", ner)
-
-    for i in range(len(deps)):
-        governor = parser.get_lemma(deps[i][1]).capitalize() + ":" + parser.get_pos(deps[i][1])
-        dependent = parser.get_lemma(deps[i][2]).capitalize() + ":" + parser.get_pos(deps[i][2])
-        deps[i] = [deps[i][0], governor, dependent]
 
     print("\n" + str(deps))
 

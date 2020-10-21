@@ -5,6 +5,8 @@ from sensors import *
 from actions import *
 
 
+# Front-End STT
+
 
 def_vars('X', 'Y', 'Z', 'T', 'W', 'K', 'J', 'M', 'N', "D", "I", "V", "L", "O", "E", "U")
 
@@ -30,6 +32,15 @@ c5() >> [+STT("When an American sells weapons to a hostile nation, that American
 q() >> [+STT("Colonel West is a criminal")]
 
 
+
+# Start agent command
+go() >> [show_line("Starting Caspar..."), set_wait(), HotwordDetect().start]
+
+# show Clauses kb
+s() >> [show_fol_kb()]
+# initialize Clauses Kb
+c() >> [clear_clauses_kb()]
+
 # simulating keywords
 w() >> [+HOTWORD_DETECTED("ON")]
 l() >> [+STT("listen")]
@@ -43,7 +54,15 @@ s2() >> [simulate_sensor("be", "temperature", "25")]
 t() >> [go(), w(), l()]
 
 
-+STT(X) >> [parse_rules(X), parse_deps(), feed_mst()]
+# Hotwords processing
++HOTWORD_DETECTED("ON") / WAIT(W) >> [show_line("\n\nYes, I'm here!\n"), HotwordDetect().stop, UtteranceDetect().start, +WAKE("ON"), Timer(W).start]
++STT("listen") / (WAKE("ON") & WAIT(W)) >> [+LISTEN("ON"), show_line("\nWaiting for knowledge...\n"), Timer(W).start]
++STT("reason") / (WAKE("ON") & WAIT(W)) >> [+REASON("ON"), show_line("\nWaiting for query...\n"), Timer(W).start]
+
++STT(X) / (WAKE("ON") & LISTEN("ON")) >> [parse_rules(X), parse_deps(), feed_mst(), +PROCESS_STORED_MST("OK"), Timer(W).start]
++STT(X) / (WAKE("ON") & REASON("ON")) >> [parse_rules(X), parse_deps(), feed_mst(), +PROCESS_STORED_MST("OK"), Timer(W).start]
+
+
 
 # MST components creations
 parse_deps() / DEP("nsubj", X, Y) >> [show_line("\nprocessing nsubj..."), -DEP("nsubj", X, Y), create_MST_ACT(X, Y), parse_deps()]
@@ -80,33 +99,18 @@ feed_mst() / MST_COND(X) >> [show_line("\nfeeding MST with a cond..."), -MST_CON
 
 
 
-# Front-End STT
-
-# Start agent command
-go() >> [show_line("Starting Caspar..."), set_wait(), HotwordDetect().start]
-
-# show Clauses kb
-s() >> [show_fol_kb()]
-# initialize Clauses Kb
-c() >> [clear_clauses_kb()]
-
-# Hotwords processing
-+HOTWORD_DETECTED("ON") / WAIT(W) >> [show_line("\n\nYes, I'm here!\n"), HotwordDetect().stop, UtteranceDetect().start, +WAKE("ON"), Timer(W).start]
-+STT("listen") / (WAKE("ON") & WAIT(W)) >> [+LISTEN("ON"), show_line("\nWaiting for knowledge...\n"), Timer(W).start]
-+STT("reason") / (WAKE("ON") & WAIT(W)) >> [+REASON("ON"), show_line("\nWaiting for query...\n"), Timer(W).start]
-
 # Query KB
-+STT(X) / (WAKE("ON") & REASON("ON")) >> [show_line("\nGot it.\n"), +GEN_MASK("FULL"), new_def_clause(X, "ONE", "NOMINAL")]
++PROCESS_STORED_MST("OK") / (WAKE("ON") & REASON("ON")) >> [show_line("\nGot it.\n"), +GEN_MASK("FULL"), new_def_clause("ONE", "NOMINAL")]
 
 # Nominal clauses assertion --> single: FULL", "ONE" ---  multiple: "BASE", "MORE"
-+STT(X) / (WAKE("ON") & LISTEN("ON")) >> [show_line("\nGot it.\n"), +GEN_MASK("BASE"), new_def_clause(X, "MORE", "NOMINAL"), process_rule()]
++PROCESS_STORED_MST("OK") / (WAKE("ON") & LISTEN("ON")) >> [show_line("\nGot it.\n"), +GEN_MASK("BASE"), new_def_clause("MORE", "NOMINAL"), process_rule()]
 # processing rules --> single: FULL", "ONE" ---  multiple: "BASE", "MORE"
-process_rule() / IS_RULE(X) >> [show_line("\n", X, " ----> is a rule!\n"), -IS_RULE(X), +GEN_MASK("BASE"), new_def_clause(X, "MORE", "RULE")]
+process_rule() / IS_RULE("TRUE") >> [show_line("\n------> rule detected!!!\n"), -IS_RULE("TRUE"), +GEN_MASK("BASE"), new_def_clause("MORE", "RULE")]
 
 # Generalization assertion
-new_def_clause(X, M, T) / GEN_MASK("BASE") >> [-GEN_MASK("BASE"), preprocess_clause(X, "BASE", M, T), parse(), process_clause(), new_def_clause(X, M, T)]
-new_def_clause(X, M, T) / GEN_MASK(Y) >> [-GEN_MASK(Y), preprocess_clause(X, Y, M, T), parse(), process_clause(), new_def_clause(X, M, T)]
-new_def_clause(X, M, T) / WAIT(W) >> [show_line("\n------------- Done.\n"), Timer(W).start]
+new_def_clause(M, T) / GEN_MASK("BASE") >> [-GEN_MASK("BASE"), preprocess_clause("BASE", M, T), parse(), process_clause(), new_def_clause(M, T)]
+new_def_clause(M, T) / GEN_MASK(Y) >> [-GEN_MASK(Y), preprocess_clause(Y, M, T), parse(), process_clause(), new_def_clause(M, T)]
+new_def_clause(M, T) / WAIT(W) >> [show_line("\n------------- Done.\n"), Timer(W).start]
 
 
 # Reactive Reasoning
@@ -210,7 +214,7 @@ process_clause() / (DEF_CLAUSE(X) & LEFT_CLAUSE(Y)) >> [show_line("\nProcessing 
 process_clause() / (DEF_CLAUSE(X) & CLAUSE("LEFT", Y)) >> [show_line("\nProcessing definite definite clause WITH CLAUSE LEFT..."), -CLAUSE("LEFT", Y), process_clause()]
 process_clause() / CLAUSE("LEFT", Y) >> [show_line("\nRetracting unuseful LEFT clause..."), -CLAUSE("LEFT", Y), process_clause()]
 
-process_clause() / (DEF_CLAUSE(X) & REASON("ON") & IS_RULE(Y)) >> [show_line("\nReasoning...............\n"), -DEF_CLAUSE(X), -LISTEN('ON'), -IS_RULE(Y), reason(X), process_clause()]
+process_clause() / (DEF_CLAUSE(X) & REASON("ON") & IS_RULE("TRUE")) >> [show_line("\nReasoning...............\n"), -DEF_CLAUSE(X), -LISTEN('ON'), -IS_RULE("TRUE"), reason(X), process_clause()]
 process_clause() / (DEF_CLAUSE(X) & REASON("ON")) >> [show_line("\nReasoning...............\n"), -DEF_CLAUSE(X), -LISTEN('ON'), reason(X), process_clause()]
 
 process_clause() / (DEF_CLAUSE(X) & LISTEN("ON") & RETRACT("ON")) >> [show_line("\nRetracting clause."), -DEF_CLAUSE(X), -RETRACT("ON"), retract_clause(X), process_clause()]

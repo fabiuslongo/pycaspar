@@ -103,6 +103,7 @@ class REASON(Belief): pass
 class RETRACT(Belief): pass
 class IS_RULE(Belief): pass
 class WAIT(Belief): pass
+class PROCESS_STORED_MST(Reactor): pass
 
 # domotic reactive routines
 class r1(Procedure): pass
@@ -268,10 +269,9 @@ class join_clauses(Action):
 class preprocess_clause(Action):
 
     def execute(self, *args):
-        sentence = args[0]()
-        gen_mask = str(args[1]())
-        mode = str(args[2]())
-        type = str(args[3]())
+        gen_mask = str(args[0]())
+        mode = str(args[1]())
+        type = str(args[2]())
 
         print("\n--------- NEW GENERALIZATION ---------\n ")
         print("gen_mask: " + gen_mask)
@@ -285,9 +285,7 @@ class preprocess_clause(Action):
 
         self.MAIN_NEG_PRESENT = False
 
-        print("\n" + sentence)
-        LEMMATIZED = True
-        deps = parser.get_deps(sentence, LEMMATIZED)
+        deps = parser.get_last_deps()
 
         for i in range(len(deps)):
             governor = self.get_lemma(deps[i][1]).capitalize() + ":" + self.get_pos(deps[i][1])
@@ -296,7 +294,7 @@ class preprocess_clause(Action):
 
         print("\n" + str(deps))
 
-        MST = parser.create_MST(deps, 'e', 'x')
+        MST = parser.get_last_MST()
         print("\nMST: \n" + str(MST))
 
         # MST varlist correction on cases of adj-obj
@@ -321,7 +319,7 @@ class preprocess_clause(Action):
                 if ASSIGN_RULES_ADMITTED:
                     check_isa = m.check_for_rule(deps, vect_LR_fol)
                     if check_isa:
-                        self.assert_belief(IS_RULE(sentence))
+                        self.assert_belief(IS_RULE("TRUE"))
                 dclause = vect_LR_fol[:]
             else:
                 dclause = vect_LR_fol[:]
@@ -1549,12 +1547,14 @@ class clear_clauses_kb(Action):
 class parse_rules(Action):
     """Asserting dependencies related beliefs."""
     def execute(self, arg):
+
+        parser.flush()
+
         sent = str(arg).split("'")[3]
         print("\n", sent)
         deps = parser.get_deps(sent, True)
         print("\n", deps)
-        offset_dict = parser.offset_dict
-        print("\n", offset_dict)
+        parser.set_last_deps(deps)
 
         for dep in deps:
             self.assert_belief(DEP(dep[0], str(dep[1]), str(dep[2])))
@@ -1667,7 +1667,7 @@ class feed_mst_preps_parser(Action):
     def execute(self, arg1, arg2, arg3):
         label = str(arg1).split("'")[3]
         var = str(arg2).split("'")[3]
-        var_obj = str(arg2).split("'")[3]
+        var_obj = str(arg3).split("'")[3]
 
         prep = []
         prep.append(label)
@@ -1709,3 +1709,9 @@ class feed_mst_conds_parser(Action):
         cond = str(arg1).split("'")[3]
 
         parser.feed_MST(cond, 5)
+
+
+class flush_parser_cache(Action):
+    """Flushing parser cache"""
+    def execute(self):
+        parser.flush()
