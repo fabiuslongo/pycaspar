@@ -29,7 +29,7 @@ c4() >> [+STT("Colonel West sells missiles to Cuba")]
 c5() >> [+STT("When an American sells weapons to a hostile nation, that American is a criminal")]
 
 # Query
-q() >> [+STT("Barack Obama has been elected president of United States")]
+q() >> [+STT("Barack Obama has been elected as president of United States")]
 
 
 
@@ -80,6 +80,8 @@ parse_deps() / (MST_VAR(V, X) & DEP("compound", X, Y)) >> [show_line("\nprocessi
 parse_deps() / (MST_VAR(V, X) & DEP("amod", X, Y)) >> [show_line("\nprocessing amod..."), -DEP("amod", X, Y), +MST_BIND(X, Y), parse_deps()]
 
 parse_deps() / (MST_VAR(V, X) & MST_BIND(X, Y) & DEP("prep", Y, K)) >> [show_line("\nprocessing bind prep..."), -DEP("prep", Y, K), create_MST_PREP(V, K), parse_deps()]
+parse_deps() / (MST_VAR(V, X) & DEP("prep", X, K)) >> [show_line("\nprocessing prep..."), -DEP("prep", X, K), create_MST_PREP(V, K), parse_deps()]
+
 
 parse_deps() / (MST_PREP(X, Y, Z) & DEP("pobj", X, O) & MST_VAR(Z, "?")) >> [show_line("\nprocessing pobj..."), -MST_VAR(Z, "?"), -DEP("pobj", X, O), +MST_VAR(Z, O), parse_deps()]
 
