@@ -1544,7 +1544,7 @@ def main():
     VERBOSE = True
     LEMMMATIZED = True
 
-    sentence = "Rocky Balboa drink water slowly in the dark"
+    sentence = "Barack Obama has been elected president of United States"
 
     parser = Parse(VERBOSE)
 
@@ -1558,9 +1558,6 @@ def main():
     MST = parser.create_MST(deps, 'e', 'x')
     print("\nMST: \n" + str(MST))
 
-
-    last_enc_deps = parser.get_enc_deps(sentence)
-    print(last_enc_deps)
 
 
 

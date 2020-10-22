@@ -29,7 +29,7 @@ c4() >> [+STT("Colonel West sells missiles to Cuba")]
 c5() >> [+STT("When an American sells weapons to a hostile nation, that American is a criminal")]
 
 # Query
-q() >> [+STT("Colonel West is a criminal")]
+q() >> [+STT("Barack Obama has been elected president of United States")]
 
 
 
@@ -65,17 +65,21 @@ t() >> [go(), w(), l()]
 
 
 # MST components creations
+
 parse_deps() / DEP("nsubj", X, Y) >> [show_line("\nprocessing nsubj..."), -DEP("nsubj", X, Y), create_MST_ACT(X, Y), parse_deps()]
 parse_deps() / DEP("nsubjpass", X, Y) >> [show_line("\nprocessing nsubjpass..."), -DEP("nsubjpass", X, Y), create_MST_ACT_PASS(X, Y), parse_deps()]
 
 parse_deps() / (MST_ACT(X, D, Y, Z) & MST_VAR(Z, "?") & DEP("attr", X, K)) >> [show_line("\nprocessing attr..."), -DEP("attr", X, K), -MST_VAR(Z, "?"), +MST_VAR(Z, K), parse_deps()]
 parse_deps() / (MST_ACT(X, D, Y, Z) & MST_VAR(Z, "?") & DEP("acomp", X, K)) >> [show_line("\nprocessing acomp..."), -DEP("acomp", X, K), -MST_VAR(Z, "?"), +MST_VAR(Z, K), parse_deps()]
 parse_deps() / (MST_ACT(X, D, Y, Z) & MST_VAR(Z, "?") & DEP("dobj", X, K)) >> [show_line("\nprocessing dobj..."), -DEP("dobj", X, K), -MST_VAR(Z, "?"), +MST_VAR(Z, K), parse_deps()]
+parse_deps() / (MST_ACT(X, D, Y, Z) & MST_VAR(Z, O) & DEP("oprd", X, K)) >> [show_line("\nprocessing oprd..."), -DEP("oprd", X, K), +MST_BIND(O, K), parse_deps()]
 parse_deps() / (MST_ACT(X, D, Y, Z) & DEP("dative", X, K)) >> [show_line("\nprocessing dative..."), -DEP("dative", X, K), create_MST_PREP(D, K), parse_deps()]
-parse_deps() / (MST_ACT(X, D, Y, Z) & DEP("prep", X, K)) >> [show_line("\nprocessing dative..."), -DEP("prep", X, K), create_MST_PREP(D, K), parse_deps()]
+parse_deps() / (MST_ACT(X, D, Y, Z) & DEP("prep", X, K)) >> [show_line("\nprocessing action prep..."), -DEP("prep", X, K), create_MST_PREP(D, K), parse_deps()]
 
 parse_deps() / (MST_VAR(V, X) & DEP("compound", X, Y)) >> [show_line("\nprocessing compound..."), -DEP("compound", X, Y), +MST_COMP(X, Y), parse_deps()]
 parse_deps() / (MST_VAR(V, X) & DEP("amod", X, Y)) >> [show_line("\nprocessing amod..."), -DEP("amod", X, Y), +MST_BIND(X, Y), parse_deps()]
+
+parse_deps() / (MST_VAR(V, X) & MST_BIND(X, Y) & DEP("prep", Y, K)) >> [show_line("\nprocessing bind prep..."), -DEP("prep", Y, K), create_MST_PREP(V, K), parse_deps()]
 
 parse_deps() / (MST_PREP(X, Y, Z) & DEP("pobj", X, O) & MST_VAR(Z, "?")) >> [show_line("\nprocessing pobj..."), -MST_VAR(Z, "?"), -DEP("pobj", X, O), +MST_VAR(Z, O), parse_deps()]
 

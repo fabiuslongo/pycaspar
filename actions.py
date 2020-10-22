@@ -1583,10 +1583,11 @@ class create_MST_ACT_PASS(Action):
         verb = str(arg1).split("'")[3]
         subj = str(arg2).split("'")[3]
 
+        davidsonian = "e" + str(next(dav))
         subj_var = "x"+str(next(cnt))
         obj_var = "x"+str(next(cnt))
 
-        self.assert_belief(MST_ACT(verb, obj_var, subj_var))
+        self.assert_belief(MST_ACT(verb, davidsonian, obj_var, subj_var))
         self.assert_belief(MST_VAR(subj_var, subj))
         self.assert_belief(MST_VAR(obj_var, "?"))
 
