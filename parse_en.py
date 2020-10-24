@@ -1544,7 +1544,7 @@ def main():
     VERBOSE = True
     LEMMMATIZED = True
 
-    sentence = "Barack Obama has been elected president of United States"
+    sentence = "Robert knows that Barbara drinks wine"
 
     parser = Parse(VERBOSE)
 
