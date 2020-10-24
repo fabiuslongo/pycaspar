@@ -29,7 +29,7 @@ c4() >> [+STT("Colonel West sells missiles to Cuba")]
 c5() >> [+STT("When an American sells weapons to a hostile nation, that American is a criminal")]
 
 # Query
-q() >> [+STT("drink the wine")]
+q() >> [+STT("Obama knows that Helen become mad")]
 
 
 
@@ -90,6 +90,10 @@ parse_deps() / (MST_ACT(X, D, Y, Z) & DEP("advmod", X, K)) >> [show_line("\nproc
 parse_deps() / (MST_ACT(X, D, Y, Z) & DEP("mark", X, K) & NBW(K)) >> [show_line("\nprocessing mark..."), -DEP("mark", X, K), +MST_COND(D), parse_deps()]
 
 parse_deps() / (MST_ACT(X, D, Y, Z) & MST_VAR(Y, "?") & DEP("agent", X, K) & DEP("pobj", K, O)) >> [show_line("\nprocessing agent..."), -MST_VAR(Y, "?"), -DEP("agent", X, K), -DEP("pobj", K, O), +MST_VAR(Y, O), parse_deps()]
+
+
+parse_deps() / (MST_ACT(X, D, Y, Z) & MST_ACT(T, E, W, K) & DEP("ccomp", X, T)) >> [show_line("\nprocessing ccomp..."), -DEP("ccomp", X, T), -MST_ACT(X, D, Y, Z), +MST_ACT(X, D, Y, E), parse_deps()]
+parse_deps() / (DEP("ccomp", X, Y)) >> [show_line("\nprocessing ccomp as nsubj..."), -DEP("ccomp", X, Y), create_MST_ACT(X, Y), parse_deps()]
 
 
 parse_deps() / DEP("ROOT", X, X) >> [show_line("\nremoving ROOT..."), -DEP("ROOT", X, X), parse_deps()]

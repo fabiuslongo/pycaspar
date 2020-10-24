@@ -1544,7 +1544,7 @@ def main():
     VERBOSE = True
     LEMMMATIZED = True
 
-    sentence = "Robert knows that Barbara drinks wine"
+    sentence = "Obama knows that Helen become mad"
 
     parser = Parse(VERBOSE)
 
