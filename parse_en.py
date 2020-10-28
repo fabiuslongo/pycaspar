@@ -2,6 +2,21 @@ import spacy
 import platform
 import os
 from collections import Counter
+from nltk.corpus import wordnet
+import configparser
+
+
+config = configparser.ConfigParser()
+config.read('config.ini')
+
+DIS_ACTIVE = config.getboolean('DISAMBIGUATION', 'DIS_ACTIVE')
+DIS_VERB = config.get('DISAMBIGUATION', 'DIS_VERB').split(", ")
+DIS_NOUN = config.get('DISAMBIGUATION', 'DIS_NOUN').split(", ")
+DIS_ADJ = config.get('DISAMBIGUATION', 'DIS_ADJ').split(", ")
+DIS_ADV = config.get('DISAMBIGUATION', 'DIS_ADV').split(", ")
+DIS_EXCEPTIONS = config.get('DISAMBIGUATION', 'DIS_EXCEPTIONS').split(", ")
+
+
 
 
 class Parse(object):
@@ -1465,19 +1480,65 @@ class Parse(object):
 
 
         counter = Counter(words_list)
-        # print("\ncounter: ", counter)
 
         offset_dict = {}
         offset_dict_lemmatized = {}
 
+
         for token in reversed(doc):
             index = counter[token.text]
-            offset_dict[token.idx] = token.text+"0"+str(index)+":"+token.tag_
-            offset_dict_lemmatized[token.idx] = token.lemma_+"0"+str(index)+":"+token.tag_
+
+            print("\nToken in exam: ", token.text)
+
+            if DIS_ACTIVE and (token.tag_ in DIS_VERB or token.tag_ in DIS_NOUN or token.tag_ in DIS_ADJ or token.tag_ in DIS_ADV) and token.text not in DIS_EXCEPTIONS:
+
+                if token.tag_ in DIS_VERB:
+                    pos = wordnet.VERB
+                elif token.tag_ in DIS_NOUN:
+                    pos = wordnet.NOUN
+                elif token.tag_ in DIS_ADV:
+                    pos = wordnet.ADV
+                else:
+                    pos = wordnet.ADJ
+
+                # pos=VERB, NOUN, ADJ, ADV
+                syns = wordnet.synsets(token.text, pos=pos, lang="eng")
+
+                proper_syn = ""
+                proper_syn_sim = 0
+                proper_example = ""
+
+                for synset in syns:
+
+                    # first valorization in case of empty examples
+                    if proper_syn == "":
+                        proper_syn = synset.name()
+
+                    for example in synset.examples():
+
+                        doc2 = nlp(example)
+                        sim = doc.similarity(doc2)
+
+                        if sim > proper_syn_sim:
+                            proper_syn_sim = sim
+                            proper_syn = str(synset.name())
+                            proper_example = example
+
+                print("\nProper syn: ", proper_syn)
+                print("Max sim: ", proper_syn_sim)
+                print("Example: ", proper_example)
+
+
+                offset_dict[token.idx] = token.text + "0" + str(index) + ":" + token.tag_
+                offset_dict_lemmatized[token.idx] = proper_syn + "0" + str(index) + ":" + token.tag_
+
+
+            else:
+                offset_dict[token.idx] = token.text+"0"+str(index)+":"+token.tag_
+                offset_dict_lemmatized[token.idx] = token.lemma_+"0"+str(index)+":"+token.tag_
+
             counter[token.text] = index - 1
 
-        # print("\ncounter: ", counter)
-        # print("\noffset_dict: ", offset_dict)
 
         deps = []
         for token in doc:
@@ -1544,7 +1605,7 @@ def main():
     VERBOSE = True
     LEMMMATIZED = True
 
-    sentence = "Obama knows that Helen become mad"
+    sentence = "When an American sells weapons to a hostile nation, that American is a criminal"
 
     parser = Parse(VERBOSE)
 
