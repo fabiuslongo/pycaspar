@@ -1514,24 +1514,33 @@ class Parse(object):
                     if proper_syn == "":
                         proper_syn = synset.name()
 
-                    for example in synset.examples():
-
-                        doc2 = nlp(example)
+                    # Checking vect distance from glosses
+                    if len(synset.examples()) == 0:
+                        doc2 = nlp(synset.definition())
                         sim = doc.similarity(doc2)
 
                         if sim > proper_syn_sim:
                             proper_syn_sim = sim
                             proper_syn = str(synset.name())
-                            proper_example = example
+                            proper_example = synset.definition()
+                    else:
+
+                        # Checking vect distances from examples
+                        for example in synset.examples():
+                            doc2 = nlp(example)
+                            sim = doc.similarity(doc2)
+
+                            if sim > proper_syn_sim:
+                                proper_syn_sim = sim
+                                proper_syn = str(synset.name())
+                                proper_example = example
 
                 print("\nProper syn: ", proper_syn)
                 print("Max sim: ", proper_syn_sim)
                 print("Example: ", proper_example)
 
-
                 offset_dict[token.idx] = token.text + "0" + str(index) + ":" + token.tag_
                 offset_dict_lemmatized[token.idx] = proper_syn + "0" + str(index) + ":" + token.tag_
-
 
             else:
                 offset_dict[token.idx] = token.text+"0"+str(index)+":"+token.tag_
@@ -1605,7 +1614,7 @@ def main():
     VERBOSE = True
     LEMMMATIZED = True
 
-    sentence = "When an American sells weapons to a hostile nation, that American is a criminal"
+    sentence = "He likes to eat grilled bass"
 
     parser = Parse(VERBOSE)
 
