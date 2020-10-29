@@ -1427,7 +1427,6 @@ class Parse(object):
         return result
 
 
-
     def get_enc_deps(self, input_text):
 
         nlp = self.get_nlp_engine()
@@ -1455,8 +1454,6 @@ class Parse(object):
         self.offset_dict = offset_dict
 
         return enc_deps
-
-
 
 
     def get_deps(self, input_text, LEMMATIZED):

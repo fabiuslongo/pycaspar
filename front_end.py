@@ -22,8 +22,10 @@ c3() >> [+STT("missiles are weapons")]
 c4() >> [+STT("Colonel West sells missiles to Cuba")]
 c5() >> [+STT("When an American sells weapons to a hostile nation, that American is a criminal")]
 
+# testing disambiguation: He likes to eat fresh basses, He likes to play the bass
+
 # Query
-q() >> [+STT("He likes to eat fresh basses")]
+q() >> [+STT("Garden Beach is the worst place I have ever been")]
 
 
 
