@@ -1754,3 +1754,20 @@ class Wh_Det(ActiveBelief):
                 return False
         else:
             return False
+
+
+
+class create_MST_ACT_SUBJ(Action):
+    """Asserting an MST  Action."""
+    def execute(self, arg1, arg2, arg3):
+
+        verb = str(arg1).split("'")[3]
+        subj = str(arg2).split("'")[3]
+        subj_var = str(arg3).split("'")[3]
+
+        davidsonian = "e"+str(next(dav))
+        obj_var = "x"+str(next(cnt))
+
+        self.assert_belief(MST_ACT(verb, davidsonian, subj_var, obj_var))
+        self.assert_belief(MST_VAR(subj_var, subj))
+        self.assert_belief(MST_VAR(obj_var, "?"))

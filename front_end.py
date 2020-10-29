@@ -22,10 +22,21 @@ c3() >> [+STT("missiles are weapons")]
 c4() >> [+STT("Colonel West sells missiles to Cuba")]
 c5() >> [+STT("When an American sells weapons to a hostile nation, that American is a criminal")]
 
+# open issues
+
 # testing disambiguation: He likes to eat fresh basses, He likes to play the bass
 
+# relcl
+# I just want a simple way to get my discount -----> unresolved!
+# I lived the experience THAT you told to me: Yes! --- I lived the experience WHICH you told to me: Yes!
+# I lived the experience THAT you told me: No! --- I lived the experience WHICH you told me: No!
+# I saw the man that you love: Yes! --- I saw the man you love: No!
+
+# mark: unwanted conditionals
+# I want to see the issues like he sees them, I want to see the issues as he sees them
+
 # Query
-q() >> [+STT("I just want a simple way to get my discount")]
+q() >> [+STT("There are many online sites offering booking facilities")]
 
 
 
