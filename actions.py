@@ -196,7 +196,6 @@ class feed_mst(Procedure): pass
 
 
 
-
 class set_wait(Action):
     def execute(self):
         self.assert_belief(WAIT(WAIT_TIME))
@@ -1716,3 +1715,15 @@ class flush_parser_cache(Action):
     """Flushing parser cache"""
     def execute(self):
         parser.flush()
+
+
+class concat_mst_verbs(Action):
+    """Concatenate composite verbs"""
+    def execute(self, arg1, arg2, arg3, arg4, arg5):
+        verb1 = str(arg1).split("'")[3]
+        verb2 = str(arg2).split("'")[3]
+        dav = str(arg3).split("'")[3]
+        subj = str(arg4).split("'")[3]
+        obj = str(arg5).split("'")[3]
+
+        self.assert_belief(MST_ACT(verb1+"_"+verb2, dav, subj, obj))

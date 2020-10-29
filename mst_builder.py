@@ -8,12 +8,16 @@ from actions import *
 parse_deps() / DEP("nsubj", X, Y) >> [show_line("\nprocessing nsubj..."), -DEP("nsubj", X, Y), create_MST_ACT(X, Y), parse_deps()]
 parse_deps() / DEP("nsubjpass", X, Y) >> [show_line("\nprocessing nsubjpass..."), -DEP("nsubjpass", X, Y), create_MST_ACT_PASS(X, Y), parse_deps()]
 
+parse_deps() / (MST_ACT(X, D, Y, Z) & DEP("xcomp", T, K)) >> [show_line("\nprocessing xcomp...", T), +MST_ACT(K, D, Y, Z), -DEP("xcomp", T, K), parse_deps()]
+
 parse_deps() / (MST_ACT(X, D, Y, Z) & MST_VAR(Z, "?") & DEP("attr", X, K)) >> [show_line("\nprocessing attr..."), -DEP("attr", X, K), -MST_VAR(Z, "?"), +MST_VAR(Z, K), parse_deps()]
 parse_deps() / (MST_ACT(X, D, Y, Z) & MST_VAR(Z, "?") & DEP("acomp", X, K)) >> [show_line("\nprocessing acomp..."), -DEP("acomp", X, K), -MST_VAR(Z, "?"), +MST_VAR(Z, K), parse_deps()]
 parse_deps() / (MST_ACT(X, D, Y, Z) & MST_VAR(Z, "?") & DEP("dobj", X, K)) >> [show_line("\nprocessing dobj..."), -DEP("dobj", X, K), -MST_VAR(Z, "?"), +MST_VAR(Z, K), parse_deps()]
 parse_deps() / (MST_ACT(X, D, Y, Z) & MST_VAR(Z, O) & DEP("oprd", X, K)) >> [show_line("\nprocessing oprd..."), -DEP("oprd", X, K), +MST_BIND(O, K), parse_deps()]
 parse_deps() / (MST_ACT(X, D, Y, Z) & DEP("dative", X, K)) >> [show_line("\nprocessing dative..."), -DEP("dative", X, K), create_MST_PREP(D, K), parse_deps()]
 parse_deps() / (MST_ACT(X, D, Y, Z) & DEP("prep", X, K)) >> [show_line("\nprocessing action prep..."), -DEP("prep", X, K), create_MST_PREP(D, K), parse_deps()]
+
+
 
 parse_deps() / (MST_VAR(V, X) & DEP("compound", X, Y)) >> [show_line("\nprocessing compound..."), -DEP("compound", X, Y), +MST_COMP(X, Y), parse_deps()]
 parse_deps() / (MST_VAR(V, X) & DEP("amod", X, Y)) >> [show_line("\nprocessing amod..."), -DEP("amod", X, Y), +MST_BIND(X, Y), parse_deps()]
@@ -35,8 +39,13 @@ parse_deps() / (MST_ACT(X, D, Y, Z) & MST_ACT(T, E, W, K) & DEP("ccomp", X, T)) 
 parse_deps() / (DEP("ccomp", X, Y)) >> [show_line("\nprocessing ccomp as nsubj..."), -DEP("ccomp", X, Y), create_MST_ACT(X, Y), parse_deps()]
 
 
+parse_deps() / (MST_ACT(X, D, Y, Z) & MST_ACT(T, D, Y, Z) & neq(X, T)) >> [show_line("\nconcat composite verbals..."), -MST_ACT(X, D, Y, Z), -MST_ACT(T, D, Y, Z), concat_mst_verbs(X, T, D, Y, Z), parse_deps()]
+
+
+
 parse_deps() / DEP("ROOT", X, X) >> [show_line("\nremoving ROOT..."), -DEP("ROOT", X, X), parse_deps()]
 parse_deps() / DEP(Z, X, Y) >> [show_line("\nremoving ", Z), -DEP(Z, X, Y), parse_deps()]
+
 
 
 # Feeding parser's MST components section
