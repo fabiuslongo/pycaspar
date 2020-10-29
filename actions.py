@@ -1771,3 +1771,18 @@ class create_MST_ACT_SUBJ(Action):
         self.assert_belief(MST_ACT(verb, davidsonian, subj_var, obj_var))
         self.assert_belief(MST_VAR(subj_var, subj))
         self.assert_belief(MST_VAR(obj_var, "?"))
+
+
+class create_MST_ACT_EX(Action):
+    """Asserting an MST Existencial"""
+    def execute(self, arg1):
+
+        verb = str(arg1).split("'")[3]
+
+        davidsonian = "e"+str(next(dav))
+        subj_var = "x"+str(next(cnt))
+        obj_var = "x" + str(next(cnt))
+
+        self.assert_belief(MST_ACT(verb, davidsonian, subj_var, obj_var))
+        self.assert_belief(MST_VAR(subj_var, "?"))
+        self.assert_belief(MST_VAR(obj_var, "?"))
