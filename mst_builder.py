@@ -41,7 +41,7 @@ parse_deps() / (DEP("ccomp", X, Y)) >> [show_line("\nprocessing ccomp as nsubj..
 
 parse_deps() / (MST_ACT(X, D, Y, Z) & MST_ACT(T, D, Y, Z) & neq(X, T)) >> [show_line("\nconcat composite verbals..."), -MST_ACT(X, D, Y, Z), -MST_ACT(T, D, Y, Z), concat_mst_verbs(X, T, D, Y, Z), parse_deps()]
 
-
+parse_deps() / (MST_ACT(X, D, Y, Z) & MST_VAR(W, K) & DEP("relcl", K, X)) >> [show_line("\nprocessing relcl..."), -DEP("relcl", K, X), -MST_ACT(X, D, Y, Z), +MST_ACT(X, D, Y, W), parse_deps()]
 
 parse_deps() / DEP("ROOT", X, X) >> [show_line("\nremoving ROOT..."), -DEP("ROOT", X, X), parse_deps()]
 parse_deps() / DEP(Z, X, Y) >> [show_line("\nremoving ", Z), -DEP(Z, X, Y), parse_deps()]

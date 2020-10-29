@@ -25,7 +25,7 @@ c5() >> [+STT("When an American sells weapons to a hostile nation, that American
 # testing disambiguation: He likes to eat fresh basses, He likes to play the bass
 
 # Query
-q() >> [+STT("Garden Beach is the worst place I have ever been")]
+q() >> [+STT("David Bowie is the man who sold the world")]
 
 
 

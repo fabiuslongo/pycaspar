@@ -426,7 +426,7 @@ class preprocess_clause(Action):
                     mods.append(v[0])
                 elif self.get_pos(v[0]) == "IN" and GEN_PREP is True:
                     mods.append(v[0])
-                elif self.get_pos(v[0]) == "JJ" and GEN_ADJ is True:
+                elif (self.get_pos(v[0]) == "JJ" or self.get_pos(v[0]) == "JJS") and GEN_ADJ is True:
                     mods.append(v[0])
 
                 if self.get_pos(v[0]) in ['RB', 'RBR', 'RBS']:
