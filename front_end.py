@@ -25,7 +25,7 @@ c5() >> [+STT("When an American sells weapons to a hostile nation, that American
 # testing disambiguation: He likes to eat fresh basses, He likes to play the bass
 
 # Query
-q() >> [+STT("David Bowie is the man who sold the world")]
+q() >> [+STT("I just want a simple way to get my discount")]
 
 
 
@@ -55,8 +55,8 @@ t() >> [go(), w(), l()]
 +STT("listen") / (WAKE("ON") & WAIT(W)) >> [+LISTEN("ON"), show_line("\nWaiting for knowledge...\n"), Timer(W).start]
 +STT("reason") / (WAKE("ON") & WAIT(W)) >> [+REASON("ON"), show_line("\nWaiting for query...\n"), Timer(W).start]
 
-+STT(X) / (WAKE("ON") & LISTEN("ON")) >> [parse_rules(X), parse_deps(), feed_mst(), +PROCESS_STORED_MST("OK"), Timer(W).start]
-+STT(X) / (WAKE("ON") & REASON("ON")) >> [parse_rules(X), parse_deps(), feed_mst(), +PROCESS_STORED_MST("OK"), Timer(W).start]
++STT(X) / (WAKE("ON") & LISTEN("ON")) >> [parse_rules(X), parse_deps(), feed_mst(), -PROCESS_STORED_MST("OK"), Timer(W).start]
++STT(X) / (WAKE("ON") & REASON("ON")) >> [parse_rules(X), parse_deps(), feed_mst(), -PROCESS_STORED_MST("OK"), Timer(W).start]
 
 
 # Query KB

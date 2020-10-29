@@ -1727,3 +1727,30 @@ class concat_mst_verbs(Action):
         obj = str(arg5).split("'")[3]
 
         self.assert_belief(MST_ACT(verb1+"_"+verb2, dav, subj, obj))
+
+
+class Past_Part(ActiveBelief):
+    """Checking for Past Participle tense"""
+    def evaluate(self, x):
+
+        label = str(x).split("'")[3]
+
+        if label.split(':')[1] == "VBN":
+            return True
+        else:
+            return False
+
+
+class Wh_Det(ActiveBelief):
+    """Checking for Wh-determiner"""
+    def evaluate(self, x):
+
+        label = str(x).split("'")[3]
+
+        if label != "?":
+            if label.split(':')[1] == "WDT":
+                return True
+            else:
+                return False
+        else:
+            return False

@@ -27,8 +27,12 @@ parse_deps() / (MST_VAR(V, X) & DEP("prep", X, K)) >> [show_line("\nprocessing p
 
 parse_deps() / (MST_PREP(X, Y, Z) & DEP("pobj", X, O) & MST_VAR(Z, "?")) >> [show_line("\nprocessing pobj..."), -MST_VAR(Z, "?"), -DEP("pobj", X, O), +MST_VAR(Z, O), parse_deps()]
 
+# Conditionals/Adverbs
 parse_deps() / (MST_ACT(X, D, Y, Z) & DEP("advmod", X, K) & COND_WORD(K)) >> [show_line("\nprocessing conditional..."), -DEP("advmod", X, K), +MST_COND(D), parse_deps()]
-parse_deps() / (MST_ACT(X, D, Y, Z) & DEP("advmod", X, K)) >> [show_line("\nprocessing adverb..."), -DEP("advmod", X, K), +MST_VAR(D, K), parse_deps()]
+parse_deps() / (MST_ACT(X, D, Y, Z) & DEP("advmod", X, K)) >> [show_line("\nprocessing advmod..."), -DEP("advmod", X, K), +MST_VAR(D, K), parse_deps()]
+parse_deps() / (MST_ACT(X, D, Y, Z) & DEP("npadvmod", X, K)) >> [show_line("\nprocessing npadvmod..."), -DEP("npadvmod", X, K), +MST_VAR(D, K), parse_deps()]
+parse_deps() / (MST_ACT(X, D, Y, Z) & DEP("neg", X, K)) >> [show_line("\nprocessing neg..."), -DEP("neg", X, K), +MST_VAR(D, K), parse_deps()]
+
 
 parse_deps() / (MST_ACT(X, D, Y, Z) & DEP("mark", X, K) & NBW(K)) >> [show_line("\nprocessing mark..."), -DEP("mark", X, K), +MST_COND(D), parse_deps()]
 
@@ -41,13 +45,16 @@ parse_deps() / (DEP("ccomp", X, Y)) >> [show_line("\nprocessing ccomp as nsubj..
 
 parse_deps() / (MST_ACT(X, D, Y, Z) & MST_ACT(T, D, Y, Z) & neq(X, T)) >> [show_line("\nconcat composite verbals..."), -MST_ACT(X, D, Y, Z), -MST_ACT(T, D, Y, Z), concat_mst_verbs(X, T, D, Y, Z), parse_deps()]
 
-parse_deps() / (MST_ACT(X, D, Y, Z) & MST_VAR(W, K) & DEP("relcl", K, X)) >> [show_line("\nprocessing relcl..."), -DEP("relcl", K, X), -MST_ACT(X, D, Y, Z), +MST_ACT(X, D, Y, W), parse_deps()]
+parse_deps() / (MST_ACT(X, D, Y, Z) & MST_VAR(W, K) & DEP("relcl", K, X) & Past_Part(X)) >> [show_line("\nprocessing relcl pp..."), -DEP("relcl", K, X), -MST_ACT(X, D, Y, Z), +MST_ACT(X, D, Y, W), parse_deps()]
+parse_deps() / (MST_ACT(X, D, Y, Z) & MST_VAR(W, K) & MST_VAR(Z, U) & DEP("relcl", K, X) & Wh_Det(U)) >> [show_line("\nprocessing relcl wh..."), -DEP("relcl", K, X), -MST_ACT(X, D, Y, Z), +MST_ACT(X, D, Y, W), parse_deps()]
+parse_deps() / (MST_ACT(X, D, Y, Z) & MST_VAR(W, K) & DEP("relcl", K, X)) >> [show_line("\nprocessing relcl..."), -DEP("relcl", K, X), -MST_ACT(X, D, Y, Z), +MST_ACT(X, D, W, Z), parse_deps()]
+
 
 parse_deps() / DEP("ROOT", X, X) >> [show_line("\nremoving ROOT..."), -DEP("ROOT", X, X), parse_deps()]
 parse_deps() / DEP(Z, X, Y) >> [show_line("\nremoving ", Z), -DEP(Z, X, Y), parse_deps()]
 
 
-
+"""
 # Feeding parser's MST components section
 feed_mst() / MST_ACT(X, Y, Z, T) >> [show_line("\nfeeding MST with an action..."), -MST_ACT(X, Y, Z, T), feed_mst_actions_parser(X, Y, Z, T), feed_mst()]
 feed_mst() / MST_VAR(X, Y) >> [show_line("\nfeeding MST with a var..."), -MST_VAR(X, Y), feed_mst_vars_parser(X, Y), feed_mst()]
@@ -55,7 +62,7 @@ feed_mst() / MST_BIND(X, Y) >> [show_line("\nfeeding MST with a bind..."), -MST_
 feed_mst() / MST_PREP(X, Y, Z) >> [show_line("\nfeeding MST with a prep..."), -MST_PREP(X, Y, Z), feed_mst_preps_parser(X, Y, Z), feed_mst()]
 feed_mst() / MST_COMP(X, Y) >> [show_line("\nfeeding MST a comp..."), -MST_COMP(X, Y), feed_mst_comps_parser(X, Y), feed_mst()]
 feed_mst() / MST_COND(X) >> [show_line("\nfeeding MST with a cond..."), -MST_COND(X), feed_mst_conds_parser(X), feed_mst()]
-
+"""
 
 
 
