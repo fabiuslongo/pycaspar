@@ -1,7 +1,7 @@
 from phidias.Main import *
 from phidias.Types import *
 
-def_vars('X', 'Y', 'Z', 'T', 'W', 'K', 'J', 'M', 'N', "D", "I", "V", "L", "O", "E", "U")
+def_vars('X', 'Y', 'Z', 'T', 'W', 'K', 'J', 'M', 'N', "D", "I", "V", "L", "O", "E", "U", "S")
 
 from actions import *
 from mst_builder import *

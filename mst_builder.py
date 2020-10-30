@@ -18,14 +18,25 @@ parse_deps() / (MST_ACT(X, D, Y, Z) & MST_VAR(Y, "?") & DEP("attr", X, K)) >> [s
 
 parse_deps() / (MST_ACT(X, D, Y, Z) & MST_VAR(Z, "?") & DEP("acomp", X, K)) >> [show_line("\nprocessing acomp..."), -DEP("acomp", X, K), -MST_VAR(Z, "?"), +MST_VAR(Z, K), parse_deps()]
 parse_deps() / (MST_ACT(X, D, Y, Z) & MST_VAR(Z, "?") & DEP("dobj", X, K)) >> [show_line("\nprocessing dobj..."), -DEP("dobj", X, K), -MST_VAR(Z, "?"), +MST_VAR(Z, K), parse_deps()]
-parse_deps() / (MST_ACT(X, D, Y, Z) & MST_VAR(Z, O) & DEP("oprd", X, K)) >> [show_line("\nprocessing oprd..."), -DEP("oprd", X, K), +MST_BIND(O, K), parse_deps()]
+
+# object predicates
+parse_deps() / (MST_ACT(V, D, S, O) & MST_VAR(O, "?") & DEP("oprd", V, K)) >> [show_line("\nprocessing oprd var..."), -DEP("oprd", V, K), -MST_VAR(O, "?"), +MST_VAR(O, K), parse_deps()]
+parse_deps() / (MST_VAR(V, X) & DEP("oprd", X, Y)) >> [show_line("\nprocessing oprd bind..."), -DEP("oprd", X, Y), +MST_BIND(X, Y), parse_deps()]
+
 parse_deps() / (MST_ACT(X, D, Y, Z) & DEP("dative", X, K)) >> [show_line("\nprocessing dative..."), -DEP("dative", X, K), create_MST_PREP(D, K), parse_deps()]
 parse_deps() / (MST_ACT(X, D, Y, Z) & DEP("prep", X, K)) >> [show_line("\nprocessing action prep..."), -DEP("prep", X, K), create_MST_PREP(D, K), parse_deps()]
 
 
-
 parse_deps() / (MST_VAR(V, X) & DEP("compound", X, Y)) >> [show_line("\nprocessing compound..."), -DEP("compound", X, Y), +MST_COMP(X, Y), parse_deps()]
+
+# adjectival/possession/number/noun phrase as adverbial/appositional/quantifier modifiers
 parse_deps() / (MST_VAR(V, X) & DEP("amod", X, Y)) >> [show_line("\nprocessing amod..."), -DEP("amod", X, Y), +MST_BIND(X, Y), parse_deps()]
+parse_deps() / (MST_VAR(V, X) & DEP("poss", X, Y)) >> [show_line("\nprocessing poss..."), -DEP("poss", X, Y), +MST_BIND(X, Y), parse_deps()]
+parse_deps() / (MST_VAR(V, X) & DEP("nummod", X, Y)) >> [show_line("\nprocessing nummod..."), -DEP("nummod", X, Y), +MST_BIND(X, Y), parse_deps()]
+parse_deps() / (MST_VAR(V, X) & DEP("nmod", X, Y)) >> [show_line("\nprocessing nmod..."), -DEP("nmod", X, Y), +MST_BIND(X, Y), parse_deps()]
+parse_deps() / (MST_VAR(V, X) & DEP("appos", X, Y)) >> [show_line("\nprocessing appos..."), -DEP("appos", X, Y), +MST_BIND(X, Y), parse_deps()]
+parse_deps() / (MST_VAR(V, X) & DEP("quantmod", X, Y)) >> [show_line("\nprocessing quantmod..."), -DEP("quantmod", X, Y), +MST_BIND(X, Y), parse_deps()]
+
 
 parse_deps() / (MST_VAR(V, X) & MST_BIND(X, Y) & DEP("prep", Y, K)) >> [show_line("\nprocessing bind prep..."), -DEP("prep", Y, K), create_MST_PREP(V, K), parse_deps()]
 parse_deps() / (MST_VAR(V, X) & DEP("prep", X, K)) >> [show_line("\nprocessing prep..."), -DEP("prep", X, K), create_MST_PREP(V, K), parse_deps()]
