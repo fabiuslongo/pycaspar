@@ -79,7 +79,7 @@ parse_deps() / (MST_ACT(V, D, X, Y) & MST_VAR(Y, K) & DEP("acl", K, U)) >> [show
 # conjuncts
 parse_deps() / (MST_ACT(V, D, S, O) & DEP("conj", V, U)) >> [show_line("\nprocessing action related conj.."), -DEP("conj", V, U), +MST_BIND(V, U), parse_deps()]
 parse_deps() / (MST_ACT(V, E, X, Y) & MST_ACT(U, D, S, O) & MST_COND(E) & MST_BIND(V, U)) >> [show_line("\nupdating CONDS +", D), -MST_BIND(V, U), +MST_COND(D), parse_deps()]
-parse_deps() / (MST_ACT(V, E, X, Y) & MST_ACT(U, D, S, O) & MST_BIND(V, U)) >> [show_line("\ngenerating new action from bind", D), -MST_BIND(V, U), +MST_COND(D), parse_deps()]
+parse_deps() / (MST_ACT(V, D, S, O) & MST_BIND(V, U)) >> [show_line("\ngenerating new action from bind: ", U), -MST_BIND(V, U), +MST_ACT(U, D, S, O), parse_deps()]
 
 parse_deps() / (MST_VAR(V, X) & DEP("conj", X, Y)) >> [show_line("\nprocessing var related conj.."), -DEP("conj", X, Y), +MST_BIND(X, Y), parse_deps()]
 
