@@ -36,7 +36,7 @@ c5() >> [+STT("When an American sells weapons to a hostile nation, that American
 # I want to see the issues like he sees them, I want to see the issues as he sees them
 
 # Query
-q() >> [+STT("I will be prime minister of Italy when the sun become brighter and the moon paints its surface")]
+q() >> [+STT("Donald Trump has been judged guilty and taken to the prison")]
 
 
 

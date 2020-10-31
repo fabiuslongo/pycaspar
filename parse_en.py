@@ -1611,7 +1611,7 @@ def main():
     VERBOSE = True
     LEMMMATIZED = True
 
-    sentence = "I will be prime minister of Italy when the sun become brighter and the moon paints its surface"
+    sentence = "Donald Trump has been judged guilty and taken to the prison"
 
     parser = Parse(VERBOSE)
 

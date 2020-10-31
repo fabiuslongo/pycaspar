@@ -28,6 +28,8 @@ parse_deps() / (MST_ACT(X, D, Y, Z) & MST_VAR(Z, "?") & DEP("dobj", X, K)) >> [s
 # object predicates
 parse_deps() / (MST_ACT(V, D, S, O) & MST_VAR(O, "?") & DEP("oprd", V, K)) >> [show_line("\nprocessing oprd var..."), -DEP("oprd", V, K), -MST_VAR(O, "?"), +MST_VAR(O, K), parse_deps()]
 parse_deps() / (MST_VAR(V, X) & DEP("oprd", X, Y)) >> [show_line("\nprocessing oprd bind..."), -DEP("oprd", X, Y), +MST_BIND(X, Y), parse_deps()]
+parse_deps() / (MST_ACT(V, D, S, O) & MST_VAR(O, U) & DEP("oprd", V, K)) >> [show_line("\nprocessing oprd bind passive..."), -DEP("oprd", V, K), +MST_BIND(U, K), parse_deps()]
+
 
 parse_deps() / (MST_ACT(X, D, Y, Z) & DEP("dative", X, K)) >> [show_line("\nprocessing dative..."), -DEP("dative", X, K), create_MST_PREP(D, K), parse_deps()]
 parse_deps() / (MST_ACT(X, D, Y, Z) & DEP("prep", X, K)) >> [show_line("\nprocessing action prep..."), -DEP("prep", X, K), create_MST_PREP(D, K), parse_deps()]
@@ -75,8 +77,11 @@ parse_deps() / (DEP("relcl", X, Y) & MST_VAR(W, X) & MST_ACT(T, D, U, W)) >> [sh
 parse_deps() / (MST_ACT(V, D, X, Y) & MST_VAR(Y, K) & DEP("acl", K, U)) >> [show_line("\nprocessing acl as nsubj..."), -DEP("acl", K, U), create_MST_ACT_SUBJ(U, Y), parse_deps()]
 
 # conjuncts
-parse_deps() / (MST_ACT(V, D, S, O) & DEP("conj", V, U)) >> [show_line("\nprocessing conj.."), -DEP("conj", V, U), +MST_BIND(V, U), parse_deps()]
+parse_deps() / (MST_ACT(V, D, S, O) & DEP("conj", V, U)) >> [show_line("\nprocessing action related conj.."), -DEP("conj", V, U), +MST_BIND(V, U), parse_deps()]
 parse_deps() / (MST_ACT(V, E, X, Y) & MST_ACT(U, D, S, O) & MST_COND(E) & MST_BIND(V, U)) >> [show_line("\nupdating CONDS +", D), -MST_BIND(V, U), +MST_COND(D), parse_deps()]
+parse_deps() / (MST_ACT(V, E, X, Y) & MST_ACT(U, D, S, O) & MST_BIND(V, U)) >> [show_line("\ngenerating new action from bind", D), -MST_BIND(V, U), +MST_COND(D), parse_deps()]
+
+parse_deps() / (MST_VAR(V, X) & DEP("conj", X, Y)) >> [show_line("\nprocessing var related conj.."), -DEP("conj", X, Y), +MST_BIND(X, Y), parse_deps()]
 
 
 # linking together composite verbal actions
