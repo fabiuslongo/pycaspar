@@ -35,8 +35,12 @@ c5() >> [+STT("When an American sells weapons to a hostile nation, that American
 # mark: unwanted conditionals
 # I want to see the issues like he sees them, I want to see the issues as he sees them
 
+# dobj
+# What she bought to me were these books: YES!
+# What she bought me were these books
+
 # Query
-q() >> [+STT("She bought me these books")]
+q() >> [+STT("I persuaded her to come")]
 
 
 

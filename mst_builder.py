@@ -24,6 +24,8 @@ parse_deps() / (MST_ACT(X, D, Y, Z) & MST_VAR(Z, "?") & DEP("acomp", X, K)) >> [
 
 # direct objects
 parse_deps() / (MST_ACT(X, D, Y, Z) & MST_VAR(Z, "?") & DEP("dobj", X, K)) >> [show_line("\nprocessing dobj..."), -DEP("dobj", X, K), -MST_VAR(Z, "?"), +MST_VAR(Z, K), parse_deps()]
+parse_deps() / (MST_ACT(X, D, Y, Z) & DEP("dobj", X, K)) >> [show_line("\nprocessing dobj as adv..."), -DEP("dobj", X, K), +MST_VAR(D, K), parse_deps()]
+
 
 # object predicates
 parse_deps() / (MST_ACT(V, D, S, O) & MST_VAR(O, "?") & DEP("oprd", V, K)) >> [show_line("\nprocessing oprd var..."), -DEP("oprd", V, K), -MST_VAR(O, "?"), +MST_VAR(O, K), parse_deps()]
@@ -40,7 +42,10 @@ parse_deps() / (MST_VAR(V, X) & DEP("compound", X, Y)) >> [show_line("\nprocessi
 # adjectival/possession/number/noun phrase as adverbial/appositional/quantifier modifiers
 parse_deps() / (MST_VAR(V, X) & DEP("amod", X, Y)) >> [show_line("\nprocessing amod..."), -DEP("amod", X, Y), +MST_BIND(X, Y), parse_deps()]
 parse_deps() / (MST_BIND(V, X) & DEP("amod", X, Y)) >> [show_line("\nprocessing bind related amod..."), -DEP("amod", X, Y), +MST_BIND(V, Y), parse_deps()]
+
 parse_deps() / (MST_VAR(V, X) & DEP("poss", X, Y)) >> [show_line("\nprocessing poss..."), -DEP("poss", X, Y), +MST_BIND(X, Y), parse_deps()]
+parse_deps() / (MST_BIND(V, X) & DEP("poss", X, Y)) >> [show_line("\nprocessing bind related poss..."), -DEP("poss", X, Y), +MST_BIND(V, Y), parse_deps()]
+
 parse_deps() / (MST_VAR(V, X) & DEP("nummod", X, Y)) >> [show_line("\nprocessing nummod..."), -DEP("nummod", X, Y), +MST_BIND(X, Y), parse_deps()]
 parse_deps() / (MST_VAR(V, X) & DEP("nmod", X, Y)) >> [show_line("\nprocessing nmod..."), -DEP("nmod", X, Y), +MST_BIND(X, Y), parse_deps()]
 parse_deps() / (MST_VAR(V, X) & DEP("appos", X, Y)) >> [show_line("\nprocessing appos..."), -DEP("appos", X, Y), +MST_BIND(X, Y), parse_deps()]
