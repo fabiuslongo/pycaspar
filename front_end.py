@@ -40,7 +40,7 @@ c5() >> [+STT("When an American sells weapons to a hostile nation, that American
 # What she bought me were these books
 
 # Query
-q() >> [+STT("I persuaded her to come")]
+q() >> [+STT("Charlie is going out with Max or Lilly")]
 
 
 

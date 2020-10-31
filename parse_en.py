@@ -1611,7 +1611,7 @@ def main():
     VERBOSE = True
     LEMMMATIZED = True
 
-    sentence = "What she bought to me were these books"
+    sentence = "Charlie is going out with Max or Lilly"
 
     parser = Parse(VERBOSE)
 

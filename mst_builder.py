@@ -6,16 +6,18 @@ from actions import *
 # MST components creations
 
 # noun subjects
-parse_deps() / DEP("nsubj", X, Y) >> [show_line("\nprocessing nsubj..."), -DEP("nsubj", X, Y), create_MST_ACT(X, Y), parse_deps()]
+parse_deps() / DEP("nsubj", X, Y) >> [show_line("\nprocessing nsubj: ", X), -DEP("nsubj", X, Y), create_MST_ACT(X, Y), parse_deps()]
 # noun subjects passive
-parse_deps() / DEP("nsubjpass", X, Y) >> [show_line("\nprocessing nsubjpass..."), -DEP("nsubjpass", X, Y), create_MST_ACT_PASS(X, Y), parse_deps()]
+parse_deps() / DEP("nsubjpass", X, Y) >> [show_line("\nprocessing nsubjpass: ", X), -DEP("nsubjpass", X, Y), create_MST_ACT_PASS(X, Y), parse_deps()]
+
+# particles
+parse_deps() / (MST_ACT(X, D, Y, Z) & DEP("prt", X, K)) >> [show_line("\nprocessing prt: ", Y), -DEP("prt", X, K), +MST_VAR(D, K), parse_deps()]
 
 # expletive existentials (there) in the subject position.
 parse_deps() / DEP("expl", X, Y) >> [show_line("\nprocessing expl..."), -DEP("expl", X, Y), create_MST_ACT_EX(X), parse_deps()]
 
 # open clausal complements or adverbial clause modifiers
 parse_deps() / (MST_ACT(X, D, Y, Z) & DEP("xcomp", T, K)) >> [show_line("\nprocessing xcomp...", T), +MST_ACT(K, D, Y, Z), -DEP("xcomp", T, K), parse_deps()]
-# parse_deps() / (MST_ACT(X, D, Y, Z) & DEP("advcl", T, K)) >> [show_line("\nprocessing advcl...", T), +MST_ACT(K, D, Y, Z), -DEP("advcl", T, K), parse_deps()]
 
 # attribute or adjectival complements
 parse_deps() / (MST_ACT(X, D, Y, Z) & MST_VAR(Z, "?") & DEP("attr", X, K)) >> [show_line("\nprocessing attr obj..."), -DEP("attr", X, K), -MST_VAR(Z, "?"), +MST_VAR(Z, K), parse_deps()]
