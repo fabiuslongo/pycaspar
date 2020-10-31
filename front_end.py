@@ -36,7 +36,7 @@ c5() >> [+STT("When an American sells weapons to a hostile nation, that American
 # I want to see the issues like he sees them, I want to see the issues as he sees them
 
 # Query
-q() >> [+STT("I want to take my revenge and rule the known world")]
+q() >> [+STT("She bought me these books")]
 
 
 

@@ -39,6 +39,7 @@ parse_deps() / (MST_VAR(V, X) & DEP("compound", X, Y)) >> [show_line("\nprocessi
 
 # adjectival/possession/number/noun phrase as adverbial/appositional/quantifier modifiers
 parse_deps() / (MST_VAR(V, X) & DEP("amod", X, Y)) >> [show_line("\nprocessing amod..."), -DEP("amod", X, Y), +MST_BIND(X, Y), parse_deps()]
+parse_deps() / (MST_BIND(V, X) & DEP("amod", X, Y)) >> [show_line("\nprocessing bind related amod..."), -DEP("amod", X, Y), +MST_BIND(V, Y), parse_deps()]
 parse_deps() / (MST_VAR(V, X) & DEP("poss", X, Y)) >> [show_line("\nprocessing poss..."), -DEP("poss", X, Y), +MST_BIND(X, Y), parse_deps()]
 parse_deps() / (MST_VAR(V, X) & DEP("nummod", X, Y)) >> [show_line("\nprocessing nummod..."), -DEP("nummod", X, Y), +MST_BIND(X, Y), parse_deps()]
 parse_deps() / (MST_VAR(V, X) & DEP("nmod", X, Y)) >> [show_line("\nprocessing nmod..."), -DEP("nmod", X, Y), +MST_BIND(X, Y), parse_deps()]
@@ -63,6 +64,9 @@ parse_deps() / (MST_ACT(X, D, Y, Z) & DEP("mark", X, K) & NBW(K)) >> [show_line(
 # agents
 parse_deps() / (MST_ACT(X, D, Y, Z) & MST_VAR(Y, "?") & DEP("agent", X, K) & DEP("pobj", K, O)) >> [show_line("\nprocessing agent..."), -MST_VAR(Y, "?"), -DEP("agent", X, K), -DEP("pobj", K, O), +MST_VAR(Y, O), parse_deps()]
 
+# clausal subjects
+parse_deps() / (MST_ACT(V, D, S, O) & DEP("csubj", U, V)) >> [show_line("\nprocessing csubj..."), -DEP("csubj", U, V), create_MST_ACT_SUBJ(U, D), parse_deps()]
+
 # clausal complements
 parse_deps() / (MST_ACT(X, D, Y, Z) & MST_ACT(T, E, W, K) & DEP("ccomp", X, T)) >> [show_line("\nprocessing ccomp..."), -DEP("ccomp", X, T), -MST_ACT(X, D, Y, Z), +MST_ACT(X, D, Y, E), parse_deps()]
 parse_deps() / (DEP("ccomp", X, Y)) >> [show_line("\nprocessing ccomp as nsubj..."), -DEP("ccomp", X, Y), create_MST_ACT(X, Y), parse_deps()]
@@ -79,16 +83,14 @@ parse_deps() / (MST_ACT(V, D, X, Y) & MST_VAR(Y, K) & DEP("acl", K, U)) >> [show
 # conjuncts
 parse_deps() / (MST_ACT(V, D, S, O) & DEP("conj", V, U)) >> [show_line("\nprocessing action related conj.."), -DEP("conj", V, U), +MST_BIND(V, U), parse_deps()]
 parse_deps() / (MST_ACT(V, E, X, Y) & MST_ACT(U, D, S, O) & MST_COND(E) & MST_BIND(V, U)) >> [show_line("\nupdating CONDS +", D), -MST_BIND(V, U), +MST_COND(D), parse_deps()]
-parse_deps() / (MST_ACT(V, D, S, O) & MST_BIND(V, U)) >> [show_line("\ngenerating new action from bind: ", U), -MST_BIND(V, U), +MST_ACT(U, D, S, O), parse_deps()]
+parse_deps() / (MST_ACT(V, D, S, O) & MST_BIND(V, U)) >> [show_line("\ngenerating new action from bind: ", U), -MST_BIND(V, U), create_MST_ACT_SUBJ(U, S), parse_deps()]
 parse_deps() / (MST_BIND(V, U) & DEP("conj", U, K)) >> [show_line("\nprocessing var related conj..."), -DEP("conj", U, K), +MST_BIND(V, K), parse_deps()]
-
-
 parse_deps() / (MST_VAR(V, X) & DEP("conj", X, Y)) >> [show_line("\nprocessing var related conj.."), -DEP("conj", X, Y), +MST_BIND(X, Y), parse_deps()]
 
-
 # linking together composite verbal actions
-# parse_deps() / (MST_ACT(X, D, Y, Z) & MST_ACT(T, D, Y, Z) & neq(X, T)) >> [show_line("\nconcat composite verbals..."), -MST_ACT(X, D, Y, Z), -MST_ACT(T, D, Y, Z), concat_mst_verbs(X, T, D, Y, Z), parse_deps()]
+parse_deps() / (MST_ACT(X, D, Y, Z) & MST_ACT(T, D, Y, Z) & neq(X, T)) >> [show_line("\nconcat composite verbals..."), -MST_ACT(X, D, Y, Z), -MST_ACT(T, D, Y, Z), concat_mst_verbs(X, T, D, Y, Z), parse_deps()]
 
+parse_deps() / (MST_PREP(X, Y, Z) & MST_VAR(Z, '?')) >> [show_line("\nchanging unactive prep in adv..."), -MST_PREP(X, Y, Z), -MST_VAR(Z, '?'), +MST_VAR(Y, X), parse_deps()]
 
 parse_deps() / DEP("ROOT", X, X) >> [show_line("\nremoving ROOT..."), -DEP("ROOT", X, X), parse_deps()]
 parse_deps() / DEP(Z, X, Y) >> [show_line("\nremoving ", Z), -DEP(Z, X, Y), parse_deps()]

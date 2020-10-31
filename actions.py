@@ -1758,7 +1758,7 @@ class Wh_Det(ActiveBelief):
 
 
 class create_MST_ACT_SUBJ(Action):
-    """Asserting an MST  Action."""
+    """Asserting an MST Action with custom var subj"""
     def execute(self, arg1, arg2):
 
         verb = str(arg1).split("'")[3]

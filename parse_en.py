@@ -1611,7 +1611,7 @@ def main():
     VERBOSE = True
     LEMMMATIZED = True
 
-    sentence = "Donald Trump has been judged guilty and taken to the prison"
+    sentence = "What matters most is that you are safe"
 
     parser = Parse(VERBOSE)
 
