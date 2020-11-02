@@ -27,7 +27,7 @@ check_conds() / SENSOR(V, X, Y) >> [show_line("\nbelief sensor not more needed..
 +INTENT(X, "Door", Y, T) / lemma_in_syn(X, "open.v.01") >> [show_line("\n---- Result: failed to execute the command in the specified location")]
 
 # specify, set, determine, define, fix, limit
-+INTENT(X, "Cooler", "Bedroom", T) / lemma_in_syn(X, "specify.v.02") >> [exec_cmd("specify.v.02", "cooler", "bedroom", T)]
++INTENT(X, "Cooler", "Bedroom", T) / lemma_in_syn(X, "specify.v.02") >> [exec_cmd("specify.v.02", "Cooler", "Bedroom", T)]
 +INTENT(X, "Cooler", Y, T) / lemma_in_syn(X, "specify.v.02") >> [show_line("\n---- Result: failed to execute the command in the specified location")]
 
 # cut

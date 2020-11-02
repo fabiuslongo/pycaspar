@@ -100,6 +100,10 @@ parse_deps() / (MST_VAR(V, X) & DEP("conj", X, Y)) >> [show_line("\nprocessing v
 parse_deps() / (MST_ACT(V, D, S, O) & MST_ACT(U, E, X, Y) & DEP("parataxis", V, U)) >> [show_line("\nprocessing parataxis..."), -DEP("parataxis", V, U), -MST_ACT(U, E, X, Y), +MST_ACT(U, E, X, D), parse_deps()]
 
 
+# imperatives
+parse_deps() / DEP("dobj", X, Y) >> [show_line("\nprocessing imperative dobj: ", X), -DEP("dobj", X, Y), create_IMP_MST_ACT(X, Y), parse_deps()]
+
+
 # linking together composite verbal actions
 parse_deps() / (MST_ACT(X, D, Y, Z) & MST_ACT(T, D, Y, Z) & neq(X, T)) >> [show_line("\nconcat composite verbals..."), -MST_ACT(X, D, Y, Z), -MST_ACT(T, D, Y, Z), concat_mst_verbs(X, T, D, Y, Z), parse_deps()]
 

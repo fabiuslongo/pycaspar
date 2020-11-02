@@ -796,6 +796,8 @@ class new_clause(Action):
 
         print("\n" + sentence)
         mf = parser.morph(sentence)
+        print("\nmorphed: " + sentence)
+
         def_clause = expr(mf)
 
         kb_fol.nested_tell(def_clause)
@@ -857,13 +859,12 @@ class assert_command(Action):
 
         print(sentence)
 
-        LEMMMATIZED = True
-        deps = parser.get_deps(sentence, LEMMMATIZED)
+        deps = parser.get_last_deps()
 
-        TABLE = parser.create_MST(deps, 'd', 'x')
+        MST = parser.get_last_MST()
 
         m = ManageFols(VERBOSE, LANGUAGE)
-        vect_LR_fol = m.build_LR_fol(TABLE, 'd')
+        vect_LR_fol = m.build_LR_fol(MST, 'd')
 
         # getting fol's type
         check_isa = False
@@ -1809,3 +1810,17 @@ class create_MST_ACT_EX(Action):
 
         self.assert_belief(MST_ACT(verb, davidsonian, "_", obj_var))
         self.assert_belief(MST_VAR(obj_var, "?"))
+
+
+class create_IMP_MST_ACT(Action):
+    """Asserting an Imperative MST Action."""
+    def execute(self, arg1, arg2):
+
+        verb = str(arg1).split("'")[3]
+        obj = str(arg2).split("'")[3]
+
+        davidsonian = "e"+str(next(dav))
+        obj_var = "x"+str(next(cnt))
+
+        self.assert_belief(MST_ACT(verb, davidsonian, "_", obj_var))
+        self.assert_belief(MST_VAR(obj_var, obj))
