@@ -120,6 +120,8 @@ class Parse(object):
         return self.nlp
 
 
+    # Only for testing porpuses
+    """
     def create_MST(self, deps, dav, var):
 
         index_args_counter = 0
@@ -1389,7 +1391,7 @@ class Parse(object):
         TABLE.append(cond)
 
         return TABLE
-
+    """
 
     def get_first_token(self, s):
         s_list = s.split("_")
