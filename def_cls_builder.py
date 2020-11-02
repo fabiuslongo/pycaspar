@@ -82,7 +82,7 @@ finalize_gnd() / GND(I, X, L) >> [show_line("\ncreating remain...", L), -GND(I, 
 finalize_gnd() >> [show_line("\nremains finalization done.")]
 
 # creating merged definite clauses driven by subj-obj
-process_clause() / (CLAUSE(I, X) & CLAUSE(I, Y) & neq(X, Y) & ACT_CROSS_VAR(I, Z, V)) >> [show_line("\njoining clauses with...", Z, " and ", V), -CLAUSE(I, X), -CLAUSE(I, Y), -ACT_CROSS_VAR(I, Z, V), join_clauses(X, Y, V), process_clause()]
+process_clause() / (CLAUSE(I, X) & CLAUSE(I, Y) & neq(X, Y) & ACT_CROSS_VAR(I, Z, V)) >> [show_line("\njoining clauses with...", Z, " and ", V), -CLAUSE(I, X), -CLAUSE(I, Y), -ACT_CROSS_VAR(I, Z, V), join_clauses(X, Y, V, Z), process_clause()]
 
 # creating definite clauses with common left hand-side
 process_clause() / (CLAUSE("RIGHT", X) & LEFT_CLAUSE(Y)) >> [show_line("\ncreating multiple definite clause..."), -CLAUSE("RIGHT", X), join_hand_sides(Y, X), process_clause()]

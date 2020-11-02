@@ -243,24 +243,50 @@ class lemma_in_syn(ActiveBelief):
 
 
 class join_clauses(Action):
-    def execute(self, arg1, arg2, arg3):
+    def execute(self, arg1, arg2, arg3, arg4):
 
         clause1 = str(arg1).split("'")[3]
         clause2 = str(arg2).split("'")[3]
         verb = str(arg3).split("'")[3]
+        common_var = str(arg4).split("'")[3]
+
+        print("\nclause1: ", clause1)
+        print("clause2: ", clause2)
+        print("verb: ", verb)
+        print("common_var: ", common_var)
 
         match = SequenceMatcher(None, clause1, clause2).find_longest_match(0, len(clause1), 0, len(clause2))
         common = clause1[match.a: match.a + match.size]
 
-        while common[0] == "(":
+        print("match: ", match)
+        print("common: ", common)
+
+        while common[0] == "(" or common[0] == ")" or common[0] == "," or common[0] == " ":
             common = common[1:]
+
+        num_par_open = common.count("(")
+        print("num_par_open: ", num_par_open)
+        num_par_closed = common.count(")")
+        print("num_par_closed: ", num_par_closed)
+
         while common[-1] != ")":
             common = common[:len(common) - 1]
+
+        print("common cleaned: ", common)
+
+        while num_par_open < num_par_closed:
+            common = common[:len(common) - 1]
+            num_par_open = common.count("(")
+            num_par_closed = common.count(")")
+
+        print("common fixed: ", common)
 
         if str(clause1).find(verb) == -1:
             new_clause = clause1.replace(common, clause2)
         else:
             new_clause = clause2.replace(common, clause1)
+
+        print(new_clause)
 
         self.assert_belief(DEF_CLAUSE(new_clause))
 
@@ -1132,6 +1158,8 @@ class NLP_Parser(object):
         return self.parser
 
 
+# ---------------------- Definite Clauses Builder section
+
 class aggregate(Action):
     def execute(self, arg0, arg1, arg2, arg3, arg4):
 
@@ -1501,8 +1529,7 @@ class create_precross(Action):
 
         pn_label = self.get_par_number(verb_act_merged)
 
-        act_merged = prep_label + "(" + verb_act_merged[
-                                        :-pn_label] + "(" + subj_act_merged + ", " + obj_act_merged + ")"
+        act_merged = prep_label + "(" + verb_act_merged[:-pn_label] + "(" + subj_act_merged + ", " + obj_act_merged + ")"
         for i in range(pn_label):
             act_merged = act_merged + ")"
         act_merged = act_merged + ", " + prep_obj + ")"
@@ -1543,6 +1570,8 @@ class clear_clauses_kb(Action):
 
 
 
+# ---------------------- MST Builder Section
+
 class parse_rules(Action):
     """Asserting dependencies related beliefs."""
     def execute(self, arg):
@@ -1557,7 +1586,6 @@ class parse_rules(Action):
 
         for dep in deps:
             self.assert_belief(DEP(dep[0], str(dep[1]), str(dep[2])))
-
 
 
 class create_MST_ACT(Action):
@@ -1754,7 +1782,6 @@ class Wh_Det(ActiveBelief):
                 return False
         else:
             return False
-
 
 
 class create_MST_ACT_SUBJ(Action):
