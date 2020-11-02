@@ -2,6 +2,21 @@ import spacy
 import platform
 import os
 from collections import Counter
+from nltk.corpus import wordnet
+import configparser
+
+
+config = configparser.ConfigParser()
+config.read('config.ini')
+
+DIS_ACTIVE = config.getboolean('DISAMBIGUATION', 'DIS_ACTIVE')
+DIS_VERB = config.get('DISAMBIGUATION', 'DIS_VERB').split(", ")
+DIS_NOUN = config.get('DISAMBIGUATION', 'DIS_NOUN').split(", ")
+DIS_ADJ = config.get('DISAMBIGUATION', 'DIS_ADJ').split(", ")
+DIS_ADV = config.get('DISAMBIGUATION', 'DIS_ADV').split(", ")
+DIS_EXCEPTIONS = config.get('DISAMBIGUATION', 'DIS_EXCEPTIONS').split(", ")
+
+
 
 
 class Parse(object):
@@ -37,9 +52,6 @@ class Parse(object):
         # last dependencies
         self.last_deps = []
 
-        # last uniquezed dependencies
-        self.last_m_deps = []
-
         # last detected entities
         self.ner = []
 
@@ -48,6 +60,23 @@ class Parse(object):
 
         # last processed sentence
         self.pending_root_tense_debt = None
+
+        # novel deps usage
+        self.last_enc_deps = []
+
+        # offset dictionary
+        self.offset_dict = {}
+
+        # Macro Semantic Table
+        self.MST = [[], [], [], [], [], []]
+
+
+    def feed_MST(self, component, index):
+        self.MST[index].append(component)
+
+
+    def get_last_MST(self):
+        return self.MST
 
 
     def get_pending_root_tense_debt(self):
@@ -79,8 +108,8 @@ class Parse(object):
     def flush(self):
         self.FLUSH = True
         self.last_deps = []
-        self.last_m_deps = []
         self.ner = []
+        self.MST = [[], [], [], [], [], []]
 
 
     def no_flush(self):
@@ -91,6 +120,8 @@ class Parse(object):
         return self.nlp
 
 
+    # Only for testing porpuses
+    """
     def create_MST(self, deps, dav, var):
 
         index_args_counter = 0
@@ -328,7 +359,7 @@ class Parse(object):
                                 p[3] = davidsonian_found
 
                     if self.VERBOSE is True:
-                        print('--------- csubj ----------')
+                        print('--------- parataxis ----------')
                         print('pendings: ' + str(pendings))
                         print('pending_prep: ' + str(pending_prep))
                         print('preps: ' + str(preps))
@@ -1360,7 +1391,7 @@ class Parse(object):
         TABLE.append(cond)
 
         return TABLE
-
+    """
 
     def get_first_token(self, s):
         s_list = s.split("_")
@@ -1398,6 +1429,35 @@ class Parse(object):
         return result
 
 
+    def get_enc_deps(self, input_text):
+
+        nlp = self.get_nlp_engine()
+        doc = nlp(input_text)
+        self.last_sentence = input_text
+
+        enc_deps = []
+        offset_dict = {}
+
+        for token in doc:
+            enc_dep = []
+            enc_dep.append(token.dep_)
+            #enc_dep.append(token.head.idx)
+            enc_dep.append(token.head.text)
+
+            offset_dict[token.idx] = token.head.text
+
+            #enc_dep.append(token.idx)
+            enc_dep.append(token.text)
+
+            offset_dict[token.idx] = token.text
+
+            enc_deps.append(enc_dep)
+
+        self.offset_dict = offset_dict
+
+        return enc_deps
+
+
     def get_deps(self, input_text, LEMMATIZED):
 
         nlp = self.get_nlp_engine()
@@ -1412,20 +1472,81 @@ class Parse(object):
         for token in doc:
             words_list.append(token.text)
 
+            enc_dep = []
+            enc_dep.append(token.dep_)
+            enc_dep.append(token.head.idx)
+            enc_dep.append(token.idx)
+
+
         counter = Counter(words_list)
-        # print("\ncounter: ", counter)
 
         offset_dict = {}
         offset_dict_lemmatized = {}
 
+
         for token in reversed(doc):
             index = counter[token.text]
-            offset_dict[token.idx] = token.text+"0"+str(index)+":"+token.tag_
-            offset_dict_lemmatized[token.idx] = token.lemma_+"0"+str(index)+":"+token.tag_
+
+            print("\nToken in exam: ", token.text)
+
+            if DIS_ACTIVE and (token.tag_ in DIS_VERB or token.tag_ in DIS_NOUN or token.tag_ in DIS_ADJ or token.tag_ in DIS_ADV) and token.text not in DIS_EXCEPTIONS:
+
+                if token.tag_ in DIS_VERB:
+                    pos = wordnet.VERB
+                elif token.tag_ in DIS_NOUN:
+                    pos = wordnet.NOUN
+                elif token.tag_ in DIS_ADV:
+                    pos = wordnet.ADV
+                else:
+                    pos = wordnet.ADJ
+
+                # pos=VERB, NOUN, ADJ, ADV
+                syns = wordnet.synsets(token.text, pos=pos, lang="eng")
+
+                proper_syn = ""
+                proper_syn_sim = 0
+                proper_example = ""
+
+                for synset in syns:
+
+                    # first valorization in case of empty examples
+                    if proper_syn == "":
+                        proper_syn = synset.name()
+
+                    # Checking vect distance from glosses
+                    if len(synset.examples()) == 0:
+                        doc2 = nlp(synset.definition())
+                        sim = doc.similarity(doc2)
+
+                        if sim > proper_syn_sim:
+                            proper_syn_sim = sim
+                            proper_syn = str(synset.name())
+                            proper_example = synset.definition()
+                    else:
+
+                        # Checking vect distances from examples
+                        for example in synset.examples():
+                            doc2 = nlp(example)
+                            sim = doc.similarity(doc2)
+
+                            if sim > proper_syn_sim:
+                                proper_syn_sim = sim
+                                proper_syn = str(synset.name())
+                                proper_example = example
+
+                print("\nProper syn: ", proper_syn)
+                print("Max sim: ", proper_syn_sim)
+                print("Example: ", proper_example)
+
+                offset_dict[token.idx] = token.text + "0" + str(index) + ":" + token.tag_
+                offset_dict_lemmatized[token.idx] = proper_syn + "0" + str(index) + ":" + token.tag_
+
+            else:
+                offset_dict[token.idx] = token.text+"0"+str(index)+":"+token.tag_
+                offset_dict_lemmatized[token.idx] = token.lemma_+"0"+str(index)+":"+token.tag_
+
             counter[token.text] = index - 1
 
-        # print("\ncounter: ", counter)
-        # print("\noffset_dict: ", offset_dict)
 
         deps = []
         for token in doc:
@@ -1455,6 +1576,11 @@ class Parse(object):
             for d in deps:
                 if d[2][0:5].lower() == "dummy":
                     d[2] = "Dummy:DM"
+
+        for i in range(len(deps)):
+            governor = self.get_lemma(deps[i][1]).capitalize() + ":" + self.get_pos(deps[i][1])
+            dependent = self.get_lemma(deps[i][2]).capitalize() + ":" + self.get_pos(deps[i][2])
+            deps[i] = [deps[i][0], governor, dependent]
 
         return deps
 
@@ -1487,23 +1613,20 @@ def main():
     VERBOSE = True
     LEMMMATIZED = True
 
-    sentence = "The beast drunk his meal"
+    sentence = "The guy, John said, left early in the morning"
 
     parser = Parse(VERBOSE)
+
     deps = parser.get_deps(sentence, LEMMMATIZED)
     parser.set_last_deps(deps)
     ner = parser.get_last_ner()
     print("\nner: ", ner)
 
-    for i in range(len(deps)):
-        governor = parser.get_lemma(deps[i][1]).capitalize() + ":" + parser.get_pos(deps[i][1])
-        dependent = parser.get_lemma(deps[i][2]).capitalize() + ":" + parser.get_pos(deps[i][2])
-        deps[i] = [deps[i][0], governor, dependent]
-
     print("\n" + str(deps))
 
     MST = parser.create_MST(deps, 'e', 'x')
     print("\nMST: \n" + str(MST))
+
 
 
 

@@ -28,7 +28,6 @@ class ManageFols(object):
         self.PKB.append(element)
 
 
-
     def get_pos(self, s):
         s_list = s.split(':')
         if len(s_list) > 1:
@@ -40,7 +39,6 @@ class ManageFols(object):
     def get_lemma(self, s):
         s_list = s.split(':')
         return s_list[0]
-
 
 
     def build_fol(self, table, dav):
@@ -194,7 +192,6 @@ class ManageFols(object):
                     fol.append(comp)
 
         return fol
-
 
 
     def build_LR_fol(self, table, dav):
@@ -470,7 +467,6 @@ class ManageFols(object):
         return fol
 
 
-
     def term_vect_to_gentle_term(self, term):
         # action case
         gentle_term = []
@@ -485,7 +481,6 @@ class ManageFols(object):
         else:
             gentle_term.append(str(term[0]) + '(' + str(term[1]) + ')')
         return gentle_term
-
 
 
     def fol_vect_to_gentle_fol(self, fol_vect):
@@ -563,13 +558,11 @@ class ManageFols(object):
         return gentle_table
 
 
-
     def check_implication(self, clause_vect):
         if len(clause_vect) == 3:
             if clause_vect[1][0] == '==>':
                 return True
         return False
-
 
 
     def check_neg(self, word):
@@ -588,7 +581,6 @@ class ManageFols(object):
             if str(synset.name()) in self.ISA_SYNS:
                 return True
         return False
-
 
 
     def check_isa(self, vect_fol, deps):
@@ -701,19 +693,6 @@ class ManageFols(object):
         isa_fol.append(rhs)
 
         return isa_fol
-
-
-    def createPKB(self, source, parser, language):
-
-        document = open(source, "r").read()
-        data = document.splitlines()
-
-        for element in data:
-            self.sentences.append(element)
-            deps = parser.get_deps(element)
-            Ren = Uniquelizer(self.VERBOSE, language)
-            m_deps = Ren.morph_deps(deps)
-            self.PKB.append(m_deps)
 
 
     def vect_LR_to_gentle_LR(self, LR_fol, deps, check_implication, check_isa):
@@ -858,9 +837,6 @@ class ManageFols(object):
             vect_LR_fol.append(rhs)
 
         return vect_LR_fol
-
-
-
 
 
     def seek_and_change_var(self, fol, origin_var, dest_var):
