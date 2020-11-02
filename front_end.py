@@ -58,8 +58,8 @@ l() >> [+STT("listen")]
 r() >> [+STT("reason")]
 
 # simulating sensors
-s1() >> [simulate_sensor("be", "time", "12.00")]
-s2() >> [simulate_sensor("be", "temperature", "25")]
+s1() >> [simulate_sensor("Be", "Time", "12.00")]
+s2() >> [simulate_sensor("Be", "Temperature", "25")]
 
 # test assertions
 t() >> [go(), w(), l()]

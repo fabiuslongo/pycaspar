@@ -1014,7 +1014,7 @@ class append_intent_params(Action):
         prep = self.get_arg(str(args[3]))
         prep_obj = self.get_arg(str(args[4]))
 
-        if prep == "in":
+        if prep == "In":
             location = prep_obj
         else:
 
@@ -1044,7 +1044,7 @@ class append_routine_params(Action):
         location = self.get_arg(str(args[6]))
         parameters_list = self.get_arg(str(args[7]))
 
-        if prep == "in":
+        if prep == "In":
             location = prep_obj
         else:
             if len(parameters_list) == 0:
