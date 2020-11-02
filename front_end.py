@@ -24,10 +24,10 @@ c5() >> [+STT("When an American sells weapons to a hostile nation, that American
 
 # open issues
 
-# testing disambiguation: He likes to eat fresh basses, He likes to play the bass
+# testing disambiguation: He likes to eat a river bass, He likes to play the bass
 
 # relcl
-# I just want a simple way to get my discount -----> unresolved!
+# I just want a simple way to get my discount -----> unsolved!
 # I lived the experience THAT you told to me: Yes! --- I lived the experience WHICH you told to me: Yes!
 # I lived the experience THAT you told me: No! --- I lived the experience WHICH you told me: No!
 # I saw the man that you love: Yes! --- I saw the man you love: No!

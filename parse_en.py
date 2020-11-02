@@ -15,7 +15,7 @@ DIS_NOUN = config.get('DISAMBIGUATION', 'DIS_NOUN').split(", ")
 DIS_ADJ = config.get('DISAMBIGUATION', 'DIS_ADJ').split(", ")
 DIS_ADV = config.get('DISAMBIGUATION', 'DIS_ADV').split(", ")
 DIS_EXCEPTIONS = config.get('DISAMBIGUATION', 'DIS_EXCEPTIONS').split(", ")
-
+DIS_METRIC_COMPARISON = config.get('DISAMBIGUATION', 'DIS_METRIC_COMPARISON')
 
 
 
@@ -1505,23 +1505,21 @@ class Parse(object):
 
                 proper_syn = ""
                 proper_syn_sim = 0
-                proper_example = ""
+                proper_definition = ""
+                source = ""
 
                 for synset in syns:
 
-                    # first valorization in case of empty examples
-                    if proper_syn == "":
-                        proper_syn = synset.name()
-
                     # Checking vect distance from glosses
-                    if len(synset.examples()) == 0:
+                    if DIS_METRIC_COMPARISON == "GLOSS" or len(synset.examples()) == 0:
                         doc2 = nlp(synset.definition())
                         sim = doc.similarity(doc2)
 
                         if sim > proper_syn_sim:
                             proper_syn_sim = sim
-                            proper_syn = str(synset.name())
-                            proper_example = synset.definition()
+                            proper_syn = synset.name()
+                            proper_definition = synset.definition()
+                            source = "GLOSS"
                     else:
 
                         # Checking vect distances from examples
@@ -1531,15 +1529,18 @@ class Parse(object):
 
                             if sim > proper_syn_sim:
                                 proper_syn_sim = sim
-                                proper_syn = str(synset.name())
-                                proper_example = example
+                                proper_syn = synset.name()
+                                proper_definition = synset.definition()
+                                source = "EXAMPLES"
 
                 print("\nProper syn: ", proper_syn)
                 print("Max sim: ", proper_syn_sim)
-                print("Example: ", proper_example)
+                print("Gloss: ", proper_definition)
+                print("Source: ", source)
+
 
                 offset_dict[token.idx] = token.text + "0" + str(index) + ":" + token.tag_
-                offset_dict_lemmatized[token.idx] = proper_syn + "0" + str(index) + ":" + token.tag_
+                offset_dict_lemmatized[token.idx] = self.shrink(proper_syn) + "0" + str(index) + ":" + token.tag_
 
             else:
                 offset_dict[token.idx] = token.text+"0"+str(index)+":"+token.tag_
@@ -1609,14 +1610,25 @@ class Parse(object):
         return final_sent_changed
 
 
+    def shrink(self, word):
+        chunk_list = word.split("_")
+        sw = ""
+        for chunk in chunk_list:
+            sw = sw + chunk
+        return sw
+
+
+
 def main():
     VERBOSE = True
-    LEMMMATIZED = True
-
-    sentence = "The guy, John said, left early in the morning"
 
     parser = Parse(VERBOSE)
 
+    print(parser.shrink("ciao"))
+
+    """
+    LEMMMATIZED = True
+    sentence = "The guy, John said, left early in the morning"
     deps = parser.get_deps(sentence, LEMMMATIZED)
     parser.set_last_deps(deps)
     ner = parser.get_last_ner()
@@ -1626,6 +1638,7 @@ def main():
 
     MST = parser.create_MST(deps, 'e', 'x')
     print("\nMST: \n" + str(MST))
+    """
 
 
 

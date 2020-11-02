@@ -794,9 +794,9 @@ class new_clause(Action):
 
         start_time = time.time()
 
-        print("\n" + sentence)
+        print("\n", sentence)
         mf = parser.morph(sentence)
-        print("\nmorphed: " + sentence)
+        print("", mf)
 
         def_clause = expr(mf)
 
