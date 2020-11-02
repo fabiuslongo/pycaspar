@@ -357,7 +357,7 @@ class Parse(object):
                                 p[3] = davidsonian_found
 
                     if self.VERBOSE is True:
-                        print('--------- csubj ----------')
+                        print('--------- parataxis ----------')
                         print('pendings: ' + str(pendings))
                         print('pending_prep: ' + str(pending_prep))
                         print('preps: ' + str(preps))
@@ -1611,7 +1611,7 @@ def main():
     VERBOSE = True
     LEMMMATIZED = True
 
-    sentence = "Charlie is going out with Max or Lilly"
+    sentence = "The guy, John said, left early in the morning"
 
     parser = Parse(VERBOSE)
 

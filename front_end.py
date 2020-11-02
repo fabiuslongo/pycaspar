@@ -40,7 +40,7 @@ c5() >> [+STT("When an American sells weapons to a hostile nation, that American
 # What she bought me were these books
 
 # Query
-q() >> [+STT("Charlie is going out with Max or Lilly")]
+q() >> [+STT("Colonel West is a criminal")]
 
 
 
@@ -70,8 +70,8 @@ t() >> [go(), w(), l()]
 +STT("listen") / (WAKE("ON") & WAIT(W)) >> [+LISTEN("ON"), show_line("\nWaiting for knowledge...\n"), Timer(W).start]
 +STT("reason") / (WAKE("ON") & WAIT(W)) >> [+REASON("ON"), show_line("\nWaiting for query...\n"), Timer(W).start]
 
-+STT(X) / (WAKE("ON") & LISTEN("ON")) >> [parse_rules(X), parse_deps(), feed_mst(), -PROCESS_STORED_MST("OK"), Timer(W).start]
-+STT(X) / (WAKE("ON") & REASON("ON")) >> [parse_rules(X), parse_deps(), feed_mst(), -PROCESS_STORED_MST("OK"), Timer(W).start]
++STT(X) / (WAKE("ON") & LISTEN("ON")) >> [parse_rules(X), parse_deps(), feed_mst(), +PROCESS_STORED_MST("OK"), Timer(W).start]
++STT(X) / (WAKE("ON") & REASON("ON")) >> [parse_rules(X), parse_deps(), feed_mst(), +PROCESS_STORED_MST("OK"), Timer(W).start]
 
 
 # Query KB
