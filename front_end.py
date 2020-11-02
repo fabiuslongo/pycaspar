@@ -20,7 +20,7 @@ c1() >> [+STT("Cuba is an hostile nation")]
 c2() >> [+STT("Colonel West is American")]
 c3() >> [+STT("missiles are weapons")]
 c4() >> [+STT("Colonel West sells missiles to Cuba")]
-c5() >> [+STT("When an American sells weapons to a hostile nation, that American is a criminal")]
+c5() >> [+STT("When an American sells any weapons to a hostile nation, that American is a criminal")]
 
 # open issues
 

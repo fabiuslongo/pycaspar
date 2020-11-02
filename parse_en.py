@@ -1520,9 +1520,10 @@ class Parse(object):
                             proper_syn = synset.name()
                             proper_definition = synset.definition()
                             source = "GLOSS"
-                    else:
 
-                        # Checking vect distances from examples
+                    elif DIS_METRIC_COMPARISON == "EXAMPLES":
+
+                        # Checking vect distances from examples (wether existing)
                         for example in synset.examples():
                             doc2 = nlp(example)
                             sim = doc.similarity(doc2)
@@ -1532,6 +1533,28 @@ class Parse(object):
                                 proper_syn = synset.name()
                                 proper_definition = synset.definition()
                                 source = "EXAMPLES"
+
+                    else:
+
+                        # Checking best vect distances between gloss and examples
+                        for example in synset.examples():
+                            doc2 = nlp(example)
+                            sim1 = doc.similarity(doc2)
+
+                            if sim1 > proper_syn_sim:
+                                proper_syn_sim = sim1
+                                proper_syn = synset.name()
+                                proper_definition = synset.definition()
+                                source = "BEST-example"
+
+                        doc2 = nlp(synset.definition())
+                        sim2 = doc.similarity(doc2)
+
+                        if sim2 > proper_syn_sim:
+                            proper_syn_sim = sim2
+                            proper_syn = synset.name()
+                            proper_definition = synset.definition()
+                            source = "BEST-gloss"
 
                 print("\nProper syn: ", proper_syn)
                 print("Max sim: ", proper_syn_sim)
