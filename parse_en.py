@@ -1649,9 +1649,9 @@ def main():
 
     print(parser.shrink("ciao"))
 
-    """
+
     LEMMMATIZED = True
-    sentence = "The guy, John said, left early in the morning"
+    sentence = "Colonel West doesn't sell missiles to Nono"
     deps = parser.get_deps(sentence, LEMMMATIZED)
     parser.set_last_deps(deps)
     ner = parser.get_last_ner()
@@ -1659,6 +1659,7 @@ def main():
 
     print("\n" + str(deps))
 
+    """
     MST = parser.create_MST(deps, 'e', 'x')
     print("\nMST: \n" + str(MST))
     """
