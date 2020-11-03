@@ -87,9 +87,10 @@ parse_deps() / (MST_ACT(X, D, Y, Z) & MST_VAR(W, K) & DEP("relcl", K, X)) >> [sh
 parse_deps() / (DEP("relcl", X, Y) & MST_VAR(W, X) & MST_ACT(T, D, U, W)) >> [show_line("\nprocessing relcl as nsubj..."), -DEP("relcl", X, Y), create_MST_ACT_SUBJ(Y, W), parse_deps()]
 
 # clausal modifiers of noun
-parse_deps() / (MST_ACT(V, D, X, Y) & MST_VAR(Y, K) & DEP("acl", K, U)) >> [show_line("\nprocessing acl as nsubj..."), -DEP("acl", K, U), create_MST_ACT_SUBJ(U, Y), parse_deps()]
+parse_deps() / (MST_ACT(V, D, X, Y) & MST_VAR(Y, K) & DEP("acl", K, U)) >> [show_line("\nprocessing acl as nsubj pass..."), -DEP("acl", K, U), create_MST_ACT_SUBJ(U, Y), parse_deps()]
+parse_deps() / (MST_ACT(V, D, X, Y) & MST_VAR(X, K) & DEP("acl", K, U)) >> [show_line("\nprocessing acl as nsubj..."), -DEP("acl", K, U), create_MST_ACT_SUBJ(U, X), parse_deps()]
 
-# conjuncts
+
 parse_deps() / (MST_ACT(V, D, S, O) & DEP("conj", V, U)) >> [show_line("\nprocessing action related conj.."), -DEP("conj", V, U), +MST_BIND(V, U), parse_deps()]
 parse_deps() / (MST_ACT(V, E, X, Y) & MST_ACT(U, D, S, O) & MST_COND(E) & MST_BIND(V, U)) >> [show_line("\nupdating CONDS +", D), -MST_BIND(V, U), +MST_COND(D), parse_deps()]
 parse_deps() / (MST_ACT(V, D, S, O) & MST_BIND(V, U)) >> [show_line("\ngenerating new action from bind: ", U), -MST_BIND(V, U), create_MST_ACT_SUBJ(U, S), parse_deps()]
@@ -111,7 +112,6 @@ parse_deps() / (MST_PREP(X, Y, Z) & MST_VAR(Z, '?')) >> [show_line("\nchanging u
 
 parse_deps() / DEP("ROOT", X, X) >> [show_line("\nremoving ROOT..."), -DEP("ROOT", X, X), parse_deps()]
 parse_deps() / DEP(Z, X, Y) >> [show_line("\nremoving ", Z), -DEP(Z, X, Y), parse_deps()]
-
 
 
 # Feeding parser's MST components section
