@@ -52,7 +52,7 @@ gnd_actions() / (ACTION(I, V, D, X, Y) & ADJ(I, Y, K) & GND(I, Y, M)) >> [show_l
 # prep is turned into a ground
 gnd_actions() / (ACTION(I, V, D, X, Y) & PREP(I, Y, L, O) & no_dav(Y)) >> [show_line("\nact obj not ready to be grounded (prep)..."), prep_to_gnd(), gnd_actions()]
 # applying grounds to actions object
-gnd_actions() / (ACTION(I, V, D, X, Y) & GND(I, Y, M)) >> [show_line("\ngrounds to actions object: ", M), -ACTION(I, V, D, X, Y), -GND(I, Y, M), ground_obj_act(I, V, D, X, Y, M), gnd_actions()]
+gnd_actions() / (ACTION(I, V, D, X, Y) & GND(I, Y, M)) >> [show_line("\ngrounds to actions object: ", M), -ACTION(I, V, D, X, Y), ground_obj_act(I, V, D, X, Y, M), gnd_actions()]
 gnd_actions() / (ACTION(I, V, D, X, Y) & ADJ(I, Y, M)) >> [show_line("\n", M, " as object of ", V), -ACTION(I, V, D, X, Y), -ADJ(I, Y, M), ground_obj_act(I, V, D, X, Y, M), gnd_actions()]
 gnd_actions() >> [show_line("\ngrounding actions done.")]
 
