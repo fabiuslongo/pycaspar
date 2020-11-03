@@ -10,12 +10,16 @@ config = configparser.ConfigParser()
 config.read('config.ini')
 
 DIS_ACTIVE = config.getboolean('DISAMBIGUATION', 'DIS_ACTIVE')
-DIS_VERB = config.get('DISAMBIGUATION', 'DIS_VERB').split(", ")
-DIS_NOUN = config.get('DISAMBIGUATION', 'DIS_NOUN').split(", ")
-DIS_ADJ = config.get('DISAMBIGUATION', 'DIS_ADJ').split(", ")
-DIS_ADV = config.get('DISAMBIGUATION', 'DIS_ADV').split(", ")
+DIS_VERB = config.get('DISAMBIGUATION', 'DIS_POS_VERB').split(", ")
+DIS_NOUN = config.get('DISAMBIGUATION', 'DIS_POS_NOUN').split(", ")
+DIS_ADJ = config.get('DISAMBIGUATION', 'DIS_POS_ADJ').split(", ")
+DIS_ADV = config.get('DISAMBIGUATION', 'DIS_POS_ADV').split(", ")
 DIS_EXCEPTIONS = config.get('DISAMBIGUATION', 'DIS_EXCEPTIONS').split(", ")
 DIS_METRIC_COMPARISON = config.get('DISAMBIGUATION', 'DIS_METRIC_COMPARISON')
+
+GMC_ACTIVE = config.getboolean('GROUNDED_MEANING_CONTEXT', 'GMC_ACTIVE')
+GMC_POS = config.get('GROUNDED_MEANING_CONTEXT', 'GMC_POS').split(", ")
+
 
 
 
@@ -69,6 +73,10 @@ class Parse(object):
 
         # Macro Semantic Table
         self.MST = [[], [], [], [], [], []]
+
+        # GMG
+        self.GMC = {}
+
 
 
     def feed_MST(self, component, index):
@@ -1458,6 +1466,7 @@ class Parse(object):
         return enc_deps
 
 
+
     def get_deps(self, input_text, LEMMATIZED):
 
         nlp = self.get_nlp_engine()
@@ -1487,9 +1496,19 @@ class Parse(object):
         for token in reversed(doc):
             index = counter[token.text]
 
-            print("\nToken in exam: ", token.text)
+            print("\nlemma in exam: ", token.lemma_)
 
-            if DIS_ACTIVE and (token.tag_ in DIS_VERB or token.tag_ in DIS_NOUN or token.tag_ in DIS_ADJ or token.tag_ in DIS_ADV) and token.text not in DIS_EXCEPTIONS:
+            # check for presence in Grounded Meaning Context
+            if GMC_ACTIVE is True and token.tag_ in GMC_POS and token.lemma_ in self.GMC:
+
+                offset_dict[token.idx] = token.text + "0" + str(index) + ":" + token.tag_
+                shrinked_proper_syn = self.GMC[token.lemma_]
+                offset_dict_lemmatized[token.idx] = shrinked_proper_syn + "0" + str(index) + ":" + token.tag_
+
+                print("\n<--------------- Getting from GMC: "+token.text+" ("+shrinked_proper_syn+")")
+
+
+            elif DIS_ACTIVE and (token.tag_ in DIS_VERB or token.tag_ in DIS_NOUN or token.tag_ in DIS_ADJ or token.tag_ in DIS_ADV) and token.lemma_ not in DIS_EXCEPTIONS:
 
                 if token.tag_ in DIS_VERB:
                     pos = wordnet.VERB
@@ -1563,7 +1582,12 @@ class Parse(object):
 
 
                 offset_dict[token.idx] = token.text + "0" + str(index) + ":" + token.tag_
-                offset_dict_lemmatized[token.idx] = self.shrink(proper_syn) + "0" + str(index) + ":" + token.tag_
+
+                shrinked_proper_syn = self.shrink(proper_syn)
+                self.GMC[token.lemma_] = shrinked_proper_syn
+                print("\n--------------> Storing in GCM: "+token.lemma_+" ("+shrinked_proper_syn+")")
+
+                offset_dict_lemmatized[token.idx] = shrinked_proper_syn + "0" + str(index) + ":" + token.tag_
 
             else:
                 offset_dict[token.idx] = token.text+"0"+str(index)+":"+token.tag_
