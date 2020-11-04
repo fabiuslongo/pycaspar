@@ -275,14 +275,21 @@ class preprocess_clause(Action):
         MST = parser.get_last_MST()
         print("\nMST: \n" + str(MST))
         print("\nGMC: \n" + str(parser.GMC))
+        print("\nREV_GMC: \n" + str(parser.REV_GMC))
+        print("\nLCD: \n" + str(parser.LCD))
+
 
         # MST varlist correction on cases of adj-obj
-        if OBJ_JJ_TO_NOUN:
+        if OBJ_JJ_TO_NOUN is True:
             for v in MST[1]:
                 if self.get_pos(v[1]) in ['JJ', 'JJR', 'JJS']:
                     old_value = v[1]
                     new_value = self.get_lemma(v[1]) + ":NNP"
                     v[1] = new_value
+
+                    new_value_clean = parser.get_lemma(new_value.lower())[:-2]
+                    print("\nadj-obj correction...", new_value_clean)
+                    parser.LCD[parser.REV_GMC[new_value_clean]] = new_value_clean
 
                     # binds correction
                     for b in MST[3]:

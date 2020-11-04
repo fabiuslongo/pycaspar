@@ -77,6 +77,12 @@ class Parse(object):
         # GMG
         self.GMC = {}
 
+        # reversed GMG
+        self.REV_GMC = {}
+
+        # Lemmas correction dictionary
+        self.LCD = {}
+
 
 
     def feed_MST(self, component, index):
@@ -127,9 +133,9 @@ class Parse(object):
     def get_nlp_engine(self):
         return self.nlp
 
-
-    # Only for testing porpuses
     """
+    # Only for testing porpuses
+    
     def create_MST(self, deps, dav, var):
 
         index_args_counter = 0
@@ -1399,7 +1405,7 @@ class Parse(object):
         TABLE.append(cond)
 
         return TABLE
-    """
+   
 
     def get_first_token(self, s):
         s_list = s.split("_")
@@ -1413,7 +1419,7 @@ class Parse(object):
             return s_list[len(s_list)-1]
         else:
             return s_list[0]
-
+    """
 
     def get_pos(self, s):
         s_list = s.split(':')
@@ -1610,13 +1616,27 @@ class Parse(object):
 
                 shrinked_proper_syn = self.shrink(proper_syn)
                 self.GMC[token.lemma_] = shrinked_proper_syn
-                print("\n--------------> Storing in GCM: "+token.lemma_+" ("+shrinked_proper_syn+")")
 
+                self.REV_GMC[shrinked_proper_syn] = token.lemma_
+
+                # taking in account of possible past adj-obj corrections
+                lemma = str(token.lemma_).lower()
+                if lemma in self.LCD:
+                    shrinked_proper_syn = self.LCD[lemma]
+
+                print("\n--------------> Storing in GCM: "+token.lemma_+" ("+shrinked_proper_syn+")")
                 offset_dict_lemmatized[token.idx] = shrinked_proper_syn + "0" + str(index) + ":" + token.tag_
 
             else:
+
+                lemma = str(token.lemma_).lower()
+
+                # taking in account of possible past adj-obj corrections
+                if lemma in self.LCD:
+                    lemma = self.LCD[lemma]
+
                 offset_dict[token.idx] = token.text+"0"+str(index)+":"+token.tag_
-                offset_dict_lemmatized[token.idx] = token.lemma_+"0"+str(index)+":"+token.tag_
+                offset_dict_lemmatized[token.idx] = lemma+"0"+str(index)+":"+token.tag_
 
             counter[token.text] = index - 1
 
