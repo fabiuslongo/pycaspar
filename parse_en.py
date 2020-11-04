@@ -1498,7 +1498,7 @@ class Parse(object):
 
             print("\nlemma in exam: ", token.lemma_)
 
-            # check for presence in Grounded Meaning Context
+            # check for presence in Grounded Meaning Context (GMC)
             if GMC_ACTIVE is True and token.tag_ in GMC_POS and token.lemma_ in self.GMC:
 
                 offset_dict[token.idx] = token.text + "0" + str(index) + ":" + token.tag_
@@ -1553,7 +1553,7 @@ class Parse(object):
                                 proper_definition = synset.definition()
                                 source = "EXAMPLES"
 
-                    else:
+                    elif DIS_METRIC_COMPARISON == "BEST":
 
                         # Checking best vect distances between gloss and examples
                         for example in synset.examples():
@@ -1574,6 +1574,31 @@ class Parse(object):
                             proper_syn = synset.name()
                             proper_definition = synset.definition()
                             source = "BEST-gloss"
+
+                    else:
+
+                        # COMBINED = average between doc2vect gloss and examples
+                        actual_sim1 = 0
+                        source = "COMBINED"
+
+                        for example in synset.examples():
+                            doc2 = nlp(example)
+                            sim1 = doc.similarity(doc2)
+
+                            if sim1 > actual_sim1:
+                                actual_sim1 = sim1
+
+                        doc2 = nlp(synset.definition())
+                        sim2 = doc.similarity(doc2)
+                        average = (actual_sim1 + sim2) / 2
+                        print("actual_sim1: ", actual_sim1)
+                        print("sim2: ", sim2)
+                        print("average: ", average)
+
+                        if average > proper_syn_sim:
+                            proper_syn_sim = average
+                            proper_syn = synset.name()
+                            proper_definition = synset.definition()
 
                 print("\nProper syn: ", proper_syn)
                 print("Max sim: ", proper_syn_sim)
