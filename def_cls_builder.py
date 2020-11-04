@@ -78,7 +78,8 @@ finalize_clause() / (LEFT_CLAUSE(X) & CLAUSE("LEFT", Y)) >> [show_line("\nleft c
 finalize_gnd() / (GND(I, X, L) & CLAUSE(I, Y)) >> [show_line("\nretract unuseful grounds...", L), -GND(I, X, L), finalize_gnd()]
 finalize_gnd() / (PREP(I, D, L, O) & CLAUSE(I, Y)) >> [show_line("\nretract unuseful preps...", L), -PREP(I, D, L, O), finalize_gnd()]
 finalize_gnd() / REMAIN(I, K) >> [show_line("\nturning remain in half clause..."), -REMAIN(I, K), +CLAUSE(I, K), finalize_gnd()]
-finalize_gnd() / GND(I, X, L) >> [show_line("\ncreating remain...", L), -GND(I, X, L), create_remain(I, X, L), finalize_gnd()]
+finalize_gnd() / GND(I, X, L) >> [show_line("\ncreating remain gnd...", L), -GND(I, X, L), create_remain(I, X, L), finalize_gnd()]
+finalize_gnd() / ADJ(I, X, L) >> [show_line("\nretract unuseful adj...", L), -ADJ(I, X, L), finalize_gnd()]
 finalize_gnd() >> [show_line("\nremains finalization done.")]
 
 # creating merged definite clauses driven by subj-obj

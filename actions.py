@@ -31,6 +31,8 @@ INCLUDE_NOUNS_POS = config.getboolean('POS', 'INCLUDE_NOUNS_POS')
 INCLUDE_ADJ_POS = config.getboolean('POS', 'INCLUDE_ADJ_POS')
 INCLUDE_PRP_POS = config.getboolean('POS', 'INCLUDE_PRP_POS')
 INCLUDE_ADV_POS = config.getboolean('POS', 'INCLUDE_ADV_POS')
+OBJ_JJ_TO_NOUN = config.getboolean('POS', 'OBJ_JJ_TO_NOUN')
+
 GEN_PREP = config.getboolean('GEN', 'GEN_PREP')
 GEN_ADJ = config.getboolean('GEN', 'GEN_ADJ')
 GEN_ADV = config.getboolean('GEN', 'GEN_ADV')
@@ -272,16 +274,27 @@ class preprocess_clause(Action):
 
         MST = parser.get_last_MST()
         print("\nMST: \n" + str(MST))
+        print("\nGMC: \n" + str(parser.GMC))
+        print("\nREV_GMC: \n" + str(parser.REV_GMC))
+        print("\nLCD: \n" + str(parser.LCD))
+
 
         # MST varlist correction on cases of adj-obj
-        for v in MST[1]:
-            if self.get_pos(v[1]) in ['JJ', 'JJR', 'JJS']:
-                old_value = v[1]
-                new_value = self.get_lemma(v[1]) + ":NNP"
-                v[1] = new_value
-                for b in MST[3]:
-                    if b[0] == old_value:
-                        b[0] = new_value
+        if OBJ_JJ_TO_NOUN is True:
+            for v in MST[1]:
+                if self.get_pos(v[1]) in ['JJ', 'JJR', 'JJS']:
+                    old_value = v[1]
+                    new_value = self.get_lemma(v[1]) + ":NNP"
+                    v[1] = new_value
+
+                    new_value_clean = parser.get_lemma(new_value.lower())[:-2]
+                    print("\nadj-obj correction...", new_value_clean)
+                    parser.LCD[parser.REV_GMC[new_value_clean]] = new_value_clean
+
+                    # binds correction
+                    for b in MST[3]:
+                        if b[0] == old_value:
+                            b[0] = new_value
 
         m = ManageFols(VERBOSE, LANGUAGE)
         vect_LR_fol = m.build_LR_fol(MST, 'e')
