@@ -457,7 +457,7 @@ Where the gloss of the synset "Bass.n.07" is:"the member with the lowest range o
 
 ---------------
 
-In the scope of a distinct session, during a normal converasation, it it most likely that words with same
-lemmas are considered to have the same meaning. Since slight differences in the POS classification and/or differences 
-in the choice of the synsets might lead also to unsuccessful reasoning, by setting GMC_ACTIVE = true in the section
-GROUNDED_MEANING_CONTEXT, it is possible to set all labels with the same lemma to the first synset value encountered of them.
+In the scope of a distinct session, during a normal converasation, it is most likely that words with same
+lemmas are considered to have the same meaning. Since slight differences in the POS classification and/or synset choices might
+ lead also to unsuccessful reasoning, by setting GMC_ACTIVE = true in the section GROUNDED_MEANING_CONTEXT, it is possible
+  to set all labels with the same lemma to the first synset value encountered of them.
