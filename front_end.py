@@ -24,7 +24,7 @@ c5() >> [+STT("When an American sells weapons to a hostile nation, that American
 
 # open issues
 
-# testing disambiguation: He likes to eat a river bass, He likes to play the bass
+# testing disambiguation: He likes to eat bass, He likes to play the bass
 
 # relcl
 # I just want a simple way to get my discount -----> unsolved!

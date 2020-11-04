@@ -425,13 +425,39 @@ Result: False
 
 Result:  {v_219: v_129, v_220: x2, v_280: v_216, v_281: v_217, v_282: v_218, v_366: v_277, v_367: v_278, v_368: v_279}
 ```
-Above are showed both results of Nominal Reasoning by the Backward-Chaining argorithm and Nested Reasoning.
+Above are showen both results of Nominal Reasoning by the Backward-Chaining argorithm and Nested Reasoning.
 
 
+### Disambiguation
+
+---------------
+
+In order to obtain a disambiguation between labels containing the same lemmas, depending on the context of
+the sentence, instead of the lemma it is possible to encode labels with synsets by changing the value of DIS_ACTIVE in the
+DISAMBIGUATION section of config.ini. It is also possible to specify the Parts-Of-Speech whom will be encoded. Such
+encoding take in account of the vect2doc distance between the sentence in exam and the text fields within 
+ each synset containing the words in the sentence.
+
+For instance, considering the following sentences and their encoding:
+
+* He likes to eat a bass
+```sh
+> Like.v.05:VBZ_Feed.v.06:VB(He:PRP(x1), Sea_bass.n.01:NN(x2))
+```
+The synset "Sea_bass.n.01" has "the lean flesh of a saltwater fish of the family Serranidae" as gloss
+
+* He likes to play the bass
+```sh
+> Wish.v.02:VBZ_Play.v.18:VB(He:PRP(x1), Bass.n.07:NN(x2))
+```
+The synset "Bass.n.07" has "the member with the lowest range of a family of musical instruments" as gloss
 
 
+### Grounded Meaning Context
 
+---------------
 
-
-
-
+In the scope of a distinct session, during a normal converasation, it it most likely that words with same
+lemmas are considered to have the same meaning. Since slight differences in the POS classification and/or differences 
+in the choice of the synsets might lead also to unsuccessful reasoning, by setting GMC_ACTIVE = true in the section
+GROUNDED_MEANING_CONTEXT, it is possible to set all labels with the same lemma to the first synset value encountered of them.

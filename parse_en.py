@@ -1597,9 +1597,6 @@ class Parse(object):
                         doc2 = nlp(synset.definition())
                         sim2 = doc.similarity(doc2)
                         average = (actual_sim1 + sim2) / 2
-                        print("actual_sim1: ", actual_sim1)
-                        print("sim2: ", sim2)
-                        print("average: ", average)
 
                         if average > proper_syn_sim:
                             proper_syn_sim = average
@@ -1716,11 +1713,8 @@ def main():
 
     parser = Parse(VERBOSE)
 
-    print(parser.shrink("ciao"))
-
-
     LEMMMATIZED = True
-    sentence = "Colonel West doesn't sell missiles to Nono"
+    sentence = "The world is yours"
     deps = parser.get_deps(sentence, LEMMMATIZED)
     parser.set_last_deps(deps)
     ner = parser.get_last_ner()
