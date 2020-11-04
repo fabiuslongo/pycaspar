@@ -444,13 +444,13 @@ For instance, considering the following sentences and their encoding:
 ```sh
 > Like.v.05:VBZ_Feed.v.06:VB(He:PRP(x1), Sea_bass.n.01:NN(x2))
 ```
-The synset "Sea_bass.n.01" has "the lean flesh of a saltwater fish of the family Serranidae" as gloss
+Where the gloss of the synset "Sea_bass.n.01" is: "the lean flesh of a saltwater fish of the family Serranidae"
 
 * He likes to play the bass
 ```sh
 > Wish.v.02:VBZ_Play.v.18:VB(He:PRP(x1), Bass.n.07:NN(x2))
 ```
-The synset "Bass.n.07" has "the member with the lowest range of a family of musical instruments" as gloss
+Where the gloss of the synset "Bass.n.07" is:"the member with the lowest range of a family of musical instruments"
 
 
 ### Grounded Meaning Context
