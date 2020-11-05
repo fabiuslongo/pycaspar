@@ -10,16 +10,16 @@ config = configparser.ConfigParser()
 config.read('config.ini')
 
 DIS_ACTIVE = config.getboolean('DISAMBIGUATION', 'DIS_ACTIVE')
-DIS_VERB = config.get('DISAMBIGUATION', 'DIS_POS_VERB').split(", ")
-DIS_NOUN = config.get('DISAMBIGUATION', 'DIS_POS_NOUN').split(", ")
-DIS_ADJ = config.get('DISAMBIGUATION', 'DIS_POS_ADJ').split(", ")
-DIS_ADV = config.get('DISAMBIGUATION', 'DIS_POS_ADV').split(", ")
+DIS_VERB = config.get('DISAMBIGUATION', 'DIS_VERB').split(", ")
+DIS_NOUN = config.get('DISAMBIGUATION', 'DIS_NOUN').split(", ")
+DIS_ADJ = config.get('DISAMBIGUATION', 'DIS_ADJ').split(", ")
+DIS_ADV = config.get('DISAMBIGUATION', 'DIS_ADV').split(", ")
 DIS_EXCEPTIONS = config.get('DISAMBIGUATION', 'DIS_EXCEPTIONS').split(", ")
 DIS_METRIC_COMPARISON = config.get('DISAMBIGUATION', 'DIS_METRIC_COMPARISON')
-
 GMC_ACTIVE = config.getboolean('GROUNDED_MEANING_CONTEXT', 'GMC_ACTIVE')
 GMC_POS = config.get('GROUNDED_MEANING_CONTEXT', 'GMC_POS').split(", ")
 
+OBJ_JJ_TO_NOUN = config.getboolean('POS', 'OBJ_JJ_TO_NOUN')
 
 
 
@@ -74,11 +74,11 @@ class Parse(object):
         # Macro Semantic Table
         self.MST = [[], [], [], [], [], []]
 
-        # GMG
-        self.GMC = {}
+        # GMC support dictionary
+        self.GMC_SUPP = {}
 
-        # reversed GMG
-        self.REV_GMC = {}
+        # GMC support dictionary reversed
+        self.GMC_SUPP_REV = {}
 
         # Lemmas correction dictionary
         self.LCD = {}
@@ -1504,16 +1504,16 @@ class Parse(object):
 
             print("\nlemma in exam: ", token.lemma_)
 
-            # check for presence in Grounded Meaning Context (GMC)
-            if GMC_ACTIVE is True and token.tag_ in GMC_POS and token.lemma_ in self.GMC:
+            # check for presence in Grounded Meaning Context (GMC). In this case the choosen synset must be that in GMC, already found
+            if GMC_ACTIVE is True and token.tag_ in GMC_POS and token.lemma_ in self.GMC_SUPP:
 
                 offset_dict[token.idx] = token.text + "0" + str(index) + ":" + token.tag_
-                shrinked_proper_syn = self.GMC[token.lemma_]
+                shrinked_proper_syn = self.GMC_SUPP[token.lemma_]
                 offset_dict_lemmatized[token.idx] = shrinked_proper_syn + "0" + str(index) + ":" + token.tag_
 
                 print("\n<--------------- Getting from GMC: "+token.text+" ("+shrinked_proper_syn+")")
 
-
+            # Otherwise a proper synset must be inferred....
             elif DIS_ACTIVE and (token.tag_ in DIS_VERB or token.tag_ in DIS_NOUN or token.tag_ in DIS_ADJ or token.tag_ in DIS_ADV) and token.lemma_ not in DIS_EXCEPTIONS:
 
                 if token.tag_ in DIS_VERB:
@@ -1625,33 +1625,30 @@ class Parse(object):
                 print("Gloss: ", proper_definition)
                 print("Source: ", source)
 
-
-                offset_dict[token.idx] = token.text + "0" + str(index) + ":" + token.tag_
-
                 shrinked_proper_syn = self.shrink(proper_syn)
 
-                if GMC_ACTIVE is True and token.tag_ in GMC_POS and token.lemma_ in self.GMC:
-                    self.GMC[token.lemma_] = shrinked_proper_syn
-                    self.REV_GMC[shrinked_proper_syn] = token.lemma_
-                    print("\n--------------> Storing in GCM: "+token.lemma_+" ("+shrinked_proper_syn+")")
+                self.GMC_SUPP[token.lemma_] = shrinked_proper_syn
+                print("\n--------------> Storing in GCM: "+token.lemma_+" ("+shrinked_proper_syn+")")
+                self.GMC_SUPP_REV[shrinked_proper_syn] = token.lemma_
 
-
-                # taking in account of possible past adj-obj corrections
-                lemma = str(token.lemma_).lower()
-                if lemma in self.LCD:
-                    shrinked_proper_syn = self.LCD[lemma]
-                    print("\n<------------- Getting from LCD: "+shrinked_proper_syn+" ("+lemma+")")
-
+                if OBJ_JJ_TO_NOUN is True:
+                    # taking in account of possible past adj-obj corrections
+                    lemma = str(token.lemma_).lower()
+                    if lemma in self.LCD:
+                        shrinked_proper_syn = self.LCD[lemma]
+                        print("\n<------------- Getting from LCD: "+shrinked_proper_syn+" ("+lemma+")")
 
                 offset_dict_lemmatized[token.idx] = shrinked_proper_syn + "0" + str(index) + ":" + token.tag_
+                offset_dict[token.idx] = token.text + "0" + str(index) + ":" + token.tag_
 
             else:
 
                 lemma = str(token.lemma_).lower()
 
                 # taking in account of possible past adj-obj corrections
-                if lemma in self.LCD:
+                if OBJ_JJ_TO_NOUN is True and lemma in self.LCD:
                     lemma = self.LCD[lemma]
+                    print("\n<------------- Getting from LCD: ", lemma)
 
                 offset_dict[token.idx] = token.text+"0"+str(index)+":"+token.tag_
                 offset_dict_lemmatized[token.idx] = lemma+"0"+str(index)+":"+token.tag_

@@ -274,8 +274,8 @@ class preprocess_clause(Action):
 
         MST = parser.get_last_MST()
         print("\nMST: \n" + str(MST))
-        print("\nGMC: \n" + str(parser.GMC))
-        print("\nREV_GMC: \n" + str(parser.REV_GMC))
+        print("\nGMC_SUPP: \n" + str(parser.GMC_SUPP))
+        print("\nSUPP_SUPP_REV: \n" + str(parser.GMC_SUPP_REV))
         print("\nLCD: \n" + str(parser.LCD))
 
 
@@ -289,7 +289,10 @@ class preprocess_clause(Action):
 
                     new_value_clean = parser.get_lemma(new_value.lower())[:-2]
                     print("\nadj-obj correction...", new_value_clean)
-                    parser.LCD[parser.REV_GMC[new_value_clean]] = new_value_clean
+
+                    # checking if the lemma has a disambiguation
+                    if new_value_clean in parser.GMC_SUPP_REV:
+                        parser.LCD[parser.GMC_SUPP_REV[new_value_clean]] = new_value_clean
 
                     # binds correction
                     for b in MST[3]:
