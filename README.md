@@ -435,7 +435,7 @@ Above are showen both results of Nominal Reasoning by the Backward-Chaining argo
 In order to obtain a disambiguation between labels containing the same lemma, depending on the context of
 the sentence, instead of the lemma it is possible to encode labels with synsets by changing the value of DIS_ACTIVE in the
 DISAMBIGUATION section of config.ini. It is also possible to specify the Parts-Of-Speech whom will be encoded. Such
-encoding take in account of the vect2doc distance between the sentence in exam and the text fields within 
+encoding take in account of the vect2doc similarity, provided by SpaCy, between the sentence in exam and the text fields (gloss and examples) within 
  each synset containing the words in the sentence.
 
 For instance, considering the following sentences sharing the word "bass" and their encoding:
