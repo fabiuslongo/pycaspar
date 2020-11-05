@@ -35,7 +35,7 @@ This repository has been tested on Pycharm 2019.1.2 x64 with the following packa
 > python -m pip install parse
 ```
 
-### SpaCy
+### spaCy
 
 ---------------
 
