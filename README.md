@@ -428,7 +428,7 @@ Result:  {v_219: v_129, v_220: x2, v_280: v_216, v_281: v_217, v_282: v_218, v_3
 Above are showen both results of Nominal Reasoning by the Backward-Chaining argorithm and Nested Reasoning.
 
 
-### Disambiguation
+### Word Sense Disambiguation
 
 ---------------
 
