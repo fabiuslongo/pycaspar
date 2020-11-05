@@ -1534,6 +1534,8 @@ class Parse(object):
                 source = ""
 
                 for synset in syns:
+                    print("\nsynset: ", synset.name())
+                    print("#synset examples: ", len(synset.examples()))
 
                     # Checking vect distance from glosses
                     if DIS_METRIC_COMPARISON == "GLOSS" or len(synset.examples()) == 0:
@@ -1581,11 +1583,11 @@ class Parse(object):
                             proper_definition = synset.definition()
                             source = "BEST-gloss"
 
-                    else:
+                    elif DIS_METRIC_COMPARISON == "AVERAGE":
 
-                        # COMBINED = average between doc2vect gloss and examples
+                        # AVERAGE = average between doc2vect gloss and examples
                         actual_sim1 = 0
-                        source = "COMBINED"
+                        source = "AVERAGE"
 
                         for example in synset.examples():
                             doc2 = nlp(example)
@@ -1602,6 +1604,21 @@ class Parse(object):
                             proper_syn_sim = average
                             proper_syn = synset.name()
                             proper_definition = synset.definition()
+
+                    else:
+                        # COMBINED = similarity between doc2vect gloss+examples
+                        source = "COMBINED"
+
+                        for example in synset.examples():
+                            combined = str(synset.definition())+" "+example
+                            doc2 = nlp(combined)
+                            sim1 = doc.similarity(doc2)
+
+                            if sim1 > proper_syn_sim:
+                                proper_syn_sim = sim1
+                                proper_syn = synset.name()
+                                proper_definition = synset.definition()
+
 
                 print("\nProper syn: ", proper_syn)
                 print("Max sim: ", proper_syn_sim)
