@@ -263,8 +263,7 @@ def standardize_variables(sentence, dic=None):
             dic[sentence] = v
             return v
     else:
-        return Expr(sentence.op,
-                    *[standardize_variables(a, dic) for a in sentence.args])
+        return Expr(sentence.op, *[standardize_variables(a, dic) for a in sentence.args])
 
 
 standardize_variables.counter = itertools.count()
@@ -314,7 +313,7 @@ class FolKB(KB):
 
 def nested_tell_inner(KB, clause):
     """ Assert a clause and, when lhs(clause) is not null, also a set of implications where lhs is clause
-        and rhs a derived clause pruducted by produce_clauses accordingly to a specific knowledge base."""
+        and rhs a derived clause producted by produce_clauses accordingly to a specific knowledge base."""
     if str(clause).find("==>") == -1:
         derived = []
         KB.produce_clauses(clause, derived)
@@ -322,7 +321,8 @@ def nested_tell_inner(KB, clause):
             if unify(clause, derived_clause) is None:
                 new_clause = str(clause) + " ==> " + str(derived_clause)
                 KB.tell(expr(new_clause))
-    KB.tell(clause)
+    if clause not in KB.clauses:
+        KB.tell(clause)
 
 
 def expr_to_string(e):

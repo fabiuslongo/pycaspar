@@ -42,16 +42,24 @@ parse_deps() / (MST_ACT(X, D, Y, Z) & DEP("prep", X, K)) >> [show_line("\nproces
 parse_deps() / (MST_VAR(V, X) & DEP("compound", X, Y)) >> [show_line("\nprocessing compound..."), -DEP("compound", X, Y), +MST_COMP(X, Y), parse_deps()]
 
 # adjectival/possession/number/noun phrase as adverbial/appositional/quantifier modifiers
-parse_deps() / (MST_VAR(V, X) & DEP("amod", X, Y)) >> [show_line("\nprocessing amod..."), -DEP("amod", X, Y), +MST_BIND(X, Y), parse_deps()]
+parse_deps() / DEP("amod", X, Y) >> [show_line("\nprocessing amod..."), -DEP("amod", X, Y), +MST_BIND(X, Y), parse_deps()]
 parse_deps() / (MST_BIND(V, X) & DEP("amod", X, Y)) >> [show_line("\nprocessing bind related amod..."), -DEP("amod", X, Y), +MST_BIND(V, Y), parse_deps()]
 
-parse_deps() / (MST_VAR(V, X) & DEP("poss", X, Y)) >> [show_line("\nprocessing poss..."), -DEP("poss", X, Y), +MST_BIND(X, Y), parse_deps()]
+parse_deps() / DEP("poss", X, Y) >> [show_line("\nprocessing poss..."), -DEP("poss", X, Y), +MST_BIND(X, Y), parse_deps()]
 parse_deps() / (MST_BIND(V, X) & DEP("poss", X, Y)) >> [show_line("\nprocessing bind related poss..."), -DEP("poss", X, Y), +MST_BIND(V, Y), parse_deps()]
 
-parse_deps() / (MST_VAR(V, X) & DEP("nummod", X, Y)) >> [show_line("\nprocessing nummod..."), -DEP("nummod", X, Y), +MST_BIND(X, Y), parse_deps()]
-parse_deps() / (MST_VAR(V, X) & DEP("nmod", X, Y)) >> [show_line("\nprocessing nmod..."), -DEP("nmod", X, Y), +MST_BIND(X, Y), parse_deps()]
-parse_deps() / (MST_VAR(V, X) & DEP("appos", X, Y)) >> [show_line("\nprocessing appos..."), -DEP("appos", X, Y), +MST_BIND(X, Y), parse_deps()]
-parse_deps() / (MST_VAR(V, X) & DEP("quantmod", X, Y)) >> [show_line("\nprocessing quantmod..."), -DEP("quantmod", X, Y), +MST_BIND(X, Y), parse_deps()]
+parse_deps() / DEP("nummod", X, Y) >> [show_line("\nprocessing nummod..."), -DEP("nummod", X, Y), +MST_BIND(X, Y), parse_deps()]
+parse_deps() / (MST_BIND(V, X) & DEP("nummod", X, Y)) >> [show_line("\nprocessing bind related nummod..."), -DEP("nummod", X, Y), +MST_BIND(V, Y), parse_deps()]
+
+parse_deps() / DEP("nmod", X, Y) >> [show_line("\nprocessing nmod..."), -DEP("nmod", X, Y), +MST_BIND(X, Y), parse_deps()]
+parse_deps() / (MST_BIND(V, X) & DEP("nmod", X, Y)) >> [show_line("\nprocessing bind related nmod..."), -DEP("nmod", X, Y), +MST_BIND(V, Y), parse_deps()]
+
+parse_deps() / DEP("appos", X, Y) >> [show_line("\nprocessing appos..."), -DEP("appos", X, Y), +MST_BIND(X, Y), parse_deps()]
+parse_deps() / (MST_BIND(V, X) & DEP("appos", X, Y)) >> [show_line("\nprocessing bind related appos..."), -DEP("appos", X, Y), +MST_BIND(V, Y), parse_deps()]
+
+parse_deps() / DEP("quantmod", X, Y) >> [show_line("\nprocessing quantmod..."), -DEP("quantmod", X, Y), +MST_BIND(X, Y), parse_deps()]
+parse_deps() / (MST_BIND(V, X) & DEP("quantmod", X, Y)) >> [show_line("\nprocessing bind related quantmod..."), -DEP("quantmod", X, Y), +MST_BIND(V, Y), parse_deps()]
+
 
 # prepositional modifiers
 parse_deps() / (MST_VAR(V, X) & MST_BIND(X, Y) & DEP("prep", Y, K)) >> [show_line("\nprocessing bind prep..."), -DEP("prep", Y, K), create_MST_PREP(V, K), parse_deps()]
@@ -87,8 +95,9 @@ parse_deps() / (MST_ACT(X, D, Y, Z) & MST_VAR(W, K) & DEP("relcl", K, X)) >> [sh
 parse_deps() / (DEP("relcl", X, Y) & MST_VAR(W, X) & MST_ACT(T, D, U, W)) >> [show_line("\nprocessing relcl as nsubj..."), -DEP("relcl", X, Y), create_MST_ACT_SUBJ(Y, W), parse_deps()]
 
 # clausal modifiers of noun
-parse_deps() / (MST_ACT(V, D, X, Y) & MST_VAR(Y, K) & DEP("acl", K, U)) >> [show_line("\nprocessing acl as nsubj pass..."), -DEP("acl", K, U), create_MST_ACT_SUBJ(U, Y), parse_deps()]
-parse_deps() / (MST_ACT(V, D, X, Y) & MST_VAR(X, K) & DEP("acl", K, U)) >> [show_line("\nprocessing acl as nsubj..."), -DEP("acl", K, U), create_MST_ACT_SUBJ(U, X), parse_deps()]
+parse_deps() / (MST_ACT(V, D, X, Y) & MST_VAR(Y, K) & DEP("acl", K, U)) >> [show_line("\nprocessing acl as nsubj var pass..."), -DEP("acl", K, U), create_MST_ACT_SUBJ(U, Y), parse_deps()]
+parse_deps() / (MST_ACT(V, D, X, Y) & MST_VAR(X, K) & DEP("acl", K, U)) >> [show_line("\nprocessing acl as nsubj var..."), -DEP("acl", K, U), create_MST_ACT_SUBJ(U, X), parse_deps()]
+parse_deps() / DEP("acl", K, U) >> [show_line("\nprocessing acl as nsubj..."), -DEP("acl", K, U), create_MST_ACT(U, K), parse_deps()]
 
 
 parse_deps() / (MST_ACT(V, D, S, O) & DEP("conj", V, U)) >> [show_line("\nprocessing action related conj.."), -DEP("conj", V, U), +MST_BIND(V, U), parse_deps()]

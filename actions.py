@@ -635,13 +635,15 @@ class preprocess_clause(Action):
                         self.assert_belief(ACT_CROSS_VAR(str(id), v[2], lemma))
                         print("ACT_CROSS_VAR(" + str(id) + ")")
                     else:
-                        var_crossing.append(v[2])
+                        if v[2] != "__":
+                            var_crossing.append(v[2])
 
                     if v[3] in var_crossing:
                         self.assert_belief(ACT_CROSS_VAR(str(id), v[3], lemma))
                         print("ACT_CROSS_VAR(" + str(id) + ")")
                     else:
-                        var_crossing.append(v[3])
+                        if v[3] != "__":
+                            var_crossing.append(v[3])
 
                     if v[1] not in admissible_vars:
                         admissible_vars.append(v[1])
@@ -698,7 +700,7 @@ class preprocess_clause(Action):
                         self.assert_belief(ADJ(str(id), v[1], lemma))
                         print("ADJ(" + str(id) + ", " + v[1] + ", " + lemma + ")")
 
-            elif self.get_pos(v[0]) in ['RB', 'RBR', 'RBS']:
+            elif self.get_pos(v[0]) in ['RB', 'RBR', 'RBS', 'RP']:
 
                 if UNIQUE_ADV:
                     label = v[0]

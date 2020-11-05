@@ -1612,16 +1612,20 @@ class Parse(object):
                 offset_dict[token.idx] = token.text + "0" + str(index) + ":" + token.tag_
 
                 shrinked_proper_syn = self.shrink(proper_syn)
-                self.GMC[token.lemma_] = shrinked_proper_syn
 
-                self.REV_GMC[shrinked_proper_syn] = token.lemma_
+                if GMC_ACTIVE is True and token.tag_ in GMC_POS and token.lemma_ in self.GMC:
+                    self.GMC[token.lemma_] = shrinked_proper_syn
+                    self.REV_GMC[shrinked_proper_syn] = token.lemma_
+                    print("\n--------------> Storing in GCM: "+token.lemma_+" ("+shrinked_proper_syn+")")
+
 
                 # taking in account of possible past adj-obj corrections
                 lemma = str(token.lemma_).lower()
                 if lemma in self.LCD:
                     shrinked_proper_syn = self.LCD[lemma]
+                    print("\n<------------- Getting from LCD: "+shrinked_proper_syn+" ("+lemma+")")
 
-                print("\n--------------> Storing in GCM: "+token.lemma_+" ("+shrinked_proper_syn+")")
+
                 offset_dict_lemmatized[token.idx] = shrinked_proper_syn + "0" + str(index) + ":" + token.tag_
 
             else:

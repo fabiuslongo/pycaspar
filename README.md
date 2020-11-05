@@ -438,7 +438,7 @@ DISAMBIGUATION section of config.ini. It is also possible to specify the Parts-O
 encoding take in account of the vect2doc distance between the sentence in exam and the text fields within 
  each synset containing the words in the sentence.
 
-For instance, considering the following sentences and their encoding:
+For instance, considering the following sentences sharing the word "bass" and their encoding:
 
 * He likes to eat a bass
 ```sh
@@ -451,6 +451,39 @@ Where the gloss of the synset "Sea_bass.n.01" is: "the lean flesh of a saltwater
 > Wish.v.02:VBZ_Play.v.18:VB(He:PRP(x1), Bass.n.07:NN(x2))
 ```
 Where the gloss of the synset "Bass.n.07" is:"the member with the lowest range of a family of musical instruments"
+
+Another two examples sharing the word "bank", more in detail:
+
+* Three masked men stolen all cash money from the bank
+
+```sh
+> From_IN(Steal.v.01_VBD(Masked.s.02_JJ(Three_CD_Man.n.01_NNS(x1)), Cash.n.01_NN_Money.n.01_NN(x2)), Depository_financial_institution.n.01_NN(x3))
+```
+
+where (DIS_METRIC_COMPARISON = COMBINED):
+
+* steal.v.01: "take without the owner's consent"
+* masked.s.02: "having markings suggestive of a mask"
+* money.n.02: "wealth reckoned in terms of money"
+* cash.n.01: "money in the form of bills or coins"
+* **depository_financial_institution.n.01: "a financial institution that accepts deposits and channels the money into lending activities"**
+
+
+An the other sentence:
+
+* The boy leapt from the bank into the cold water
+
+```sh
+> Into_IN(From_IN(Jump.v.08_VBD(Boy.n.04_NN(x1), __), Bank.n.01_NN(x3)), Cold.a.01_JJ(Body_of_water.n.01_NN(x4)))
+```
+
+where (DIS_METRIC_COMPARISON = COMBINED):
+
+* boy.n.02: a friendly informal reference to a grown man
+* jump.v.08: jump down from an elevated point
+* **bank.n.01: sloping land (especially the slope beside a body of water)**
+* cold.a.01: having a low or inadequate temperature or feeling a sensation of coldness or having been made cold by e.g. ice or refrigeration
+* body_of_water.n.01: the part of the earth's surface covered with water (such as a river or lake or ocean)
 
 
 ### Grounded Meaning Context
