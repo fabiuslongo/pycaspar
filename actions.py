@@ -66,11 +66,9 @@ class produce_mod(Procedure): pass
 
 # Reactive procedures - routines
 class parse_routine(Procedure): pass
-
 class produce_conds(Procedure): pass
 class aggr_ent_conds(Procedure): pass
 class produce_mod_conds(Procedure): pass
-
 class produce_routine(Procedure): pass
 class aggr_ent_rt(Procedure): pass
 class produce_mod_rt(Procedure): pass
@@ -102,7 +100,6 @@ class REASON(Belief): pass
 class RETRACT(Belief): pass
 class IS_RULE(Belief): pass
 class WAIT(Belief): pass
-
 
 # domotic reactive routines
 class r1(Procedure): pass
@@ -1515,7 +1512,11 @@ class create_precross(Action):
 
         pn_label = self.get_par_number(verb_act_merged)
 
-        act_merged = prep_label + "(" + verb_act_merged[:-pn_label] + "(" + subj_act_merged + ", " + obj_act_merged + ")"
+        if pn_label > 0:
+            act_merged = prep_label + "(" + verb_act_merged[:-pn_label] + "(" + subj_act_merged + ", " + obj_act_merged + ")"
+        else:
+            act_merged = prep_label + "(" + verb_act_merged + "(" + subj_act_merged + ", " + obj_act_merged + ")"
+
         for i in range(pn_label):
             act_merged = act_merged + ")"
         act_merged = act_merged + ", " + prep_obj + ")"
