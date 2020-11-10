@@ -36,6 +36,7 @@ GEN_EXTRA = config.getboolean('GEN', 'GEN_EXTRA')
 GEN_EXTRA_POS = config.get('GEN', 'EXTRA_GEN_POS').split(", ")
 
 parser = Parse(VERBOSE)
+m = ManageFols(VERBOSE, LANGUAGE)
 
 # Clauses Knowledge Base instantion
 kb_fol = FolKB([])
@@ -101,7 +102,7 @@ class REASON(Belief): pass
 class RETRACT(Belief): pass
 class IS_RULE(Belief): pass
 class WAIT(Belief): pass
-class PROCESS_STORED_MST(Reactor): pass
+
 
 # domotic reactive routines
 class r1(Procedure): pass
@@ -184,7 +185,7 @@ class MST_COMP(Belief): pass
 class MST_COND(Belief): pass
 class parse_deps(Procedure): pass
 class feed_mst(Procedure): pass
-
+class PROCESS_STORED_MST(Reactor): pass
 
 
 
@@ -231,9 +232,8 @@ class lemma_in_syn(ActiveBelief):
         synset = str(arg2).split("'")[1]
 
         pos = wordnet.VERB
-        language = "eng"
 
-        syns = wordnet.synsets(verb, pos=pos, lang=language)
+        syns = wordnet.synsets(verb, pos=pos, lang=LANGUAGE)
         for syn in syns:
             if syn.name() == synset:
                 return True
@@ -295,10 +295,13 @@ class preprocess_clause(Action):
                         if b[0] == old_value:
                             b[0] = new_value
 
-        m = ManageFols(VERBOSE, LANGUAGE)
+
         vect_LR_fol = m.build_LR_fol(MST, 'e')
 
         print("\nBefore dealing case:\n" + str(vect_LR_fol))
+        if len(vect_LR_fol) == 0:
+            print("\n --- IMPROPER VERBAL PHRASE COSTITUTION ---")
+            return
 
         if type == "NOMINAL":
             # NOMINAL CASE
@@ -339,7 +342,7 @@ class preprocess_clause(Action):
                     mods.append(v[0])
                 if self.get_pos(v[0]) == "IN" and GEN_PREP is True:
                     mods.append(v[0])
-                elif self.get_pos(v[0]) == "JJ" and GEN_ADJ is True:
+                elif self.get_pos(v[0]) in ['JJ', 'JJR', 'JJS'] and GEN_ADJ is True:
                     mods.append(v[0])
 
                 elif self.get_pos(v[0]) in ['RB', 'RBR', 'RBS']:
@@ -408,6 +411,7 @@ class preprocess_clause(Action):
         else:
             mods = []
             nomain_negs = []
+            main_neg_index = 0
             ent_root = self.get_ent_ROOT(deps)
             dav_act = self.get_dav_rule(dclause, ent_root)
             for v in dclause:
@@ -553,8 +557,7 @@ class preprocess_clause(Action):
             if i == 0:
                 lemma_nocount = total_lemma[i].split(':')[0][:-2] + ":" + total_lemma[i].split(':')[1]
             else:
-                lemma_nocount = total_lemma[i].split(':')[0][:-2] + ":" + total_lemma[i].split(':')[
-                    1] + "_" + lemma_nocount
+                lemma_nocount = total_lemma[i].split(':')[0][:-2] + ":" + total_lemma[i].split(':')[1] + "_" + lemma_nocount
         return lemma_nocount
 
     def process_fol(self, vect_fol, id, voc):
@@ -570,9 +573,7 @@ class preprocess_clause(Action):
         # prepositions
         for v in vect_fol:
             if len(v) == 3:
-
                 label = self.get_nocount_lemma(v[0])
-
                 if GEN_PREP is False or id == "LEFT":
                     if INCLUDE_PRP_POS:
                         lemma = label
@@ -603,10 +604,8 @@ class preprocess_clause(Action):
         for v in vect_fol:
             ACTION_ASSERTED = False
             if len(v) == 4:
-
                 label = self.get_nocount_lemma(v[0])
                 pos = self.get_pos(v[0])
-
                 if INCLUDE_ACT_POS:
                     lemma = label
                 else:
@@ -649,9 +648,7 @@ class preprocess_clause(Action):
         for v in vect_fol:
             if len(v) == 2:
                 if self.get_pos(v[0]) in ['NNP', 'NNPS', 'PRP', 'CD', 'NN', 'NNS', 'PRP', 'PRP$']:
-
                     label = self.get_nocount_lemma(v[0])
-
                     if INCLUDE_NOUNS_POS:
                         lemma = label
                     else:
@@ -664,9 +661,7 @@ class preprocess_clause(Action):
         # adjectives, adverbs
         for v in vect_fol:
             if self.get_pos(v[0]) in ['JJ', 'JJR', 'JJS']:
-
                 label = self.get_nocount_lemma(v[0])
-
                 if GEN_ADJ is False or id == "LEFT":
 
                     if INCLUDE_ADJ_POS:
@@ -811,7 +806,6 @@ class assert_command(Action):
         print(sentence)
 
         deps = parser.get_last_deps()
-
         MST = parser.get_last_MST()
 
         m = ManageFols(VERBOSE, LANGUAGE)
@@ -835,8 +829,6 @@ class assert_command(Action):
             self.process_routine(vect_LR_fol[2], id_routine)
         else:
             self.process(vect_LR_fol)
-
-
 
     def process_conditions(self, vect_fol, id_routine):
         dateTimeObj = datetime.datetime.now()
@@ -1101,14 +1093,6 @@ class simulate_sensor(Action):
         self.assert_belief(SENSOR(verb, subject, object))
 
 
-class NLP_Parser(object):
-    def __init__(self):
-        self.VERBOSE = False
-        self.parser = Parse(self.VERBOSE)
-
-    def get_parser(self):
-        return self.parser
-
 
 # ---------------------- Definite Clauses Builder section
 
@@ -1124,10 +1108,6 @@ class join_clauses(Action):
         print("clause2: ", clause2)
         print("verb: ", verb)
         print("common_var: ", common_var)
-
-        #new_clause = clause2.replace(common_var, clause1)
-
-
 
         match = SequenceMatcher(None, clause1, clause2).find_longest_match(0, len(clause1), 0, len(clause2))
         common = clause1[match.a: match.a + match.size]
