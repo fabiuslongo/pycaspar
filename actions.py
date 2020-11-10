@@ -20,11 +20,7 @@ dav = itertools.count(1)
 VERBOSE = config.getboolean('NL_TO_FOL', 'VERBOSE')
 LANGUAGE = config.get('NL_TO_FOL', 'LANGUAGE')
 ASSIGN_RULES_ADMITTED = config.getboolean('NL_TO_FOL', 'ASSIGN_RULES_ADMITTED')
-UNIQUE_NOUNS = config.getboolean('NL_TO_FOL', 'UNIQUE_NOUNS')
-UNIQUE_ACT = config.getboolean('NL_TO_FOL', 'UNIQUE_ACT')
-UNIQUE_ADJ = config.getboolean('NL_TO_FOL', 'UNIQUE_ADJ')
-UNIQUE_PRP = config.getboolean('NL_TO_FOL', 'UNIQUE_PRP')
-UNIQUE_ADV = config.getboolean('NL_TO_FOL', 'UNIQUE_ADV')
+
 WAIT_TIME = config.getint('AGENT', 'WAIT_TIME')
 INCLUDE_ACT_POS = config.getboolean('POS', 'INCLUDE_ACT_POS')
 INCLUDE_NOUNS_POS = config.getboolean('POS', 'INCLUDE_NOUNS_POS')
@@ -575,10 +571,7 @@ class preprocess_clause(Action):
         for v in vect_fol:
             if len(v) == 3:
 
-                if UNIQUE_PRP:
-                    label = v[0]
-                else:
-                    label = self.get_nocount_lemma(v[0])
+                label = self.get_nocount_lemma(v[0])
 
                 if GEN_PREP is False or id == "LEFT":
                     if INCLUDE_PRP_POS:
@@ -611,11 +604,8 @@ class preprocess_clause(Action):
             ACTION_ASSERTED = False
             if len(v) == 4:
 
-                if UNIQUE_ACT:
-                    label = v[0]
-                else:
-                    label = self.get_nocount_lemma(v[0])
-                    pos = self.get_pos(v[0])
+                label = self.get_nocount_lemma(v[0])
+                pos = self.get_pos(v[0])
 
                 if INCLUDE_ACT_POS:
                     lemma = label
@@ -659,10 +649,8 @@ class preprocess_clause(Action):
         for v in vect_fol:
             if len(v) == 2:
                 if self.get_pos(v[0]) in ['NNP', 'NNPS', 'PRP', 'CD', 'NN', 'NNS', 'PRP', 'PRP$']:
-                    if UNIQUE_NOUNS:
-                        label = v[0]
-                    else:
-                        label = self.get_nocount_lemma(v[0])
+
+                    label = self.get_nocount_lemma(v[0])
 
                     if INCLUDE_NOUNS_POS:
                         lemma = label
@@ -677,10 +665,7 @@ class preprocess_clause(Action):
         for v in vect_fol:
             if self.get_pos(v[0]) in ['JJ', 'JJR', 'JJS']:
 
-                if UNIQUE_ADJ:
-                    label = v[0]
-                else:
-                    label = self.get_nocount_lemma(v[0])
+                label = self.get_nocount_lemma(v[0])
 
                 if GEN_ADJ is False or id == "LEFT":
 
@@ -705,10 +690,7 @@ class preprocess_clause(Action):
 
             elif self.get_pos(v[0]) in ['RB', 'RBR', 'RBS', 'RP']:
 
-                if UNIQUE_ADV:
-                    label = v[0]
-                else:
-                    label = self.get_nocount_lemma(v[0])
+                label = self.get_nocount_lemma(v[0])
 
                 if GEN_ADV is False or id == "LEFT":
                     if INCLUDE_ADV_POS:

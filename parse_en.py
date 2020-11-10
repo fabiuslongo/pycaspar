@@ -1534,8 +1534,8 @@ class Parse(object):
                 source = ""
 
                 for synset in syns:
-                    print("\nsynset: ", synset.name())
-                    print("#synset examples: ", len(synset.examples()))
+                    #print("\nsynset: ", synset.name())
+                    #print("#synset examples: ", len(synset.examples()))
 
                     # Checking vect distance from glosses
                     if DIS_METRIC_COMPARISON == "GLOSS" or len(synset.examples()) == 0:
