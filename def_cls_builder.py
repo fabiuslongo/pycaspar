@@ -96,11 +96,15 @@ process_clause() / (DEF_CLAUSE(X) & LEFT_CLAUSE(Y)) >> [show_line("\nProcessing 
 process_clause() / (DEF_CLAUSE(X) & CLAUSE("LEFT", Y)) >> [show_line("\nProcessing definite definite clause WITH CLAUSE LEFT..."), -CLAUSE("LEFT", Y), process_clause()]
 process_clause() / CLAUSE("LEFT", Y) >> [show_line("\nRetracting unuseful LEFT clause..."), -CLAUSE("LEFT", Y), process_clause()]
 
+# Reasoning
 process_clause() / (DEF_CLAUSE(X) & REASON("ON") & IS_RULE("TRUE")) >> [show_line("\nReasoning...............\n"), -DEF_CLAUSE(X), -LISTEN('ON'), -IS_RULE("TRUE"), reason(X), process_clause()]
 process_clause() / (DEF_CLAUSE(X) & REASON("ON")) >> [show_line("\nReasoning...............\n"), -DEF_CLAUSE(X), -LISTEN('ON'), reason(X), process_clause()]
 
+# Retracting definite clause
 process_clause() / (DEF_CLAUSE(X) & LISTEN("ON") & RETRACT("ON")) >> [show_line("\nRetracting clause."), -DEF_CLAUSE(X), -RETRACT("ON"), retract_clause(X), process_clause()]
-process_clause() / (DEF_CLAUSE(X) & LISTEN("ON")) >> [show_line("\nAdding definite clause into Fol Kb."), -DEF_CLAUSE(X), new_clause(X), process_clause()]
+
+# Asserting definite clause
+process_clause() / (DEF_CLAUSE(X) & LISTEN("ON")) >> [show_line("\nAsserting definite clause into Fol Kb."), -DEF_CLAUSE(X), new_clause(X), process_clause()]
 
 
 

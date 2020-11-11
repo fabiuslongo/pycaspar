@@ -80,7 +80,7 @@ t() >> [go(), w(), l()]
 # Nominal clauses assertion --> single: FULL", "ONE" ---  multiple: "BASE", "MORE"
 +PROCESS_STORED_MST("OK") / (WAKE("ON") & LISTEN("ON")) >> [show_line("\nGot it.\n"), +GEN_MASK("BASE"), new_def_clause("MORE", "NOMINAL"), process_rule()]
 # processing rules --> single: FULL", "ONE" ---  multiple: "BASE", "MORE"
-process_rule() / IS_RULE("TRUE") >> [show_line("\n------> rule detected!!!\n"), -IS_RULE("TRUE"), +GEN_MASK("BASE"), new_def_clause("MORE", "RULE")]
+process_rule() / IS_RULE("TRUE") >> [show_line("\n------> rule detected!\n"), -IS_RULE("TRUE"), +GEN_MASK("BASE"), new_def_clause("MORE", "RULE")]
 
 # Generalization assertion
 new_def_clause(M, T) / GEN_MASK("BASE") >> [-GEN_MASK("BASE"), preprocess_clause("BASE", M, T), parse(), process_clause(), new_def_clause(M, T)]

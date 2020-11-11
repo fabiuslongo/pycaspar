@@ -1460,7 +1460,7 @@ class no_dav(ActiveBelief):
 
         var = str(x).split("'")[3]
         # Check for davidsonian
-        if var[0] == 'e':
+        if var[0] == 'e' or var[0] == 'd':
             return False
         else:
             return True
