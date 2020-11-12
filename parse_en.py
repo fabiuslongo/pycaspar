@@ -133,7 +133,7 @@ class Parse(object):
     def get_nlp_engine(self):
         return self.nlp
 
-    """
+
     # Only for testing porpuses
     
     def create_MST(self, deps, dav, var):
@@ -1419,7 +1419,7 @@ class Parse(object):
             return s_list[len(s_list)-1]
         else:
             return s_list[0]
-    """
+
 
     def get_pos(self, s):
         s_list = s.split(':')
@@ -1732,7 +1732,7 @@ def main():
     parser = Parse(VERBOSE)
 
     LEMMMATIZED = True
-    sentence = "The world is yours"
+    sentence = "Dummy is a quality you think is important in a friend"
     deps = parser.get_deps(sentence, LEMMMATIZED)
     parser.set_last_deps(deps)
     ner = parser.get_last_ner()
@@ -1740,10 +1740,10 @@ def main():
 
     print("\n" + str(deps))
 
-    """
+
     MST = parser.create_MST(deps, 'e', 'x')
     print("\nMST: \n" + str(MST))
-    """
+
 
 
 
