@@ -193,11 +193,13 @@ class PROCESS_STORED_MST(Reactor): pass
 
 
 class set_wait(Action):
+    """Set duration of the session from WAIT_TIME in config.ini [AGENT]"""
     def execute(self):
         self.assert_belief(WAIT(WAIT_TIME))
 
 
 class eval_cls(ActiveBelief):
+    """ActiveBelief for Beliefs KB and Clauses KB interaction"""
     def evaluate(self, arg1):
 
         utterance = str(arg1).split("'")[1]
@@ -223,6 +225,7 @@ class eval_cls(ActiveBelief):
 
 
 class lemma_in_syn(ActiveBelief):
+    """ActiveBelief for checking if a synset comprises a lemma"""
     def evaluate(self, arg1, arg2):
 
         verb = str(arg1).split("'")[3]
@@ -238,6 +241,7 @@ class lemma_in_syn(ActiveBelief):
 
 
 class preprocess_clause(Action):
+    """Producting beliefs to feed the Definite Clauses Builder"""
 
     def execute(self, *args):
         gen_mask = str(args[0]())
@@ -718,6 +722,7 @@ class preprocess_clause(Action):
 
 
 class retract_clause(Action):
+    """Retract a clause from the Clauses KB"""
 
     def execute(self, *args):
         sentence = args[0]()
@@ -731,6 +736,7 @@ class retract_clause(Action):
 
 
 class new_clause(Action):
+    """Assert a clause in the Clauses KB"""
 
     def execute(self, *args):
         sentence = args[0]()
@@ -751,6 +757,7 @@ class new_clause(Action):
 
 
 class reason(Action):
+    """Query the Clauses KB with Backward-Chaining, and if it fails with Nested Reasoning"""
 
     def execute(self, *args):
         definite_clause = args[0]()
@@ -786,6 +793,7 @@ class reason(Action):
 
 
 class assert_command(Action):
+    """Producting beliefs to feed the Direct Command and Routine parsers"""
 
     def execute(self, *args):
 
@@ -895,6 +903,7 @@ class assert_command(Action):
 
 
 class join_grounds(Action):
+    """join two GROUNDS Beliefs in one, with concatenated variables"""
     def execute(self, *args):
         dateTimeObj = datetime.datetime.now()
         id_ground = dateTimeObj.microsecond
@@ -908,6 +917,7 @@ class join_grounds(Action):
 
 
 class join_cond_grounds(Action):
+    """join two COND_GROUNDS Beliefs in one, with concatenated variables"""
     def execute(self, *args):
         dateTimeObj = datetime.datetime.now()
         id_ground = dateTimeObj.microsecond
@@ -921,6 +931,7 @@ class join_cond_grounds(Action):
 
 
 class join_routine_grounds(Action):
+    """join ROUTINE_GROUNDS Beliefs, with concatenated variables"""
     def execute(self, *args):
         dateTimeObj = datetime.datetime.now()
         id_ground = dateTimeObj.microsecond
@@ -933,17 +944,11 @@ class join_routine_grounds(Action):
         return s[3]
 
 
-class mods_grounds(Action):
-    def execute(self, *args):
-        union = self.get_arg(str(args[1])) + ", " + self.get_arg(str(args[2]) + " " + self.get_arg(str(args[3])))
-        self.assert_belief(GROUND(self.get_arg(str(args[0])), union))
-
-    def get_arg(self, arg):
-        s = arg.split("'")
-        return s[3]
 
 
 class append_intent_params(Action):
+    """Append intent params considering a prepositions list"""
+
     def execute(self, *args):
         parameters_list = self.get_arg(str(args[6]))
         location = self.get_arg(str(args[5]))
@@ -955,7 +960,7 @@ class append_intent_params(Action):
         prep = self.get_arg(str(args[3]))
         prep_obj = self.get_arg(str(args[4]))
 
-        if prep == "In":
+        if prep in ["In"]:
             location = prep_obj
         else:
 
@@ -972,6 +977,7 @@ class append_intent_params(Action):
 
 
 class append_routine_params(Action):
+    """Append routine params considering a prepositions list"""
     def execute(self, *args):
 
         id_routine = self.get_arg(str(args[0]))
@@ -985,7 +991,7 @@ class append_routine_params(Action):
         location = self.get_arg(str(args[6]))
         parameters_list = self.get_arg(str(args[7]))
 
-        if prep == "In":
+        if prep in ["In"]:
             location = prep_obj
         else:
             if len(parameters_list) == 0:
@@ -1001,6 +1007,7 @@ class append_routine_params(Action):
 
 
 class append_intent_mods(Action):
+    """Append intent modificators"""
     def execute(self, *args):
 
         verb = self.get_arg(str(args[0]))
@@ -1025,6 +1032,7 @@ class append_intent_mods(Action):
 
 
 class append_routine_mods(Action):
+    """Append routine modificators"""
     def execute(self, *args):
 
         id_routine = self.get_arg(str(args[0]))
@@ -1049,6 +1057,7 @@ class append_routine_mods(Action):
 
 
 class exec_cmd(Action):
+    """Simulating commands execution from the Smart Environment Interface"""
     def execute(self, *args):
 
         command = self.get_arg(str(args[0]))
@@ -1082,6 +1091,7 @@ class exec_cmd(Action):
 
 
 class simulate_sensor(Action):
+    """Simulating Sensors behaviour for the Smart Environment Interface"""
     def execute(self, *args):
         verb = args[0]
         subject = args[1]
@@ -1095,6 +1105,7 @@ class simulate_sensor(Action):
 
 
 class join_clauses(Action):
+    """Merging two definite clauses driven by subj-obj in one definite clause"""
     def execute(self, arg1, arg2, arg3, arg4):
         clause1 = str(arg1).split("'")[3]
         clause2 = str(arg2).split("'")[3]
@@ -1137,13 +1148,13 @@ class join_clauses(Action):
         else:
             new_clause = clause2.replace(common, clause1)
 
-
         print(new_clause)
 
         self.assert_belief(DEF_CLAUSE(new_clause))
 
 
 class aggregate(Action):
+    """join a couple of advectives (or adverbs) beliefs in one"""
     def execute(self, arg0, arg1, arg2, arg3, arg4):
 
         type = str(arg0).split("'")[1]
@@ -1179,6 +1190,7 @@ class aggregate(Action):
 
 
 class merge(Action):
+    """Merge a ground belief into a modificator argument"""
     def execute(self, arg1, arg2, arg3, arg4):
         id = str(arg1).split("'")[3]
         var = str(arg2).split("'")[3]
@@ -1190,6 +1202,7 @@ class merge(Action):
 
 
 class ground_prep(Action):
+    """Ground an object preposition belief"""
     def execute(self, arg1, arg2, arg3, arg4, arg5):
 
         id = str(arg1).split("'")[3]
@@ -1220,6 +1233,7 @@ class ground_prep(Action):
 
 
 class int_preps_tognd(Action):
+    """Merge two preposition belief in a ground beliefs"""
     def execute(self, arg1, arg2, arg3, arg4, arg5, arg6):
         id = str(arg1).split("'")[3]
         var_ground_est = str(arg2).split("'")[3]
@@ -1233,6 +1247,7 @@ class int_preps_tognd(Action):
 
 
 class gprep_to_ground(Action):
+    """Apply an object-grounded preposition belief to a ground belief"""
     def execute(self, arg1, arg2, arg3, arg4, arg5):
         id = str(arg1).split("'")[3]
         var_prep_ground = str(arg2).split("'")[3]
@@ -1245,6 +1260,7 @@ class gprep_to_ground(Action):
 
 
 class adv_to_action(Action):
+    """Apply an adverb to an action label"""
     def execute(self, arg1, arg2, arg3, arg4, arg5, arg6):
         id = str(arg1).split("'")[3]
         verb = str(arg2).split("'")[3]
@@ -1259,6 +1275,7 @@ class adv_to_action(Action):
 
 
 class act_to_clause(Action):
+    """Turn a grounded action into a clause"""
     def execute(self, arg1, arg2, arg3, arg4, arg5):
 
         id = str(arg1).split("'")[3]
@@ -1285,6 +1302,7 @@ class act_to_clause(Action):
 
 
 class ground_subj_act(Action):
+    """Ground a subject action"""
     def execute(self, arg1, arg2, arg3, arg4, arg5, arg6):
 
         id = str(arg1).split("'")[3]
@@ -1334,6 +1352,7 @@ class ground_subj_act(Action):
 
 
 class ground_obj_act(Action):
+    """Ground an object action"""
     def execute(self, arg1, arg2, arg3, arg4, arg5, arg6):
 
         id = str(arg1).split("'")[3]
@@ -1382,6 +1401,7 @@ class ground_obj_act(Action):
 
 
 class prep_to_clause(Action):
+    """Applying a prep to a clause"""
     def execute(self, arg1, arg2, arg3, arg4, arg5):
         id = str(arg1).split("'")[3]
         dav = str(arg2).split("'")[3]
@@ -1395,6 +1415,7 @@ class prep_to_clause(Action):
 
 
 class join_hand_sides(Action):
+    """Join left and right hand sides into a definite clause"""
     def execute(self, arg1, arg2):
         lhs = str(arg1).split("'")[3]
         rhs = str(arg2).split("'")[3]
@@ -1404,6 +1425,7 @@ class join_hand_sides(Action):
 
 
 class conjunct_left_clauses(Action):
+    """Joining left hand sides literals of a definite clause"""
     def execute(self, arg1, arg2):
         left_clause1 = str(arg1).split("'")[3]
         left_clause2 = str(arg2).split("'")[3]
@@ -1413,6 +1435,7 @@ class conjunct_left_clauses(Action):
 
 
 class create_remain(Action):
+    """Creating a remain belief"""
     def execute(self, arg1, arg2, arg3):
 
         id = str(arg1).split("'")[3]
@@ -1456,6 +1479,7 @@ class create_remain(Action):
 
 
 class no_dav(ActiveBelief):
+    """Check for davidsonian variable"""
     def evaluate(self, x):
 
         var = str(x).split("'")[3]
@@ -1467,6 +1491,7 @@ class no_dav(ActiveBelief):
 
 
 class merge_act(Action):
+    """Merge two actions into one via davidsonian variable"""
     def execute(self, arg1, arg2, arg3, arg4, arg5, arg6, arg7):
 
         id = str(arg1).split("'")[3]
@@ -1499,6 +1524,7 @@ class merge_act(Action):
 
 
 class create_precross(Action):
+    """Creating a precross belief"""
     def execute(self, arg1, arg2, arg3, arg4, arg5, arg6, arg7):
 
         id = str(arg1).split("'")[3]
@@ -1531,6 +1557,7 @@ class create_precross(Action):
 
 
 class feed_precross(Action):
+    """Creating a precross belief"""
     def execute(self, arg1, arg2, arg3, arg4, arg5):
         id = str(arg1).split("'")[3]
         precross_dav = str(arg2).split("'")[3]
@@ -1544,15 +1571,17 @@ class feed_precross(Action):
 
 
 class show_fol_kb(Action):
+    """Show Clauses KB"""
     def execute(self):
-        print("\n" + str(len(kb_fol.clauses)) + " clauses in Clauses kb:\n")
+        print("\n" + str(len(kb_fol.clauses)) + " clauses in Clauses KB:\n")
         for cls in kb_fol.clauses:
             print(cls)
 
 
 class clear_clauses_kb(Action):
+    """Clear Clauses KB"""
     def execute(self):
-        print("\nClauses kb initialized.")
+        print("\nClauses KB initialized.")
         kb_fol.clauses = []
 
 
