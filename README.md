@@ -437,6 +437,8 @@ the sentence, instead of the lemma it is possible to encode labels with synsets 
 DISAMBIGUATION section of config.ini. It is also possible to specify the Parts-Of-Speech whom will be encoded. Such
 encoding take in account of the doc2vect similarity, provided by spaCy, between the sentence in exam and the text fields (gloss and examples) within 
  each synset containing the words in the sentence.
+ 
+![Image 2](https://github.com/fabiuslongo/pycaspar/blob/master/images/metrics.JPG)
 
 For instance, considering the following sentences sharing the word "bass" and their encoding:
 
