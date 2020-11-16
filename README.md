@@ -436,7 +436,7 @@ In order to obtain a disambiguation between labels containing the same lemma, de
 the sentence, instead of the lemma it is possible to encode labels with synsets by changing the value of DIS_ACTIVE in the
 DISAMBIGUATION section of config.ini. It is also possible to specify the Parts-Of-Speech whom will be encoded. Such
 encoding take in account of different word2vect similarity (provided by spaCy) combinations, between the sentence ***S*** in exam and the text fields (gloss and examples) within 
- each synset comprising the lemmatized word ***l***.
+ each synset comprising the lemmatized word ***l*** in ***S***.
  
 ![Image 2](https://github.com/fabiuslongo/pycaspar/blob/master/images/metrics.JPG)
 
