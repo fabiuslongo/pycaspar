@@ -276,7 +276,7 @@ eShell: main > +STT("listen")
 eShell: main > 
 Waiting for knowledge...
 
-eShell: main > +STT("Nono is an hostile nation")
+eShell: main > +STT("Cuba is an hostile nation")
 Got it.
 
 ------------- All generalizations asserted.
@@ -360,9 +360,9 @@ Sell(Colonel_West(x1), Missile(x2))
 (To(Sell(Colonel_West(x1), Missile(x2)), Cuba(x3)) ==> To(Sell(American(v_12), Missile(v_13)), Hostile(Nation(x))))
 (To(Sell(Colonel_West(x1), Missile(x2)), Cuba(x3)) ==> To(Sell(American(v_14), Weapon(v_15)), Hostile(Nation(x))))
 (To(Sell(Colonel_West(x1), Missile(x2)), Cuba(x3)) ==> To(Sell(Colonel_West(v_16), Weapon(v_17)), Hostile(Nation(x))))
-(To(Sell(Colonel_West(x1), Missile(x2)), Cuba(x3)) ==> To(Sell(American(v_18), Missile(v_19)), Nono(x3)))
-(To(Sell(Colonel_West(x1), Missile(x2)), Cuba(x3)) ==> To(Sell(American(v_22), Weapon(v_23)), Nono(x3)))
-(To(Sell(Colonel_West(x1), Missile(x2)), Cuba(x3)) ==> To(Sell(Colonel_West(v_26), Weapon(v_27)), Nono(x3)))
+(To(Sell(Colonel_West(x1), Missile(x2)), Cuba(x3)) ==> To(Sell(American(v_18), Missile(v_19)), Cuba(x3)))
+(To(Sell(Colonel_West(x1), Missile(x2)), Cuba(x3)) ==> To(Sell(American(v_22), Weapon(v_23)), Cuba(x3)))
+(To(Sell(Colonel_West(x1), Missile(x2)), Cuba(x3)) ==> To(Sell(Colonel_West(v_26), Weapon(v_27)), Cuba(x3)))
 To(Sell(Colonel_West(x1), Missile(x2)), Cuba(x3))
 ```
 * _When an American sells weapons to a hostile nation, that American is a criminal_
@@ -396,9 +396,9 @@ Sell(Colonel_West(x1), Missile(x2))
 (To(Sell(Colonel_West(x1), Missile(x2)), Cuba(x3)) ==> To(Sell(American(v_12), Missile(v_13)), Hostile(Nation(x))))
 (To(Sell(Colonel_West(x1), Missile(x2)), Cuba(x3)) ==> To(Sell(American(v_14), Weapon(v_15)), Hostile(Nation(x))))
 (To(Sell(Colonel_West(x1), Missile(x2)), Cuba(x3)) ==> To(Sell(Colonel_West(v_16), Weapon(v_17)), Hostile(Nation(x))))
-(To(Sell(Colonel_West(x1), Missile(x2)), Cuba(x3)) ==> To(Sell(American(v_18), Missile(v_19)), Nono(x3)))
-(To(Sell(Colonel_West(x1), Missile(x2)), Cuba(x3)) ==> To(Sell(American(v_22), Weapon(v_23)), Nono(x3)))
-(To(Sell(Colonel_West(x1), Missile(x2)), Cuba(x3)) ==> To(Sell(Colonel_West(v_26), Weapon(v_27)), Nono(x3)))
+(To(Sell(Colonel_West(x1), Missile(x2)), Cuba(x3)) ==> To(Sell(American(v_18), Missile(v_19)), Cuba(x3)))
+(To(Sell(Colonel_West(x1), Missile(x2)), Cuba(x3)) ==> To(Sell(American(v_22), Weapon(v_23)), Cuba(x3)))
+(To(Sell(Colonel_West(x1), Missile(x2)), Cuba(x3)) ==> To(Sell(Colonel_West(v_26), Weapon(v_27)), Cuba(x3)))
 To(Sell(Colonel_West(x1), Missile(x2)), Cuba(x3))
 (To(Sell(American(x1), Weapon(x2)), Hostile(Nation(x3))) ==> Be(American(x4), Criminal(x5)))
 ```
