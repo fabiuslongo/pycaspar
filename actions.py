@@ -189,7 +189,10 @@ class PROCESS_STORED_MST(Reactor): pass
 
 
 
-
+class reset_ct(Action):
+    """Reset computational time"""
+    def execute(self):
+        parser.set_start_time()
 
 
 class set_wait(Action):
@@ -741,8 +744,6 @@ class new_clause(Action):
     def execute(self, *args):
         sentence = args[0]()
 
-        start_time = time.time()
-
         #print("\n", sentence)
         mf = parser.morph(sentence)
         print("\n", mf)
@@ -751,9 +752,9 @@ class new_clause(Action):
 
         kb_fol.nested_tell(def_clause)
 
-        end_time = time.time()
-        assert_time = end_time - start_time
-        print("\nAssert time: ", assert_time)
+        comp_time = parser.get_comp_time()
+
+        print("\nAssert time: ", comp_time)
 
 
 class reason(Action):
@@ -761,8 +762,6 @@ class reason(Action):
 
     def execute(self, *args):
         definite_clause = args[0]()
-
-        start_time = time.time()
 
         q = parser.morph(definite_clause)
         print("Query: " + q)
@@ -772,9 +771,9 @@ class reason(Action):
         print("\n ---- NOMINAL REASONING ---\n")
         print("Result: " + str(bc_result))
 
-        end_time1 = time.time()
-        query_time1 = end_time1 - start_time
-        print("Backward-Chaining Query time: ", query_time1)
+        comp_time = parser.get_comp_time()
+
+        print("Backward-Chaining Query time: ", comp_time)
 
         if bc_result is False:
 
@@ -787,9 +786,9 @@ class reason(Action):
             else:
                 print("\nResult: ", nested_result)
 
-            end_time2 = time.time()
-            query_time2 = end_time2 - start_time
-            print("\nQuery time: ", query_time2)
+            comp_time = parser.get_comp_time()
+
+            print("\nQuery time: ", comp_time)
 
 
 class assert_command(Action):
