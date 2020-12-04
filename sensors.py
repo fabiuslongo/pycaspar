@@ -38,7 +38,7 @@ class UtteranceDetect(Sensor):
         while self.running:
            time.sleep(1)
            # --------------> put utterance detection code here <---------------
-           # when incoming new utterance detected: self.assert_belief(SST(utterance))
+           # when incoming new utterance detected: self.assert_belief(STT(utterance))
 
 
 class Timer(Sensor):
