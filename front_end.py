@@ -13,7 +13,7 @@ r2() >> [+STT("set the cooler in the bedroom to 25 degrees and cut the grass in 
 
 # simulating direct commands
 d1() >> [+STT("set the cooler at 27 degrees in the bedroom")]
-d2() >> [+STT("turn off the lights in the living room")]
+d2() >> [+STT("turn off the alarm in the garage")]
 
 # definite clauses for reasoning purposes
 c1() >> [+STT("Cuba is an hostile nation")]
@@ -70,8 +70,8 @@ t() >> [go(), w(), l()]
 +STT("listen") / (WAKE("ON") & WAIT(W)) >> [+LISTEN("ON"), show_line("\nWaiting for knowledge...\n"), Timer(W).start]
 +STT("reason") / (WAKE("ON") & WAIT(W)) >> [+REASON("ON"), show_line("\nWaiting for query...\n"), Timer(W).start]
 
-+STT(X) / (WAKE("ON") & LISTEN("ON")) >> [reset_ct(), parse_rules(X), parse_deps(), feed_mst(), +PROCESS_STORED_MST("OK"), Timer(W).start]
-+STT(X) / (WAKE("ON") & REASON("ON")) >> [reset_ct(), parse_rules(X), parse_deps(), feed_mst(), +PROCESS_STORED_MST("OK"), Timer(W).start]
++STT(X) / (WAKE("ON") & LISTEN("ON")) >> [reset_ct(), parse_rules(X,"DISOK"), parse_deps(), feed_mst(), +PROCESS_STORED_MST("OK"), Timer(W).start]
++STT(X) / (WAKE("ON") & REASON("ON")) >> [reset_ct(), parse_rules(X, "DISOK"), parse_deps(), feed_mst(), +PROCESS_STORED_MST("OK"), Timer(W).start]
 
 
 # Query KB
@@ -89,7 +89,7 @@ new_def_clause(M, T) / WAIT(W) >> [show_line("\n------------- Done.\n"), Timer(W
 
 
 # Reactive Reasoning
-+STT(X) / WAKE("ON") >> [UtteranceDetect().stop, -WAKE("ON"), show_line("\nProcessing domotic command...\n"), parse_rules(X), parse_deps(), feed_mst(), assert_command(X), parse_command(), parse_routine(), HotwordDetect().start]
++STT(X) / WAKE("ON") >> [reset_ct(), UtteranceDetect().stop, -WAKE("ON"), show_line("\nProcessing domotic command...\n"), parse_rules(X, "NODIS"), parse_deps(), feed_mst(), assert_command(X), parse_command(), parse_routine(), HotwordDetect().start]
 
 +TIMEOUT("ON") / (WAKE("ON") & LISTEN("ON") & REASON("ON")) >> [show_line("\nReturning to idle state...\n"), -WAKE("ON"), -LISTEN("ON"), -REASON("ON"), UtteranceDetect().stop, HotwordDetect().start]
 +TIMEOUT("ON") / (WAKE("ON") & REASON("ON")) >> [show_line("\nReturning to idle state...\n"), -REASON("ON"), -WAKE("ON"), UtteranceDetect().stop, HotwordDetect().start]

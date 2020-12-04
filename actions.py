@@ -186,11 +186,15 @@ class PROCESS_STORED_MST(Reactor): pass
 
 
 
-
+class show_time(Action):
+    """Show execution time"""
+    def execute(self):
+        comp_time = parser.get_comp_time()
+        print("\nExecution time: ", comp_time)
 
 
 class reset_ct(Action):
-    """Reset computational time"""
+    """Reset execution time"""
     def execute(self):
         parser.set_start_time()
 
@@ -1081,6 +1085,9 @@ class exec_cmd(Action):
             print("Parameters: " + parameters)
         print("\n")
 
+        comp_time = parser.get_comp_time()
+        print("\nExecution time: ", comp_time)
+
     def get_arg(self, arg):
         s = arg.split("'")
         if len(s) == 3:
@@ -1589,13 +1596,18 @@ class clear_clauses_kb(Action):
 
 class parse_rules(Action):
     """Asserting dependencies related beliefs."""
-    def execute(self, arg):
+    def execute(self, arg, dis):
 
         parser.flush()
 
         sent = str(arg).split("'")[3]
+        if str(dis).split("'")[1] == "DISOK":
+            DISOK = True
+        else:
+            DISOK = False
+
         print("\n", sent)
-        deps = parser.get_deps(sent, True)
+        deps = parser.get_deps(sent, True, DISOK)
         print("\n", deps)
         parser.set_last_deps(deps)
 

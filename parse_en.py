@@ -84,7 +84,7 @@ class Parse(object):
         # Lemmas correction dictionary
         self.LCD = {}
 
-        # Beginning computational time
+        # Beginning Computational time
         self.start_time = 0
 
 
@@ -147,6 +147,7 @@ class Parse(object):
         return self.nlp
 
 
+    """
     # Only for testing porpuses
     
     def create_MST(self, deps, dav, var):
@@ -1432,6 +1433,7 @@ class Parse(object):
             return s_list[len(s_list)-1]
         else:
             return s_list[0]
+    """
 
 
     def get_pos(self, s):
@@ -1486,7 +1488,7 @@ class Parse(object):
 
 
 
-    def get_deps(self, input_text, LEMMATIZED):
+    def get_deps(self, input_text, LEMMATIZED, DISOK):
 
         nlp = self.get_nlp_engine()
         doc = nlp(input_text)
@@ -1527,7 +1529,7 @@ class Parse(object):
                 print("\n<--------------- Getting from GMC: "+token.text+" ("+shrinked_proper_syn+")")
 
             # Otherwise a proper synset must be inferred....
-            elif DIS_ACTIVE and (token.tag_ in DIS_VERB or token.tag_ in DIS_NOUN or token.tag_ in DIS_ADJ or token.tag_ in DIS_ADV) and token.lemma_ not in DIS_EXCEPTIONS:
+            elif DISOK and DIS_ACTIVE and (token.tag_ in DIS_VERB or token.tag_ in DIS_NOUN or token.tag_ in DIS_ADJ or token.tag_ in DIS_ADV) and token.lemma_ not in DIS_EXCEPTIONS:
 
                 if token.tag_ in DIS_VERB:
                     pos = wordnet.VERB
