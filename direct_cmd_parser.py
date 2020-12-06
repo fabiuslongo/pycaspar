@@ -21,6 +21,8 @@ produce_intent() / (PRE_INTENT(V, D, X, L, T) & GROUND(M, X, W)) >> [-GROUND(M, 
 produce_intent() / (PRE_INTENT(V, D, X, L, T) & MOD(D, W, K)) >> [-PRE_INTENT(V, D, X, L, T), -MOD(D, W, K), append_intent_params(V, D, X, W, K, L, T), produce_intent()]
 # appending pre-action modificators
 produce_intent() / (PRE_INTENT(V, D, X, L, T) & GROUND(M, D, K)) >> [-PRE_INTENT(V, D, X, L, T), -GROUND(M, D, K), append_intent_mods(V, D, X, K, L, T), produce_intent()]
+# retract unuseful grounds
+produce_intent() / (PRE_INTENT(V, D, X, L, T) & GROUND(J, M, N)) >> [-GROUND(J, M, N), produce_intent()]
 # asserting and executing actions
 produce_intent() / PRE_INTENT(V, D, X, L, T) >> [-PRE_INTENT(V, D, X, L, T), +INTENT(V, X, L, T)]
 

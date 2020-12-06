@@ -487,7 +487,7 @@ class ManageFols(object):
 
         gentle_table = []
 
-        if fol_vect[1] == "==>":
+        if len(fol_vect) > 1 and fol_vect[1] == "==>":
 
             LHS = []
 

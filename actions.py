@@ -6,7 +6,6 @@ from logic.logic import *
 from phidias.Types import *
 import configparser
 import math
-import time
 import datetime
 from difflib import SequenceMatcher
 
@@ -221,6 +220,8 @@ class eval_cls(ActiveBelief):
             candidates = []
 
             nested_result = kb_fol.nested_ask(expr(utterance), candidates)
+            print("Result: " + str(nested_result))
+
             if nested_result is None:
                 return True
             elif nested_result is False:
@@ -828,7 +829,7 @@ class assert_command(Action):
         gentle_LR_fol = m.vect_LR_to_gentle_LR(vect_LR_fol, deps, check_implication, check_isa)
         print(str(gentle_LR_fol))
 
-        if vect_LR_fol[1][0] == "==>":
+        if len(vect_LR_fol) > 0 and vect_LR_fol[1][0] == "==>":
 
             dateTimeObj = datetime.datetime.now()
             id_routine = dateTimeObj.microsecond
