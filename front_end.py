@@ -1,6 +1,6 @@
 from phidias.Lib import *
 from actions import *
-from sensors import *
+from sensors_google import *
 
 
 # Front-End STT

@@ -1,13 +1,16 @@
 from phidias.Types import *
 import threading
 import time
-
+import azure.cognitiveservices.speech as speechsdk
 
 class TIMEOUT(Reactor): pass
 class STT(Reactor): pass
 
 
-
+speech_key, service_region = "9e4463eb92de493f890a025a9ce1fd24", "westus"
+speech_config = speechsdk.SpeechConfig(subscription=speech_key, region=service_region)
+# Creates a recognizer with the given settings
+speech_recognizer = speechsdk.SpeechRecognizer(speech_config=speech_config)
 
 class HotwordDetect(Sensor):
 
@@ -42,11 +45,21 @@ class UtteranceDetect(Sensor):
 
     def sense(self):
         while self.running:
-           time.sleep(1)
+           #time.sleep(1)
            # --------------> put utterance detection code here <---------------
            # when incoming new utterance detected: self.assert_belief(STT(utterance))
 
+           start_time = time.time()
+           result = speech_recognizer.recognize_once()
 
+           # Checks result.
+           if result.reason == speechsdk.ResultReason.RecognizedSpeech:
+               print("Recognized: {}".format(result.text))
+
+               detection_time = time.time() - start_time
+               print("\nDetection time: ", detection_time)
+
+               self.assert_belief(STT(result.text))
 
 
 class Timer(Sensor):
