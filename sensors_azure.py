@@ -7,7 +7,7 @@ class TIMEOUT(Reactor): pass
 class STT(Reactor): pass
 
 
-speech_key, service_region = "9e4463eb92de493f890a025a9ce1fd24", "westus"
+speech_key, service_region = "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX", "westus"
 speech_config = speechsdk.SpeechConfig(subscription=speech_key, region=service_region)
 # Creates a recognizer with the given settings
 speech_recognizer = speechsdk.SpeechRecognizer(speech_config=speech_config)
