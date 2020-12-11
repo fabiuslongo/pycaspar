@@ -2,16 +2,16 @@ from __future__ import division
 from phidias.Types import *
 import threading
 import time
-
-import re
 import sys
 
 class TIMEOUT(Reactor): pass
 class STT(Reactor): pass
+class HOTWORD_DETECTED(Reactor): pass
 
+
+# ----------- Google section
 
 from google.cloud import speech
-
 import pyaudio
 from six.moves import queue
 
@@ -19,6 +19,24 @@ from six.moves import queue
 RATE = 16000
 CHUNK = int(RATE / 10)  # 100ms
 
+
+# ----------- Porcupine section
+
+import os
+import struct
+from datetime import datetime
+from threading import Thread
+import pvporcupine
+
+#  keywords available:
+#  alexa, americano, blueberry, bumblebee, computer, grapefruit, grasshopper, hey google, hey siri, jarvis, ok google, picovoice, porcupine, terminator
+
+
+
+
+
+
+# -----------------------------------------------------------------------
 
 class MicrophoneStream(object):
     """Opens a recording stream as a generator yielding the audio chunks."""
@@ -89,6 +107,60 @@ class MicrophoneStream(object):
             yield b"".join(data)
 
 
+class PorcupineDemo():
+
+    def __init__(self):
+        super(PorcupineDemo, self).__init__()
+
+    def run(self):
+
+        keywords = ["blueberry"]
+        keyword_paths = [pvporcupine.KEYWORD_PATHS[x] for x in keywords]
+        sensitivities = [0.5] * len(keyword_paths)
+
+        keywords = list()
+        for x in keyword_paths:
+            keywords.append(os.path.basename(x).replace('.ppn', '').split('_')[0])
+
+        porcupine = pvporcupine.create(
+            library_path=pvporcupine.LIBRARY_PATH,
+            model_path=pvporcupine.MODEL_PATH,
+            keyword_paths=keyword_paths,
+            sensitivities=sensitivities)
+
+        pa = pyaudio.PyAudio()
+
+        audio_stream = pa.open(
+            rate=porcupine.sample_rate,
+            channels=1,
+            format=pyaudio.paInt16,
+            input=True,
+            frames_per_buffer=porcupine.frame_length,
+            input_device_index=None)
+
+        print('\nListening {')
+        for keyword, sensitivity in zip(keywords, sensitivities):
+            print('  %s (%.2f)' % (keyword, sensitivity))
+        print('}')
+
+        FOUND_WORD = False
+
+        while FOUND_WORD is False:
+            pcm = audio_stream.read(porcupine.frame_length)
+            pcm = struct.unpack_from("h" * porcupine.frame_length, pcm)
+
+            result = porcupine.process(pcm)
+            if result >= 0:
+                print('[%s] Detected %s' % (str(datetime.now()), keywords[result]))
+                FOUND_WORD = True
+
+                porcupine.delete()
+                audio_stream.close()
+                pa.terminate()
+
+
+
+
 
 
 class HotwordDetect(Sensor):
@@ -96,17 +168,16 @@ class HotwordDetect(Sensor):
     def on_start(self):
        self.running = True
        print("\nStarting Hotword detection...")
-       # put instantiation hotword code here
 
     def on_stop(self):
         print("\nStopping Hotword detection...")
         self.running = False
 
     def sense(self):
-        while self.running is True:
-           time.sleep(1)
-           # --------------> put hotword detection code here <---------------
-           # when right hotword is detected: self.assert_belief(HOTWORD_DETECTED("ON"))
+        while self.running:
+            PorcupineDemo().run()
+            self.assert_belief(HOTWORD_DETECTED("ON"))
+            self.running = False
 
 
 
@@ -116,7 +187,6 @@ class UtteranceDetect(Sensor):
     def on_start(self):
        self.running = True
        print("\nStarting utterance detection...")
-       # instantiate hotword engine here
 
     def on_stop(self):
         print("\nStopping utterance detection...")
@@ -130,40 +200,38 @@ class UtteranceDetect(Sensor):
         config = speech.RecognitionConfig(encoding=speech.RecognitionConfig.AudioEncoding.LINEAR16, sample_rate_hertz=RATE, language_code=language_code)
         streaming_config = speech.StreamingRecognitionConfig(config=config, interim_results=True)
 
-        while self.running:
+        with MicrophoneStream(RATE, CHUNK) as stream:
+            audio_generator = stream.generator()
+            requests = (speech.StreamingRecognizeRequest(audio_content=content) for content in audio_generator)
+            responses = client.streaming_recognize(streaming_config, requests)
 
-            with MicrophoneStream(RATE, CHUNK) as stream:
-                audio_generator = stream.generator()
-                requests = (speech.StreamingRecognizeRequest(audio_content=content) for content in audio_generator)
+            num_chars_printed = 0
+            for response in responses:
+                if not response.results:
+                    continue
 
-                responses = client.streaming_recognize(streaming_config, requests)
+                result = response.results[0]
+                if not result.alternatives:
+                    continue
 
-                num_chars_printed = 0
-                for response in responses:
-                    if not response.results:
-                        continue
+                transcript = result.alternatives[0].transcript
+                overwrite_chars = " " * (num_chars_printed - len(transcript))
 
-                    result = response.results[0]
-                    if not result.alternatives:
-                        continue
+                if not result.is_final:
 
-                    transcript = result.alternatives[0].transcript
-                    overwrite_chars = " " * (num_chars_printed - len(transcript))
+                    sys.stdout.write(transcript + overwrite_chars + "\r")
+                    sys.stdout.flush()
 
-                    if not result.is_final:
+                    num_chars_printed = len(transcript)
 
-                        sys.stdout.write(transcript + overwrite_chars + "\r")
-                        sys.stdout.flush()
+                else:
+                    if self.running:
+                        print("transcript: ", transcript + overwrite_chars)
+                        self.assert_belief(STT(transcript + overwrite_chars))
+                        num_chars_printed = 0
+                        self.running = False
+                        stream.__exit__(None, None, None)
 
-                        num_chars_printed = len(transcript)
-
-                    else:
-                        if self.running:
-                            print("transcript: ", transcript + overwrite_chars)
-                            self.assert_belief(STT(transcript + overwrite_chars))
-                            num_chars_printed = 0
-                        else:
-                            stream.__exit__(None, None, None)
 
 
 

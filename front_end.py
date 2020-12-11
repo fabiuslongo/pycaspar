@@ -54,8 +54,8 @@ c() >> [clear_clauses_kb()]
 
 # simulating keywords
 w() >> [+HOTWORD_DETECTED("ON")]
-l() >> [+STT("Listen.")]
-r() >> [+STT("Reason.")]
+l() >> [+STT("listen")]
+r() >> [+STT("reason")]
 
 # simulating sensors
 s1() >> [simulate_sensor("Be", "Time", "12")]
@@ -67,9 +67,9 @@ t() >> [go(), w(), l()]
 
 # Hotwords processing
 +HOTWORD_DETECTED("ON") / WAIT(W) >> [show_line("\n\nYes, I'm here!\n"), HotwordDetect().stop, UtteranceDetect().start, +WAKE("ON"), Timer(W).start]
-+STT("Hello.") / (WAKE("ON") & WAIT(W)) >> [show_line("\nHello!\n"), Timer(W).start]
-+STT("Listen.") / (WAKE("ON") & WAIT(W)) >> [-REASON("ON"), +LISTEN("ON"), show_line("\nWaiting for knowledge...\n"), Timer(W).start]
-+STT("Reason.") / (WAKE("ON") & WAIT(W)) >> [-LISTEN("ON"), +REASON("ON"), show_line("\nWaiting for query...\n"), Timer(W).start]
++STT("hello") / (WAKE("ON") & WAIT(W)) >> [show_line("\nHello!\n"), Timer(W).start]
++STT("listen") / (WAKE("ON") & WAIT(W)) >> [-REASON("ON"), +LISTEN("ON"), show_line("\nWaiting for knowledge...\n"), UtteranceDetect().start, Timer(W).start]
++STT("reason") / (WAKE("ON") & WAIT(W)) >> [-LISTEN("ON"), +REASON("ON"), show_line("\nWaiting for query...\n"), UtteranceDetect().start, Timer(W).start]
 
 +STT(X) / (WAKE("ON") & LISTEN("ON")) >> [reset_ct(), parse_rules(X, "DISOK"), parse_deps(), feed_mst(), +PROCESS_STORED_MST("OK"), Timer(W).start]
 +STT(X) / (WAKE("ON") & REASON("ON")) >> [reset_ct(), parse_rules(X, "DISOK"), parse_deps(), feed_mst(), +PROCESS_STORED_MST("OK"), Timer(W).start]
