@@ -1,7 +1,6 @@
 from __future__ import division
 from phidias.Types import *
 import threading
-import time
 import sys
 
 class TIMEOUT(Reactor): pass
@@ -107,7 +106,7 @@ class MicrophoneStream(object):
             yield b"".join(data)
 
 
-class PorcupineDemo():
+class PorcupineDemo(Thread):
 
     def __init__(self):
         super(PorcupineDemo, self).__init__()
@@ -154,9 +153,13 @@ class PorcupineDemo():
                 print('[%s] Detected %s' % (str(datetime.now()), keywords[result]))
                 FOUND_WORD = True
 
-                porcupine.delete()
-                audio_stream.close()
-                pa.terminate()
+        audio_stream.close()
+        pa.terminate()
+        porcupine.delete()
+
+
+
+
 
 
 
