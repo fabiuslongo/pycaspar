@@ -83,6 +83,7 @@ class w(Procedure): pass
 class l(Procedure): pass
 class r(Procedure): pass
 class s(Procedure): pass
+class d(Procedure): pass
 
 # initialize Clauses Kb
 class c(Procedure): pass
