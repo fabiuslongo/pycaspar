@@ -1,9 +1,11 @@
 from phidias.Lib import *
 from actions import *
 
-from sensors import *
+#from sensors import *
+# for azure speech supported architectures, please refer to:
+# https://docs.microsoft.com/en-us/azure/cognitive-services/speech-service/speech-sdk?tabs=linux%2Cubuntu%2Cios-xcode%2Cmac-xcode%2Candroid-studio#get-the-speech-sdk
 #from sensors_azure import *
-#from sensors_google import *
+from sensors_google import *
 
 
 # Front-End STT
@@ -76,12 +78,12 @@ t() >> [go(), w(), l()]
 
 # Hotwords processing
 +HOTWORD_DETECTED("ON") / WAIT(W) >> [show_line("\n\nYes, I'm here!\n"), HotwordDetect().stop, UtteranceDetect().start, +WAKE("ON"), Timer(W).start]
-# Google
+# Google STT
 +STT("listen") / (WAKE("ON") & WAIT(W)) >> [-REASON("ON"), +LISTEN("ON"), show_line("\nWaiting for knowledge...\n"), UtteranceDetect().start, Timer(W).start]
 +STT("reason") / (WAKE("ON") & WAIT(W)) >> [-LISTEN("ON"), +REASON("ON"), show_line("\nWaiting for query...\n"), UtteranceDetect().start, Timer(W).start]
 +STT("done") / (WAKE("ON") & WAIT(W)) >> [-LISTEN("ON"), -REASON("ON"), show_line("\nExiting from cognitive phase...\n"), UtteranceDetect().stop, HotwordDetect().start, Timer(W).start]
 
-# Azure
+# Azure STT
 #+STT("Listen.") / (WAKE("ON") & WAIT(W)) >> [-REASON("ON"), +LISTEN("ON"), show_line("\nWaiting for knowledge...\n"), UtteranceDetect().start, Timer(W).start]
 #+STT("Reason.") / (WAKE("ON") & WAIT(W)) >> [-LISTEN("ON"), +REASON("ON"), show_line("\nWaiting for query...\n"), UtteranceDetect().start, Timer(W).start]
 #+STT("Done.") / (WAKE("ON") & WAIT(W)) >> [-LISTEN("ON"), -REASON("ON"), show_line("\nExiting from cognitive phase...\n"), UtteranceDetect().stop, HotwordDetect().start, Timer(W).start]

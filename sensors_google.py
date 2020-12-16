@@ -152,6 +152,7 @@ config = speech.RecognitionConfig(
     sample_rate_hertz=SAMPLE_RATE,
     language_code="en-US",
     max_alternatives=1,
+    enable_automatic_punctuation=True
 )
 
 streaming_config = speech.StreamingRecognitionConfig(
@@ -170,7 +171,6 @@ import pvporcupine
 #  keywords available:
 #  alexa, americano, blueberry, bumblebee, computer, grapefruit, grasshopper, hey google, hey siri, jarvis, ok google, picovoice, porcupine, terminator
 
-# -----------------------------------------------------------------------
 
 
 class PorcupineDemo(Thread):
@@ -226,7 +226,7 @@ class PorcupineDemo(Thread):
         porcupine.delete()
 
 
-
+# -----------------------------------------------------------------------
 
 
 
