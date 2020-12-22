@@ -1,11 +1,11 @@
 from phidias.Lib import *
 from actions import *
 
-#from sensors import *
+from sensors import *
 # for azure speech supported architectures, please refer to:
 # https://docs.microsoft.com/en-us/azure/cognitive-services/speech-service/speech-sdk?tabs=linux%2Cubuntu%2Cios-xcode%2Cmac-xcode%2Candroid-studio#get-the-speech-sdk
 #from sensors_azure import *
-from sensors_google import *
+# from sensors_google import *
 
 
 # Front-End STT

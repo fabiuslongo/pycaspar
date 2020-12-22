@@ -35,8 +35,8 @@ check_conds() / SENSOR(V, X, Y) >> [show_line("\nbelief sensor not more needed..
 +INTENT(X, "Cooler", Y, T) / lemma_in_syn(X, "specify.v.02") >> [show_line("\n---- Result: failed to execute the command in the specified location")]
 
 # cut
-+INTENT(X, "Grass", "Garden", T) / lemma_in_syn(X, "cut.v.01",) >> [exec_cmd("cut.v.01", "Grass", "Garden", T)]
-+INTENT(X, "cut.v.01", "grass", Y, T) / lemma_in_syn(X, "cut.v.01",) >> [show_line("\n---- Result: failed to execute the command in the specified location")]
++INTENT(X, "Grass", "Garden", T) / lemma_in_syn(X, "cut.v.01") >> [exec_cmd("cut.v.01", "Grass", "Garden", T)]
++INTENT(X, "cut.v.01", "grass", Y, T) / lemma_in_syn(X, "cut.v.01") >> [show_line("\n---- Result: failed to execute the command in the specified location")]
 
 # any other commands
 +INTENT(V, X, L, T) >> [show_line("\n---- Result: failed to execute the command: ", V), show_time()]
