@@ -1,6 +1,6 @@
 # pycaspar
 
-This is the repository of the Python (3.7+) implementation of CASPAR (Cognitive Architecture System Planned and Reactive)
+This is the repository of the Python (3.8+) implementation of CASPAR (Cognitive Architecture System Planned and Reactive)
 referred to the paper: [A Reactive Cognitive Architecture based on Natural Language Processing for the task of Decision-Making
 using a Rich Semantic](http://ceur-ws.org/Vol-2706/paper2.pdf), presented in WOA 2020: Workshop “From Objects to Agents”, September 14–16, 2020, Bologna, Italy.
 
