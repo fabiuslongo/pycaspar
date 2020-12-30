@@ -54,13 +54,19 @@ from python console:
 ```
 
 ### Google Speech-to-Text Client
-Follow the instruction in [here](https://cloud.google.com/speech-to-text/docs/libraries?hl=it).
+
+---------------
+
+Follow the instruction [here](https://cloud.google.com/speech-to-text/docs/libraries?hl=it).
 
 ### Snowboy
+
+---------------
+
 ```sh
 > sudo pip install snowboy
 ```
-In case of need, follow the instuction in [here](https://github.com/Kitt-AI/snowboy)
+In case of need, follow the instruction [here](https://github.com/Kitt-AI/snowboy)
 
 
 
