@@ -53,6 +53,13 @@ from python console:
 > nltk.download('wordnet')
 ```
 
+### Google Speech-to-Text Client
+Follow the instruction in [here](https://cloud.google.com/speech-to-text/docs/libraries?hl=it).
+
+### Snowboy
+Follow the instuction in [here](https://github.com/Kitt-AI/snowboy)
+
+
 
 # Testing
 This cognitive architecture is designed to implement more intelligent agents and also 
