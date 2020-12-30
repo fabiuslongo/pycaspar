@@ -14,6 +14,8 @@ This repository has been tested on Raspberry Pi 4B with the following packages v
 * [Phidias](https://github.com/corradosantoro/phidias) (release 1.3.4.alpha) 
 * SpaCy (ver. 2.3.0)
 * Natural Language Toolkit (ver. 3.5)
+* [Google Speech-to-Text Client Libraries](https://cloud.google.com/speech-to-text/docs/libraries?hl=it)
+* [Snowboy Hotword Detection](https://snowboy.kitt.ai/)
 
 
 ### Phidias
@@ -115,6 +117,7 @@ Starting utterance detection...
 ```
 
 after ten seconds of inactivity:
+
 ```sh
 Returning to idle state...
 
@@ -133,6 +136,8 @@ By the means of two testing procedure IoT direct commands can be tested, whose e
  
 * _set the cooler at 27 degrees in the bedroom_
 
+```sh
+
 Stopping utterance detection...
 
 Processing domotic command...
@@ -147,6 +152,7 @@ Action: specify.v.02
 Object: cooler
 Location: bedroom
 Parameters: at 27 degree
+```
 
 * _turn off the lights in the living room_
 
