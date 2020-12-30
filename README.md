@@ -9,30 +9,20 @@ using a Rich Semantic](http://ceur-ws.org/Vol-2706/paper2.pdf), presented in WOA
 # Installation
 
 
-This repository has been tested on Pycharm 2019.1.2 x64 with the following packages versions:
+This repository has been tested on Raspberry Pi 4B with the following packages versions:
 
 * [Phidias](https://github.com/corradosantoro/phidias) (release 1.3.4.alpha) 
-* SpaCy (ver. 2.2.4)
+* SpaCy (ver. 2.3.0)
 * Natural Language Toolkit (ver. 3.5)
 
 
 ### Phidias
 
----------------
-##### on all platforms
+
 ```sh
 > git clone https://github.com/corradosantoro/phidias
 > python setup.py install
-```
-##### additional package needed (Linux)
-```sh
-> python -pip install readline
 > python -pip install parse
-```
-##### additional package needed (Windows)
-```sh
-> python -m pip install pyreadline
-> python -m pip install parse
 ```
 
 ### spaCy
@@ -40,8 +30,10 @@ This repository has been tested on Pycharm 2019.1.2 x64 with the following packa
 ---------------
 
 ```sh
-> python -m pip install spacy
-> python -m spacy download en_core_web_md
+> sudo apt-get update
+> sudo apt-get install --reinstall build-essential
+> BLIS_ARCH=generic pip install spacy=2.3.0 --no-binary=blis
+> python -m spacy download en_core_web_lg
 ```
 
 
@@ -112,15 +104,9 @@ simulating vocal events:
 
 ---------------
 
-Here we suppose the agent recognizes a proper waking word (_caspar_ for example) and exits from its idle state, by asserting the following belief:
-```sh
-eShell: main > assert HOTWORD_DETECTED("ON")
-```
-Or more shortly:
-```sh
-eShell: main > +HOTWORD_DETECTED("ON")
-eShell: main > 
+After the waking word _caspar_ is recognized the agent will exits from its idle state:
 
+```sh
 Yes, I'm here!
 
 Stopping Hotword detection...
@@ -144,10 +130,8 @@ the amount of waiting seconds can be changed in the AGENT section of the config.
 
 By the means of two testing procedure IoT direct commands can be tested, whose entities are defined
  in the Smart Enviroment interface:
-* set the cooler at 27 degrees in the bedroom
-
-```sh
-eShell: main > +STT("set the cooler at 27 degrees in the bedroom")
+ 
+* _set the cooler at 27 degrees in the bedroom_
 
 Stopping utterance detection...
 
@@ -163,11 +147,10 @@ Action: specify.v.02
 Object: cooler
 Location: bedroom
 Parameters: at 27 degree
-```
-* turn off the lights in the living room
-```sh
-eShell: main > +STT("turn off the lights in the living room")
 
+* _turn off the lights in the living room_
+
+```sh
 Stopping utterance detection...
 
 Processing domotic command...
@@ -185,9 +168,9 @@ Parameters: off
 ```
 Caspar is capable of parsing complex routines as it follow (the agent must be first awakened):
 
-* turn off the lights in the living room, when the temperature is 25 and the time is 12.00
+* _turn off the lights in the living room, when the temperature is 25 and the time is 12.00_
+
 ```sh
-eShell: main > +STT("turn off the lights in the living room, when the temperature is 25 and the time is 12.00")
 
 Stopping utterance detection...
 
@@ -271,9 +254,9 @@ and queried by:
 
 We will show (by the command s()) the Clauses Knowlegde Base content after every assertion simulation:
 * _Nono is an hostile nation_
+
 ```sh
-eShell: main > +STT("listen")
-eShell: main > 
+
 Waiting for knowledge...
 
 eShell: main > +STT("Cuba is an hostile nation")
