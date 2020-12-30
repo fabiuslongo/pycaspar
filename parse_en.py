@@ -38,6 +38,7 @@ class Parse(object):
         self.BLACK_LIST_WORDS = ['that', 'which', 'then']
 
         # nlp engine instantiation
+        os.environ.__setitem__("TERM", "xterm")
         print("\nNLP engine initializing. Please wait...")
 
         # python -m spacy download en_core_web_md
@@ -45,6 +46,8 @@ class Parse(object):
 
         # python -m spacy download en_core_web_lg
         self.nlp = spacy.load('en_core_web_lg')  # 789 MB
+
+        os.system("espeak -s 160 -v en+f4 'System ready'")
 
         if platform.system() == "Windows":
             os.system('cls')

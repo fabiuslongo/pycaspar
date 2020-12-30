@@ -1076,6 +1076,8 @@ class exec_cmd(Action):
             object = object.replace(s[1], s[0])
             parameters = parameters.replace(s[1], s[0])
 
+        os.system("espeak -s 160 -v en+f4 'execution successful'")
+
         print("\n---- Result: execution successful")
         print("\nAction: " + command)
         print("Object: " + object)
