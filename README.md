@@ -57,7 +57,10 @@ from python console:
 Follow the instruction in [here](https://cloud.google.com/speech-to-text/docs/libraries?hl=it).
 
 ### Snowboy
-Follow the instuction in [here](https://github.com/Kitt-AI/snowboy)
+```sh
+> sudo pip install snowboy
+```
+In case of need, follow the instuction in [here](https://github.com/Kitt-AI/snowboy)
 
 
 
