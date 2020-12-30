@@ -256,6 +256,8 @@ hotwords (after the agent is awakened):
 and asserted in the Clauses Knowledge Base.
 * _reason_: the agent will wait (until timeout) for one utterance in natural language to be converted in a
 single positive literal for querying the Clauses Knowledge Base.
+* _done_: end of any listening/reasoning operations and return to the idle state.
+
 
 Next the Clauses Knowledge base will be fed by the following utterances:
 * _Cuba is an hostile nation_
