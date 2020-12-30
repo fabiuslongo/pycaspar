@@ -53,7 +53,7 @@ from python console:
 > nltk.download('wordnet')
 ```
 
-### Google Speech-to-Text Client
+### Google Speech-to-Text
 
 ---------------
 
