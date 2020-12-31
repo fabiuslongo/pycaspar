@@ -1,6 +1,6 @@
 # pycaspar
 
-This is the repository of the Python (3.8+) implementation of CASPAR (Cognitive Architecture System Planned and Reactive)
+This is the repository of the Python (3.7+) implementation of CASPAR (Cognitive Architecture System Planned and Reactive)
 referred to the paper: [A Reactive Cognitive Architecture based on Natural Language Processing for the task of Decision-Making
 using a Rich Semantic](http://ceur-ws.org/Vol-2706/paper2.pdf), presented in WOA 2020: Workshop “From Objects to Agents”, September 14–16, 2020, Bologna, Italy.
 
@@ -9,13 +9,11 @@ using a Rich Semantic](http://ceur-ws.org/Vol-2706/paper2.pdf), presented in WOA
 # Installation
 
 
-This repository has been tested on Raspberry Pi 4B with Python 3.8.6 64bit and the following packages versions:
+This repository has been tested on Raspberry Pi 4B with the following packages versions:
 
 * [Phidias](https://github.com/corradosantoro/phidias) (release 1.3.4.alpha) 
 * SpaCy (ver. 2.3.0)
 * Natural Language Toolkit (ver. 3.5)
-* [Google Speech-to-Text Client Libraries](https://cloud.google.com/speech-to-text/docs/libraries?hl=it)
-* [Snowboy Hotword Detection](https://snowboy.kitt.ai/)
 
 
 ### Phidias
@@ -53,22 +51,6 @@ from python console:
 > nltk.download('wordnet')
 ```
 
-### Google Speech-to-Text
-
----------------
-
-Follow the instruction [here](https://cloud.google.com/speech-to-text/docs/libraries?hl=it).
-
-### Snowboy
-
----------------
-
-```sh
-> sudo pip install snowboy
-```
-In case of need, follow the instruction [here](https://github.com/Kitt-AI/snowboy).
-
-
 
 # Testing
 This cognitive architecture is designed to implement more intelligent agents and also 
@@ -79,8 +61,15 @@ is an agent itself. Before starting the agent, Entities and Speech-To-Text Inter
 ---------------
 
 Entities involved in reasoning must be defined in the Smart Environment Interface 
-(smart_env_int.py).
+(line 256 of caspar.py).
 
+### Speech-To-Text Interfaces
+
+---------------
+
+SST Interfaces (for both hotwords and utterances) must be defined inside the Instances Sensors 
+(lines 8 and 26 of sensors.py).
+ 
 
 ### Starting Phidias Shell
 
@@ -126,7 +115,6 @@ Starting utterance detection...
 ```
 
 after ten seconds of inactivity:
-
 ```sh
 Returning to idle state...
 
@@ -145,8 +133,6 @@ By the means of two testing procedure IoT direct commands can be tested, whose e
  
 * _set the cooler at 27 degrees in the bedroom_
 
-```sh
-
 Stopping utterance detection...
 
 Processing domotic command...
@@ -161,7 +147,6 @@ Action: specify.v.02
 Object: cooler
 Location: bedroom
 Parameters: at 27 degree
-```
 
 * _turn off the lights in the living room_
 
@@ -256,8 +241,6 @@ hotwords (after the agent is awakened):
 and asserted in the Clauses Knowledge Base.
 * _reason_: the agent will wait (until timeout) for one utterance in natural language to be converted in a
 single positive literal for querying the Clauses Knowledge Base.
-* _done_: the agent ends any listening/reasoning operations and returns to the idle state.
-
 
 Next the Clauses Knowledge base will be fed by the following utterances:
 * _Cuba is an hostile nation_

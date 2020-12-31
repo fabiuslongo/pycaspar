@@ -175,8 +175,6 @@ def interrupt_callback():
 detector = snowboydecoder.HotwordDetector("Caspar.pmdl", sensitivity=0.5)
 
 
-
-
 # -----------------------------------------------------------------------
 
 
@@ -308,8 +306,13 @@ class UtteranceDetect(Sensor):
                             self.mic_manager.closed = True
                             self.running = False
 
+                            # changing char/snipplets not dealing with the parsing
+                            SWAP_STR = [["Turn on", "Change"]]
+                            utterance = str(transcript.strip())
+                            for s in SWAP_STR:
+                                utterance = utterance.replace(s[0], s[1])
 
-                            self.assert_belief(STT(transcript.strip()))
+                            self.assert_belief(STT(utterance))
 
                         else:
                             sys.stdout.write(RED)

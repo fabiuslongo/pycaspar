@@ -47,7 +47,8 @@ class Parse(object):
         # python -m spacy download en_core_web_lg
         self.nlp = spacy.load('en_core_web_lg')  # 789 MB
 
-        os.system("espeak -s 160 -v en+f4 'System ready'")
+        #os.system("espeak -s 160 -v en+f4 'System ready'")
+        os.system("echo 'System ready' | festival --tts")
 
         if platform.system() == "Windows":
             os.system('cls')

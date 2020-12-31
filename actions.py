@@ -186,6 +186,13 @@ class PROCESS_STORED_MST(Reactor): pass
 
 
 
+class say(Action):
+    """Text-to-Speech"""
+    def execute(self, *args):
+        text = args[0]()
+        os.system("echo '"+text+"' | festival --tts")
+
+
 class show_time(Action):
     """Show execution time"""
     def execute(self):
@@ -949,8 +956,6 @@ class join_routine_grounds(Action):
         return s[3]
 
 
-
-
 class append_intent_params(Action):
     """Append intent params considering a prepositions list"""
 
@@ -1076,8 +1081,6 @@ class exec_cmd(Action):
             object = object.replace(s[1], s[0])
             parameters = parameters.replace(s[1], s[0])
 
-        os.system("espeak -s 160 -v en+f4 'execution successful'")
-
         print("\n---- Result: execution successful")
         print("\nAction: " + command)
         print("Object: " + object)
@@ -1091,6 +1094,9 @@ class exec_cmd(Action):
 
         comp_time = parser.get_comp_time()
         print("\nExecution time: ", comp_time)
+
+        #os.system("espeak -s 160 -v en+f4 'execution successful'")
+        os.system("echo 'execution successful' | festival --tts")
 
     def get_arg(self, arg):
         s = arg.split("'")
