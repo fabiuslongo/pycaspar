@@ -9,7 +9,7 @@ using a Rich Semantic](http://ceur-ws.org/Vol-2706/paper2.pdf), presented in WOA
 # Installation
 
 
-This repository has been tested on Raspberry Pi 4B with the following packages versions:
+This repository has been tested on Raspberry Pi 4B with Python 3.8.6 64bit and the following packages versions:
 
 * [Phidias](https://github.com/corradosantoro/phidias) (release 1.3.4.alpha) 
 * SpaCy (ver. 2.3.0)
@@ -66,7 +66,7 @@ Follow the instruction [here](https://cloud.google.com/speech-to-text/docs/libra
 ```sh
 > sudo pip install snowboy
 ```
-In case of need, follow the instruction [here](https://github.com/Kitt-AI/snowboy)
+In case of need, follow the instruction [here](https://github.com/Kitt-AI/snowboy).
 
 
 
