@@ -52,6 +52,18 @@ from python console:
 ```
 
 
+### Festival Text-to-Speech
+
+Install Festival with:
+
+---------------
+ 
+```sh
+> sudo apt-get install festival
+```
+
+
+
 # Testing
 This cognitive architecture is designed to implement more intelligent agents and also 
 is an agent itself. Before starting the agent, Entities and Speech-To-Text Interfaces must be defined.
@@ -69,16 +81,6 @@ Entities involved in reasoning must be defined in the Smart Environment Interfac
 
 SST Interfaces (for both hotwords and utterances) must be defined inside the Instances Sensors 
 (lines 8 and 26 of sensors.py).
-
-### Festival Text-to-Speech
-
-Install Festival with:
-
----------------
- 
-```sh
-> sudo apt-get install festival
-```
 
 
 ### Starting Phidias Shell
