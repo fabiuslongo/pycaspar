@@ -180,7 +180,7 @@ class PorcupineDemo(Thread):
 
     def run(self):
 
-        keywords = ["blueberry"]
+        keywords = ["caspar"]
         keyword_paths = [pvporcupine.KEYWORD_PATHS[x] for x in keywords]
         sensitivities = [0.5] * len(keyword_paths)
 
@@ -239,10 +239,19 @@ class HotwordDetect(Sensor):
     def on_start(self):
        self.running = True
        print("\nStarting Hotword detection...")
+       evt = threading.Event()
+       self.event = evt
 
     def on_stop(self):
         print("\nStopping Hotword detection...")
         self.running = False
+        self.event.set()
+
+    def on_restart(self):
+        print("\nRestarting Hotword detection...")
+        self.running = False
+        self.event.set()
+
 
     def sense(self):
         while self.running:
@@ -255,99 +264,99 @@ class HotwordDetect(Sensor):
 
 
 
+
 class UtteranceDetect(Sensor):
 
     def on_start(self):
        self.running = True
        self.mic_manager = ResumableMicrophoneStream(SAMPLE_RATE, CHUNK_SIZE)
        print("\nStarting utterance detection...")
+       evt = threading.Event()
+       self.event = evt
 
     def on_stop(self):
         print("\nStopping utterance detection...")
         self.running = False
         self.mic_manager.closed = True
+        self.event.set()
 
     def on_restart(self, *args):
         print("\nRestarting utterance detection...")
         self.running = True
         self.mic_manager.closed = False
+        self.event.set()
 
 
     def sense(self):
+        while self.running:
+            self.event.clear()
 
-        with self.mic_manager as stream:
+            with self.mic_manager as stream:
 
-            while self.running:
-                sys.stdout.write(YELLOW)
-                sys.stdout.write(
-                    "\n" + str(STREAMING_LIMIT * stream.restart_counter) + ": NEW REQUEST\n"
-                )
+                while self.running:
+                    sys.stdout.write(YELLOW)
+                    sys.stdout.write(
+                        "\n" + str(STREAMING_LIMIT * stream.restart_counter) + ": NEW REQUEST\n")
 
-                stream.audio_input = []
-                audio_generator = stream.generator()
+                    stream.audio_input = []
+                    audio_generator = stream.generator()
 
-                requests = (
-                    speech.StreamingRecognizeRequest(audio_content=content)
-                    for content in audio_generator
-                )
+                    requests = (speech.StreamingRecognizeRequest(audio_content=content) for content in audio_generator)
 
-                responses = client.streaming_recognize(streaming_config, requests)
+                    responses = client.streaming_recognize(streaming_config, requests)
 
-                for response in responses:
+                    for response in responses:
 
-                    if get_current_time() - stream.start_time > STREAMING_LIMIT:
-                        stream.start_time = get_current_time()
-                        break
+                        if get_current_time() - stream.start_time > STREAMING_LIMIT:
+                            stream.start_time = get_current_time()
+                            break
 
-                    if not response.results:
-                        continue
+                        if not response.results:
+                            continue
 
-                    result = response.results[0]
+                        result = response.results[0]
 
-                    if not result.alternatives:
-                        continue
+                        if not result.alternatives:
+                            continue
 
-                    transcript = result.alternatives[0].transcript
+                        transcript = result.alternatives[0].transcript
 
-                    result_seconds = 0
-                    result_micros = 0
+                        result_seconds = 0
+                        result_micros = 0
 
-                    if result.result_end_time.seconds:
-                        result_seconds = result.result_end_time.seconds
+                        if result.result_end_time.seconds:
+                            result_seconds = result.result_end_time.seconds
 
-                    if result.result_end_time.microseconds:
-                        result_micros = result.result_end_time.microseconds
+                        if result.result_end_time.microseconds:
+                            result_micros = result.result_end_time.microseconds
 
-                    stream.result_end_time = int((result_seconds * 1000) + (result_micros / 1000))
+                        stream.result_end_time = int((result_seconds * 1000) + (result_micros / 1000))
 
-                    corrected_time = (
-                            stream.result_end_time
-                            - stream.bridging_offset
-                            + (STREAMING_LIMIT * stream.restart_counter)
-                    )
-                    # Display interim results, but with a carriage return at the end of the
-                    # line, so subsequent lines will overwrite them.
+                        corrected_time = (stream.result_end_time - stream.bridging_offset + (STREAMING_LIMIT * stream.restart_counter))
+                        # Display interim results, but with a carriage return at the end of the
+                        # line, so subsequent lines will overwrite them.
 
-                    if result.is_final:
+                        if result.is_final:
 
-                        sys.stdout.write(GREEN)
-                        sys.stdout.write("\033[K")
-                        sys.stdout.write(str(corrected_time) + ": " + transcript + "\n")
+                            sys.stdout.write(GREEN)
+                            sys.stdout.write("\033[K")
+                            sys.stdout.write(str(corrected_time) + ": " + transcript + "\n")
 
-                        stream.is_final_end_time = stream.result_end_time
-                        stream.last_transcript_was_final = True
+                            stream.is_final_end_time = stream.result_end_time
+                            stream.last_transcript_was_final = True
 
-                        self.mic_manager.closed = True
-                        self.running = False
+                            stream.closed = True
+                            self.mic_manager.closed = True
+                            self.running = False
 
-                        self.assert_belief(STT(transcript.strip()))
+                            self.assert_belief(STT(transcript.strip()))
 
-                    else:
-                        sys.stdout.write(RED)
-                        sys.stdout.write("\033[K")
-                        sys.stdout.write(str(corrected_time) + ": " + transcript + "\r")
+                        else:
+                            sys.stdout.write(RED)
+                            sys.stdout.write("\033[K")
+                            sys.stdout.write(str(corrected_time) + ": " + transcript + "\r")
 
-                        stream.last_transcript_was_final = False
+                            stream.last_transcript_was_final = False
 
 
 class Timer(Sensor):

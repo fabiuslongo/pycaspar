@@ -9,7 +9,7 @@ using a Rich Semantic](http://ceur-ws.org/Vol-2706/paper2.pdf), presented in WOA
 # Installation
 
 
-This repository has been tested on Pycharm 2019.1.2 x64 with the following packages versions:
+This repository has been tested on Python 3.7.3 64bit with the following packages versions:
 
 * [Phidias](https://github.com/corradosantoro/phidias) (release 1.3.4.alpha) 
 * SpaCy (ver. 2.2.4)
