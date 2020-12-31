@@ -349,7 +349,13 @@ class UtteranceDetect(Sensor):
                             self.mic_manager.closed = True
                             self.running = False
 
-                            self.assert_belief(STT(transcript.strip()))
+                            # changing char/snipplets not dealing with the parsing
+                            SWAP_STR = [["Turn on", "Change"]]
+                            utterance = transcript.strip()
+                            for s in SWAP_STR:
+                                utterance = utterance.replace(s[0], s[1])
+
+                            self.assert_belief(STT(utterance))
 
                         else:
                             sys.stdout.write(RED)

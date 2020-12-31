@@ -128,7 +128,13 @@ class UtteranceDetect(Sensor):
                detection_time = time.time() - start_time
                print("\nDetection time: ", detection_time)
 
-               self.assert_belief(STT(result.text))
+               # changing char/snipplets not dealing with the parsing
+               SWAP_STR = [["Turn on", "Change"]]
+               utterance = result.text
+               for s in SWAP_STR:
+                   utterance = utterance.replace(s[0], s[1])
+
+               self.assert_belief(STT(utterance))
 
 
 
