@@ -56,8 +56,8 @@ t() >> [go(), w(), l()]
 +STT("reason") / (WAKE("ON") & WAIT(W)) >> [-LISTEN("ON"), +REASON("ON"), show_line("\nWaiting for query...\n"), UtteranceDetect().start, Timer(W).start]
 +STT("done") / (WAKE("ON") & WAIT(W)) >> [-LISTEN("ON"), -REASON("ON"), show_line("\nExiting from cognitive phase...\n"), UtteranceDetect().stop, HotwordDetect().start, Timer(W).start]
 
-+STT(X) / (WAKE("ON") & LISTEN("ON")) >> [reset_ct(), parse_rules(X, "DISOK"), parse_deps(), feed_mst(), +PROCESS_STORED_MST("OK"), UtteranceDetect().start, Timer(W).start]
-+STT(X) / (WAKE("ON") & REASON("ON")) >> [reset_ct(), parse_rules(X, "DISOK"), parse_deps(), feed_mst(), +PROCESS_STORED_MST("OK"), UtteranceDetect().start, Timer(W).start]
++STT(X) / (WAKE("ON") & LISTEN("ON")) >> [reset_ct(), parse_rules(X, "DISOK"), parse_deps(), feed_mst(), +PROCESS_STORED_MST("OK"), show_ct(), UtteranceDetect().start, Timer(W).start]
++STT(X) / (WAKE("ON") & REASON("ON")) >> [reset_ct(), parse_rules(X, "DISOK"), parse_deps(), feed_mst(), +PROCESS_STORED_MST("OK"), show_ct(), UtteranceDetect().start, Timer(W).start]
 
 
 # Query KB
