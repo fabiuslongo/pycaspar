@@ -51,6 +51,16 @@ from python console:
 > nltk.download('wordnet')
 ```
 
+### Festival Text-to-Speech
+
+Install Festival with:
+
+---------------
+ 
+```sh
+> sudo apt-get install festival
+```
+
 
 # Testing
 This cognitive architecture is designed to implement more intelligent agents and also 
@@ -68,15 +78,6 @@ Entities involved in reasoning must be defined in the Smart Environment Interfac
 
 SST Interfaces (for both hotwords and utterances) must be defined inside the Instances Sensors (HotwordDetect and UtteranceDetect classes of sensors_snow_google.py).
 
-### Festival Text-to-Speech
-
-Install Festival with:
-
----------------
- 
-```sh
-> sudo apt-get install festival
-```
 
 
 ### Starting Phidias Shell
