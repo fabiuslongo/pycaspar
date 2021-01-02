@@ -143,7 +143,7 @@ class UtteranceDetect(Sensor):
 
                if LOG_ACTIVE:
                    with open("log.txt", "a") as myfile:
-                       myfile.write("\n\n" + utterance)
+                       myfile.write("\n\nAzure STT: " + utterance)
                        myfile.write("\nDetection time: " + str(detection_time))
 
                self.assert_belief(STT(utterance))
