@@ -16,6 +16,7 @@ This repository has been tested on Raspberry Pi 4B with the following packages v
 * Natural Language Toolkit (ver. 3.5)
 * [Snowboy](https://github.com/Kitt-AI/snowboy)
 * [Google Speech-to-Text](https://cloud.google.com/speech-to-text/docs/libraries#client-libraries-install-python)
+* Festival Text-to-Speech
 
 
 ### Phidias
