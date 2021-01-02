@@ -41,6 +41,6 @@ produce_routine() / (PRE_ROUTINE(I, V, D, X, L, T) & ROUTINE_MOD(D, W, K)) >> [-
 # appending pre-routines modificators
 produce_routine() / (PRE_ROUTINE(I, V, D, X, L, T) & ROUTINE_GROUND(M, D, K)) >> [-PRE_ROUTINE(I, V, D, X, L, T), -ROUTINE_GROUND(M, D, K), append_routine_mods(I, V, D, X, K, L, T), produce_routine()]
 # asserting routines
-produce_routine() / PRE_ROUTINE(I, V, D, X, L, T) >> [-PRE_ROUTINE(I, V, D, X, L, T), +ROUTINE(I, V, X, L, T), produce_routine()]
+produce_routine() / PRE_ROUTINE(I, V, D, X, L, T) >> [-PRE_ROUTINE(I, V, D, X, L, T), +ROUTINE(I, V, X, L, T), produce_routine(), show_ct()]
 
 

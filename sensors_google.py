@@ -2,7 +2,11 @@ from __future__ import division
 from phidias.Types import *
 import threading
 import sys
+import configparser
 
+config = configparser.ConfigParser()
+config.read('config.ini')
+LOG_ACTIVE = config.getboolean('AGENT', 'LOG_ACTIVE')
 
 class TIMEOUT(Reactor): pass
 class STT(Reactor): pass
@@ -294,6 +298,7 @@ class UtteranceDetect(Sensor):
             with self.mic_manager as stream:
 
                 while self.running:
+                    start_time = time.time()
                     sys.stdout.write(YELLOW)
                     sys.stdout.write(
                         "\n" + str(STREAMING_LIMIT * stream.restart_counter) + ": NEW REQUEST\n")
@@ -338,6 +343,9 @@ class UtteranceDetect(Sensor):
 
                         if result.is_final:
 
+                            detection_time = time.time() - start_time
+                            print("\nSTT Detection time: ", detection_time)
+
                             sys.stdout.write(GREEN)
                             sys.stdout.write("\033[K")
                             sys.stdout.write(str(corrected_time) + ": " + transcript + "\n")
@@ -354,6 +362,11 @@ class UtteranceDetect(Sensor):
                             utterance = transcript.strip()
                             for s in SWAP_STR:
                                 utterance = utterance.replace(s[0], s[1])
+
+                            if LOG_ACTIVE:
+                                with open("log.txt", "a") as myfile:
+                                    myfile.write("\n\n" + utterance)
+                                    myfile.write("\nDetection time: "+str(detection_time))
 
                             self.assert_belief(STT(utterance))
 

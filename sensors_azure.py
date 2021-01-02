@@ -3,9 +3,16 @@ import threading
 import time
 import azure.cognitiveservices.speech as speechsdk
 
+import configparser
+
+config = configparser.ConfigParser()
+config.read('config.ini')
+LOG_ACTIVE = config.getboolean('AGENT', 'LOG_ACTIVE')
+
 class TIMEOUT(Reactor): pass
 class STT(Reactor): pass
 class HOTWORD_DETECTED(Reactor): pass
+
 
 # ----------- Azure section
 
@@ -123,16 +130,21 @@ class UtteranceDetect(Sensor):
 
            # Checks result.
            if result.reason == speechsdk.ResultReason.RecognizedSpeech:
-               print("Recognized: {}".format(result.text))
 
                detection_time = time.time() - start_time
-               print("\nDetection time: ", detection_time)
+               print("Recognized: {}".format(result.text))
+               print("\nSTT Detection time: ", detection_time)
 
                # changing char/snipplets not dealing with the parsing
                SWAP_STR = [["Turn on", "Change"]]
                utterance = result.text
                for s in SWAP_STR:
                    utterance = utterance.replace(s[0], s[1])
+
+               if LOG_ACTIVE:
+                   with open("log.txt", "a") as myfile:
+                       myfile.write("\n\n" + utterance)
+                       myfile.write("\nDetection time: " + str(detection_time))
 
                self.assert_belief(STT(utterance))
 

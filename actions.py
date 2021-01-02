@@ -6,7 +6,7 @@ from logic.logic import *
 from phidias.Types import *
 import configparser
 import math
-import datetime
+from datetime import datetime
 from difflib import SequenceMatcher
 
 config = configparser.ConfigParser()
@@ -21,6 +21,8 @@ LANGUAGE = config.get('NL_TO_FOL', 'LANGUAGE')
 ASSIGN_RULES_ADMITTED = config.getboolean('NL_TO_FOL', 'ASSIGN_RULES_ADMITTED')
 
 WAIT_TIME = config.getint('AGENT', 'WAIT_TIME')
+LOG_ACTIVE = config.getboolean('AGENT', 'LOG_ACTIVE')
+
 INCLUDE_ACT_POS = config.getboolean('POS', 'INCLUDE_ACT_POS')
 INCLUDE_NOUNS_POS = config.getboolean('POS', 'INCLUDE_NOUNS_POS')
 INCLUDE_ADJ_POS = config.getboolean('POS', 'INCLUDE_ADJ_POS')
@@ -186,23 +188,30 @@ class PROCESS_STORED_MST(Reactor): pass
 
 
 
-class show_time(Action):
-    """Show execution time"""
-    def execute(self):
-        comp_time = parser.get_comp_time()
-        print("\nExecution time: ", comp_time)
-
 
 class reset_ct(Action):
     """Reset execution time"""
     def execute(self):
         parser.set_start_time()
 
+class show_ct(Action):
+    """Show execution time"""
+    def execute(self):
+        ct = parser.get_comp_time()
+        print("\nExecution time: ", ct)
+
+        if LOG_ACTIVE:
+            with open("log.txt", "a") as myfile:
+                myfile.write("\nExecution time: "+str(ct))
+
 
 class set_wait(Action):
     """Set duration of the session from WAIT_TIME in config.ini [AGENT]"""
     def execute(self):
         self.assert_belief(WAIT(WAIT_TIME))
+        if LOG_ACTIVE:
+            with open("log.txt", "a") as myfile:
+                myfile.write("\n\n------ NEW SESSION ------ "+str(datetime.now()))
 
 
 class eval_cls(ActiveBelief):
@@ -750,17 +759,10 @@ class new_clause(Action):
     def execute(self, *args):
         sentence = args[0]()
 
-        #print("\n", sentence)
         mf = parser.morph(sentence)
         print("\n", mf)
-
         def_clause = expr(mf)
-
         kb_fol.nested_tell(def_clause)
-
-        comp_time = parser.get_comp_time()
-
-        print("\nAssert time: ", comp_time)
 
 
 class reason(Action):
@@ -792,9 +794,6 @@ class reason(Action):
             else:
                 print("\nResult: ", nested_result)
 
-            comp_time = parser.get_comp_time()
-
-            print("\nQuery time: ", comp_time)
 
 
 class assert_command(Action):
@@ -876,7 +875,7 @@ class assert_command(Action):
 
     def process(self, vect_fol):
 
-        dateTimeObj = datetime.datetime.now()
+        dateTimeObj = datetime.now()
         id_ground = dateTimeObj.microsecond
 
         for g in vect_fol:
@@ -910,7 +909,7 @@ class assert_command(Action):
 class join_grounds(Action):
     """join two GROUNDS Beliefs in one, with concatenated variables"""
     def execute(self, *args):
-        dateTimeObj = datetime.datetime.now()
+        dateTimeObj = datetime.now()
         id_ground = dateTimeObj.microsecond
 
         union = self.get_arg(str(args[1])) + " " + self.get_arg(str(args[2]))
@@ -947,8 +946,6 @@ class join_routine_grounds(Action):
     def get_arg(self, arg):
         s = arg.split("'")
         return s[3]
-
-
 
 
 class append_intent_params(Action):
@@ -1086,9 +1083,6 @@ class exec_cmd(Action):
         if len(parameters) > 0:
             print("Parameters: " + parameters)
         print("\n")
-
-        comp_time = parser.get_comp_time()
-        print("\nExecution time: ", comp_time)
 
     def get_arg(self, arg):
         s = arg.split("'")
