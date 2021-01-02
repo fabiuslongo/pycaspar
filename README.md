@@ -60,15 +60,13 @@ is an agent itself. Before starting the agent, Entities and Speech-To-Text Inter
 
 ---------------
 
-Entities involved in reasoning must be defined in the Smart Environment Interface 
-(line 256 of caspar.py).
+Entities involved in reasoning must be defined in the Smart Environment Interface (smart_env_int.py).
 
 ### Speech-To-Text Interfaces
 
 ---------------
 
-SST Interfaces (for both hotwords and utterances) must be defined inside the Instances Sensors 
-(lines 8 and 26 of sensors.py).
+SST Interfaces (for both hotwords and utterances) must be defined inside the Instances Sensors (HotwordDetect and UtteranceDetect classes of sensors_snow_google.py).
 
 ### Festival Text-to-Speech
 
