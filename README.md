@@ -26,10 +26,13 @@ As Speech-to-Text engine you can use either Google or Azure, uncommenting the re
 ```sh
 > python -m pip install google-cloud-speech
 ```
+You must also create the authentication key following the instruction in the above link.
+
 * [Azure Speech-to-Text API](https://docs.microsoft.com/en-us/azure/cognitive-services/speech-service/get-started-speech-to-text?tabs=script%2Cbrowser%2Cwindowsinstall&pivots=programming-language-python)
 ```sh
 > python -m pip install azure-cognitiveservices-speech
 ```
+You must also create the authentication key following the instruction in the above link.
 
 ### Phidias
 
