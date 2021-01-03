@@ -20,7 +20,7 @@ This repository has been tested on Python 3.7.3 64bit on Windows 10, with the fo
 * Natural Language Toolkit (ver. 3.5)
 * [pyttsx3 (Text-to-Speech)](https://pyttsx3.readthedocs.io/en/latest/) 
 
-As Speech-to-Text engine you can use either Google or Azure, uncommenting the related lines (7 or 8) of front_end.py:
+As Speech-to-Text engine you can decide to use either Google or Azure, uncommenting the related lines (7 or 8) of front_end.py:
 
 * [Google Speech-to-Text API](https://cloud.google.com/speech-to-text/docs/libraries#client-libraries-install-python)
 ```sh
@@ -37,7 +37,7 @@ You must also create the authentication key following the instructions in the ab
 ### Phidias
 
 ---------------
-##### on all platforms
+
 ```sh
 > git clone https://github.com/corradosantoro/phidias
 > python setup.py install
