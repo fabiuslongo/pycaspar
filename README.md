@@ -8,13 +8,28 @@ using a Rich Semantic](http://ceur-ws.org/Vol-2706/paper2.pdf), presented in WOA
 
 # Installation
 
+WARNING: Starting from here, this repository changes taking in account of the branch. Please select the favorite branch (master or raspberry) before to proceed further. 
+The master branch is designed for Windows 10 64bit, while the raspberry branch is designed for Raspberry Pi 4B (4BG) and Ubuntu 20.10. 
 
-This repository has been tested on Python 3.7.3 64bit with the following packages versions:
+---------------
+
+This repository has been tested on Python 3.7.3 64bit on Windows 10, with the following packages versions:
 
 * [Phidias](https://github.com/corradosantoro/phidias) (release 1.3.4.alpha) 
 * SpaCy (ver. 2.2.4)
 * Natural Language Toolkit (ver. 3.5)
+* [pyttsx3 (Text-to-Speech)](https://pyttsx3.readthedocs.io/en/latest/) 
 
+As Speech-to-Text engine you can use either Google or Azure, uncommenting the related lines (7 or 8) of front_end.py:
+
+* [Google Speech-to-Text API](https://cloud.google.com/speech-to-text/docs/libraries#client-libraries-install-python)
+```sh
+> python -m pip install google-cloud-speech
+```
+* [Azure Speech-to-Text API](https://docs.microsoft.com/en-us/azure/cognitive-services/speech-service/get-started-speech-to-text?tabs=script%2Cbrowser%2Cwindowsinstall&pivots=programming-language-python)
+```sh
+> python -m pip install azure-cognitiveservices-speech
+```
 
 ### Phidias
 
@@ -23,14 +38,6 @@ This repository has been tested on Python 3.7.3 64bit with the following package
 ```sh
 > git clone https://github.com/corradosantoro/phidias
 > python setup.py install
-```
-##### additional package needed (Linux)
-```sh
-> python -pip install readline
-> python -pip install parse
-```
-##### additional package needed (Windows)
-```sh
 > python -m pip install pyreadline
 > python -m pip install parse
 ```
@@ -57,6 +64,15 @@ from python console:
 ```sh
 > import nltk
 > nltk.download('wordnet')
+```
+
+### pyttsx3 (Text-to-Speech)
+
+---------------
+
+from prompt:
+```sh
+> python -m pip install pyttsx3
 ```
 
 

@@ -8,12 +8,15 @@ import configparser
 import math
 from datetime import datetime
 from difflib import SequenceMatcher
+import pyttsx3
 
 config = configparser.ConfigParser()
 config.read('config.ini')
 
 cnt = itertools.count(1)
 dav = itertools.count(1)
+
+
 
 
 VERBOSE = config.getboolean('NL_TO_FOL', 'VERBOSE')
@@ -187,12 +190,28 @@ class feed_mst(Procedure): pass
 class PROCESS_STORED_MST(Reactor): pass
 
 
+class say(Action):
+    """Text-to-Speech"""
+    def execute(self, *args):
+        text = args[0]()
+
+        # setting TTS engine
+        engine = pyttsx3.init()
+        voices = engine.getProperty('voices')
+        engine.setProperty('voice', voices[2].id)
+        engine.setProperty('rate', 150)
+
+        engine.say(text)
+        engine.runAndWait()
+
+
 
 
 class reset_ct(Action):
     """Reset execution time"""
     def execute(self):
         parser.set_start_time()
+
 
 class show_ct(Action):
     """Show execution time"""
@@ -211,7 +230,7 @@ class set_wait(Action):
         self.assert_belief(WAIT(WAIT_TIME))
         if LOG_ACTIVE:
             with open("log.txt", "a") as myfile:
-                myfile.write("\n\n------ NEW SESSION ------ "+str(datetime.now()))
+                myfile.write("\n\n------ NEW SESSION ------ "+str(datetime.now().strftime("%d/%m/%Y %H:%M:%S")))
 
 
 class eval_cls(ActiveBelief):
@@ -793,7 +812,6 @@ class reason(Action):
                 print("\nClause present in kb. No substitutions needed.")
             else:
                 print("\nResult: ", nested_result)
-
 
 
 class assert_command(Action):

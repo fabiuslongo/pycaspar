@@ -52,7 +52,7 @@ q() >> [+STT("Colonel West is a criminal")]
 
 
 # Start agent command
-go() >> [show_line("Starting Caspar..."), set_wait(), HotwordDetect().start]
+go() >> [show_line("Starting Caspar..."), set_wait(), HotwordDetect().start, say("system ready")]
 
 # show Clauses kb
 s() >> [show_fol_kb()]
