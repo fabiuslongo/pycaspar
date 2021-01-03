@@ -9,7 +9,7 @@ using a Rich Semantic](http://ceur-ws.org/Vol-2706/paper2.pdf), presented in WOA
 # Installation
 
 WARNING: Starting from here, this repository changes taking in account of the branch. Please select the favorite branch (master or raspberry) before to proceed further. 
-The master branch  is designed for Windows 10 64bit, while the raspberry branch (this one) is designed for Raspberry Pi 4B (4BG) and Ubuntu 20.10.
+The master branch is designed for Windows 10 64bit, while the raspberry branch (this one) is designed for Raspberry Pi 4B (4BG) and Ubuntu 20.10.
 
 ---------------
 
