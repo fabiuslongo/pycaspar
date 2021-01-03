@@ -79,7 +79,7 @@ t() >> [go(), w(), l()]
 
 
 # Hotwords processing
-+HOTWORD_DETECTED("ON") / WAIT(W) >> [show_line("\n\nYes, I'm here!\n"), HotwordDetect().stop, UtteranceDetect().start, +WAKE("ON"), Timer(W).start]
++HOTWORD_DETECTED("ON") / WAIT(W) >> [say("yes?"), show_line("\n\nYes, I'm here!\n"), HotwordDetect().stop, UtteranceDetect().start, +WAKE("ON"), Timer(W).start]
 # Google STT
 +STT("listen") / (WAKE("ON") & WAIT(W)) >> [-REASON("ON"), +LISTEN("ON"), show_line("\nWaiting for knowledge...\n"), UtteranceDetect().start, Timer(W).start]
 +STT("reason") / (WAKE("ON") & WAIT(W)) >> [-LISTEN("ON"), +REASON("ON"), show_line("\nWaiting for query...\n"), UtteranceDetect().start, Timer(W).start]
