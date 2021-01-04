@@ -16,9 +16,10 @@ The master branch (this one) is designed for Windows 10 64bit, while the raspber
 This repository has been tested on Python 3.7.3 64bit on Windows 10, with the following packages versions:
 
 * [Phidias](https://github.com/corradosantoro/phidias) (release 1.3.4.alpha) 
-* SpaCy (ver. 2.2.4)
-* Natural Language Toolkit (ver. 3.5)
+* [spaCy](https://spacy.io/) (ver. 2.2.4)
+* [Natural Language Toolkit](https://www.nltk.org/) (ver. 3.5)
 * [pyttsx3 (Text-to-Speech)](https://pyttsx3.readthedocs.io/en/latest/) 
+* [porcupine (hotword detection)](https://github.com/Picovoice/porcupine)
 
 As Speech-to-Text engine you can decide to use either Google or Azure, uncommenting the related lines (7 or 8) of front_end.py:
 
@@ -51,7 +52,7 @@ You must also create the authentication keys by following the instructions in th
 
 ```sh
 > python -m pip install spacy
-> python -m spacy download en_core_web_md
+> python -m spacy download en_core_web_lg
 ```
 
 
@@ -78,6 +79,15 @@ from prompt:
 > python -m pip install pyttsx3
 ```
 
+### porcupine (hotword detection)
+
+---------------
+
+from prompt:
+```sh
+> python -m pip install pvporcupine
+```
+
 
 # Testing
 This cognitive architecture is designed to implement more intelligent agents and also 
@@ -93,7 +103,7 @@ Entities involved in reasoning must be defined in the Smart Environment Interfac
 
 ---------------
 
-STT Interfaces (for both hotwords and utterances) must be defined inside the Instances Sensors 
+STT Interfaces (for both hotword and utterances) must be defined inside the Instances Sensors 
 (sensors.py).
  
 
