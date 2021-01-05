@@ -27,7 +27,6 @@ speech_recognizer = speechsdk.SpeechRecognizer(speech_config=speech_config)
 import os
 import struct
 from datetime import datetime
-from threading import Thread
 import pvporcupine
 import pyaudio
 
@@ -35,14 +34,30 @@ import pyaudio
 #  alexa, americano, blueberry, bumblebee, computer, grapefruit, grasshopper, hey google, hey siri, jarvis, ok google, picovoice, porcupine, terminator
 
 
-class PorcupineDemo(Thread):
 
-    def __init__(self):
-        super(PorcupineDemo, self).__init__()
 
-    def run(self):
 
-        keywords = ["blueberry"]
+class HotwordDetect(Sensor):
+
+    def on_start(self):
+       self.running = True
+       print("\nStarting Hotword detection...")
+
+
+    def on_stop(self):
+        print("\nStopping Hotword detection...")
+        self.running = False
+
+
+    def on_restart(self):
+
+        print("\nRestarting Hotword detection...")
+        self.running = True
+
+
+    def sense(self):
+
+        keywords = ["caspar"]
         keyword_paths = [pvporcupine.KEYWORD_PATHS[x] for x in keywords]
         sensitivities = [0.5] * len(keyword_paths)
 
@@ -71,39 +86,21 @@ class PorcupineDemo(Thread):
             print('  %s (%.2f)' % (keyword, sensitivity))
         print('}')
 
-        FOUND_WORD = False
+        while self.running:
 
-        while FOUND_WORD is False:
             pcm = audio_stream.read(porcupine.frame_length)
             pcm = struct.unpack_from("h" * porcupine.frame_length, pcm)
 
             result = porcupine.process(pcm)
             if result >= 0:
                 print('[%s] Detected %s' % (str(datetime.now()), keywords[result]))
-                FOUND_WORD = True
-
+                self.assert_belief(HOTWORD_DETECTED("ON"))
+                self.running = False
+                break
         audio_stream.close()
         pa.terminate()
         porcupine.delete()
 
-
-
-class HotwordDetect(Sensor):
-
-    def on_start(self):
-       self.running = True
-       print("\nStarting Hotword detection...")
-       # put instantiation hotword code here
-
-    def on_stop(self):
-        print("\nStopping Hotword detection...")
-        self.running = False
-
-    def sense(self):
-        while self.running is True:
-            PorcupineDemo().run()
-            self.assert_belief(HOTWORD_DETECTED("ON"))
-            self.running = False
 
 
 
@@ -112,18 +109,18 @@ class UtteranceDetect(Sensor):
     def on_start(self):
        self.running = True
        print("\nStarting utterance detection...")
-       # instantiate hotword engine here
 
     def on_stop(self):
         print("\nStopping utterance detection...")
         speech_recognizer.stop_continuous_recognition()
         self.running = False
 
+    def on_restart(self, *args):
+        print("\nRestarting utterance detection...")
+        self.running = True
+
     def sense(self):
         while self.running:
-           #time.sleep(1)
-           # --------------> put utterance detection code here <---------------
-           # when incoming new utterance detected: self.assert_belief(STT(utterance))
 
            start_time = time.time()
            result = speech_recognizer.recognize_once()

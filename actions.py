@@ -9,6 +9,8 @@ import math
 from datetime import datetime
 from difflib import SequenceMatcher
 import pyttsx3
+import winsound
+
 
 config = configparser.ConfigParser()
 config.read('config.ini')
@@ -190,6 +192,14 @@ class feed_mst(Procedure): pass
 class PROCESS_STORED_MST(Reactor): pass
 
 
+
+
+class beep(Action):
+    """plays a beep"""
+    def execute(self):
+        winsound.PlaySound('ding.wav', winsound.SND_FILENAME)
+
+
 class say(Action):
     """Text-to-Speech"""
     def execute(self, *args):
@@ -203,8 +213,6 @@ class say(Action):
 
         engine.say(text)
         engine.runAndWait()
-
-
 
 
 class reset_ct(Action):
@@ -797,10 +805,7 @@ class reason(Action):
         bc_result = kb_fol.ask(expr(q))
         print("\n ---- NOMINAL REASONING ---\n")
         print("Result: " + str(bc_result))
-
-        comp_time = parser.get_comp_time()
-
-        print("Backward-Chaining Query time: ", comp_time)
+        print("Backward-Chaining Query time: ", parser.get_comp_time())
 
         if bc_result is False:
 

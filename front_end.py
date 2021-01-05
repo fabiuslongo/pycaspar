@@ -1,9 +1,7 @@
 from phidias.Lib import *
 from actions import *
 
-from sensors import *
-# for azure speech supported architectures, please refer to:
-# https://docs.microsoft.com/en-us/azure/cognitive-services/speech-service/speech-sdk?tabs=linux%2Cubuntu%2Cios-xcode%2Cmac-xcode%2Candroid-studio#get-the-speech-sdk
+#from sensors import *
 #from sensors_azure import *
 from sensors_google import *
 
@@ -33,22 +31,6 @@ c5() >> [+STT("When an American sells weapons to a hostile nation, that American
 q() >> [+STT("Colonel West is a criminal")]
 
 
-# open issues
-
-# testing disambiguation: He likes to eat bass, He likes to play the bass
-
-# relcl
-# I just want a simple way to get my discount -----> unsolved!
-# I lived the experience THAT you told to me: Yes! --- I lived the experience WHICH you told to me: Yes!
-# I lived the experience THAT you told me: No! --- I lived the experience WHICH you told me: No!
-# I saw the man that you love: Yes! --- I saw the man you love: No!
-
-# mark: unwanted conditionals
-# I want to see the issues like he sees them, I want to see the issues as he sees them
-
-# dobj
-# What she bought to me were these books: YES!
-# What she bought me were these books
 
 
 # Start agent command
@@ -79,11 +61,12 @@ t() >> [go(), w(), l()]
 
 
 # Hotwords processing
-+HOTWORD_DETECTED("ON") / WAIT(W) >> [say("yes?"), show_line("\n\nYes, I'm here!\n"), HotwordDetect().stop, UtteranceDetect().start, +WAKE("ON"), Timer(W).start]
++HOTWORD_DETECTED("ON") / WAIT(W) >> [show_line("\n\nYes, I'm here!\n"), HotwordDetect().stop, beep(), UtteranceDetect().start, +WAKE("ON"), Timer(W).start]
+
 # Google STT
-+STT("listen") / (WAKE("ON") & WAIT(W)) >> [-REASON("ON"), +LISTEN("ON"), show_line("\nWaiting for knowledge...\n"), UtteranceDetect().start, Timer(W).start]
-+STT("reason") / (WAKE("ON") & WAIT(W)) >> [-LISTEN("ON"), +REASON("ON"), show_line("\nWaiting for query...\n"), UtteranceDetect().start, Timer(W).start]
-+STT("done") / (WAKE("ON") & WAIT(W)) >> [-LISTEN("ON"), -REASON("ON"), show_line("\nExiting from cognitive phase...\n"), UtteranceDetect().stop, HotwordDetect().start, Timer(W).start]
++STT("listen") / (WAKE("ON") & WAIT(W)) >> [-REASON("ON"), +LISTEN("ON"), show_line("\nWaiting for knowledge...\n"), UtteranceDetect().stop, say("Waiting for knowledge"), UtteranceDetect().start, Timer(W).start]
++STT("reason") / (WAKE("ON") & WAIT(W)) >> [-LISTEN("ON"), +REASON("ON"), show_line("\nWaiting for query...\n"), UtteranceDetect().stop, say("Waiting for query"), UtteranceDetect().start, Timer(W).start]
++STT("done") / (WAKE("ON") & WAIT(W)) >> [-LISTEN("ON"), -REASON("ON"), show_line("\nExiting from cognitive phase...\n"), UtteranceDetect().stop, say("Exiting from cognitive phase"), HotwordDetect().start, Timer(W).start]
 
 # Azure STT
 #+STT("Listen.") / (WAKE("ON") & WAIT(W)) >> [-REASON("ON"), +LISTEN("ON"), show_line("\nWaiting for knowledge...\n"), UtteranceDetect().start, Timer(W).start]

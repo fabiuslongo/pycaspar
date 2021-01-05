@@ -169,21 +169,40 @@ streaming_config = speech.StreamingRecognitionConfig(
 import os
 import struct
 from datetime import datetime
-from threading import Thread
 import pvporcupine
 
 #  keywords available:
 #  alexa, americano, blueberry, bumblebee, computer, grapefruit, grasshopper, hey google, hey siri, jarvis, ok google, picovoice, porcupine, terminator
 
+# -----------------------------------------------------------------------
 
 
-class PorcupineDemo(Thread):
 
-    def __init__(self):
-        super(PorcupineDemo, self).__init__()
 
-    def run(self):
 
+
+
+class HotwordDetect(Sensor):
+
+    def on_start(self):
+       self.running = True
+       print("\nStarting Hotword detection...")
+
+
+    def on_stop(self):
+        print("\nStopping Hotword detection...")
+        self.running = False
+
+
+    def on_restart(self):
+
+        print("\nRestarting Hotword detection...")
+        self.running = True
+
+
+    def sense(self):
+
+        sys.stdout.write(BLUE)
         keywords = ["caspar"]
         keyword_paths = [pvporcupine.KEYWORD_PATHS[x] for x in keywords]
         sensitivities = [0.5] * len(keyword_paths)
@@ -213,9 +232,8 @@ class PorcupineDemo(Thread):
             print('  %s (%.2f)' % (keyword, sensitivity))
         print('}')
 
-        FOUND_WORD = False
+        while self.running:
 
-        while FOUND_WORD is False:
             pcm = audio_stream.read(porcupine.frame_length)
             pcm = struct.unpack_from("h" * porcupine.frame_length, pcm)
 
@@ -223,46 +241,14 @@ class PorcupineDemo(Thread):
             if result >= 0:
                 print('[%s] Detected %s' % (str(datetime.now()), keywords[result]))
                 sys.stdout.write(CWHITE)
-                FOUND_WORD = True
-
+                self.assert_belief(HOTWORD_DETECTED("ON"))
+                self.running = False
+                break
         audio_stream.close()
         pa.terminate()
         porcupine.delete()
 
 
-# -----------------------------------------------------------------------
-
-
-
-
-
-
-
-class HotwordDetect(Sensor):
-
-    def on_start(self):
-       self.running = True
-       print("\nStarting Hotword detection...")
-       evt = threading.Event()
-       self.event = evt
-
-    def on_stop(self):
-        print("\nStopping Hotword detection...")
-        self.running = False
-        self.event.set()
-
-    def on_restart(self):
-        print("\nRestarting Hotword detection...")
-        self.running = False
-        self.event.set()
-
-
-    def sense(self):
-        while self.running:
-            sys.stdout.write(BLUE)
-            PorcupineDemo().run()
-            self.assert_belief(HOTWORD_DETECTED("ON"))
-            self.running = False
 
 
 
@@ -275,29 +261,23 @@ class UtteranceDetect(Sensor):
        self.running = True
        self.mic_manager = ResumableMicrophoneStream(SAMPLE_RATE, CHUNK_SIZE)
        print("\nStarting utterance detection...")
-       evt = threading.Event()
-       self.event = evt
 
     def on_stop(self):
-        print("\nStopping utterance detection...")
+        print("\n\n --- Stopping utterance detection...")
         self.running = False
         self.mic_manager.closed = True
-        self.event.set()
 
     def on_restart(self, *args):
         print("\nRestarting utterance detection...")
         self.running = True
         self.mic_manager.closed = False
-        self.event.set()
-
 
     def sense(self):
+
         while self.running:
-            self.event.clear()
 
             with self.mic_manager as stream:
-
-                while self.running:
+                while stream.closed is not True:
                     start_time = time.time()
                     sys.stdout.write(YELLOW)
                     sys.stdout.write(
