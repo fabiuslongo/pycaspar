@@ -11,6 +11,8 @@ LOG_ACTIVE = config.getboolean('AGENT', 'LOG_ACTIVE')
 class TIMEOUT(Reactor): pass
 class STT(Reactor): pass
 class HOTWORD_DETECTED(Reactor): pass
+class FEED(Reactor): pass
+class QUERY(Reactor): pass
 
 
 # ----------- Google section
@@ -191,24 +193,21 @@ class HotwordDetect(Sensor):
        print("\nStarting Hotword detection...")
        self.running = True
        detector.set_running(True)
-       evt = threading.Event()
-       self.event = evt
 
     def on_stop(self):
         self.running = False
+
         detector.terminate()
         print("\nStopping Hotword detection...")
-        self.event.set()
+
 
     def on_restart(self):
         print("\nRestarting hotword detection...")
         self.running = True
         detector.set_running(True)
-        self.event.set()
 
     def sense(self):
         while self.running:
-            self.event.clear()
             print("\nRunning Hotword detection...")
             detector.start(detected_callback=snowboydecoder.play_audio_file, interrupt_check=interrupt_callback, sleep_time=0.03)
             self.assert_belief(HOTWORD_DETECTED("ON"))
@@ -224,30 +223,23 @@ class UtteranceDetect(Sensor):
        self.mic_manager = ResumableMicrophoneStream(SAMPLE_RATE, CHUNK_SIZE)
        print("\nStarting utterance detection...")
 
-       evt = threading.Event()
-       self.event = evt
-
     def on_stop(self):
         print("\nStopping utterance detection...")
         self.running = False
         self.mic_manager.closed = True
-        self.event.set()
+
 
     def on_restart(self):
         print("\nRestarting utterance detection...")
         self.running = True
         self.mic_manager.closed = False
-        self.event.set()
-
 
     def sense(self):
 
         while self.running:
-            self.event.clear()
 
             with self.mic_manager as stream:
-
-                while self.mic_manager.closed is False:
+                while stream.closed is False:
 
                     start_time = time.time()
                     sys.stdout.write(YELLOW)

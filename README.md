@@ -13,7 +13,7 @@ The master branch is designed for Windows 10 64bit, while the raspberry branch (
 
 ---------------
 
-This repository has been tested on Raspberry Pi 4B with the following packages versions:
+This repository has been tested on Raspberry Pi 4B (4GB) with the following packages versions:
 
 * [Phidias](https://github.com/corradosantoro/phidias) (release 1.3.4.alpha) 
 * SpaCy (ver. 2.3.0)

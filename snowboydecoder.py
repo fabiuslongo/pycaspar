@@ -130,6 +130,9 @@ class HotwordDetector(object):
     def set_running(self, state):
         self._running = state
 
+    def get_running_state(self):
+        return self._running
+
 
     def start(self, detected_callback=play_audio_file,
               interrupt_check=lambda: False,

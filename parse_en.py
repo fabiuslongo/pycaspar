@@ -50,10 +50,7 @@ class Parse(object):
         #os.system("espeak -s 160 -v en+f4 'System ready'")
         os.system("echo 'System ready' | festival --tts")
 
-        if platform.system() == "Windows":
-            os.system('cls')
-        else:
-            os.system('clear')
+        os.system('clear')
 
         # enable cache usage
         self.FLUSH = True

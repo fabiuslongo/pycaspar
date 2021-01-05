@@ -200,6 +200,7 @@ class reset_ct(Action):
     def execute(self):
         parser.set_start_time()
 
+
 class show_ct(Action):
     """Show execution time"""
     def execute(self):
@@ -210,13 +211,14 @@ class show_ct(Action):
             with open("log.txt", "a") as myfile:
                 myfile.write("\nExecution time: " + str(ct))
 
+
 class set_wait(Action):
     """Set duration of the session from WAIT_TIME in config.ini [AGENT]"""
     def execute(self):
         self.assert_belief(WAIT(WAIT_TIME))
         if LOG_ACTIVE:
             with open("log.txt", "a") as myfile:
-                myfile.write("\n\n------ NEW SESSION ------ " + str(datetime.now()))
+                myfile.write("\n\n------ NEW SESSION ------ " + str(datetime.now().strftime("%d/%m/%Y %H:%M:%S")))
 
 
 class eval_cls(ActiveBelief):
@@ -771,7 +773,6 @@ class new_clause(Action):
         kb_fol.nested_tell(def_clause)
 
 
-
 class reason(Action):
     """Query the Clauses KB with Backward-Chaining, and if it fails with Nested Reasoning"""
 
@@ -785,10 +786,7 @@ class reason(Action):
         bc_result = kb_fol.ask(expr(q))
         print("\n ---- NOMINAL REASONING ---\n")
         print("Result: " + str(bc_result))
-
-        comp_time = parser.get_comp_time()
-
-        print("Backward-Chaining Query time: ", comp_time)
+        print("Backward-Chaining Query time: ", parser.get_comp_time())
 
         if bc_result is False:
 
@@ -800,7 +798,6 @@ class reason(Action):
                 print("\nClause present in kb. No substitutions needed.")
             else:
                 print("\nResult: ", nested_result)
-
 
 
 class assert_command(Action):
@@ -838,7 +835,7 @@ class assert_command(Action):
 
         if len(vect_LR_fol) > 0 and vect_LR_fol[1][0] == "==>":
 
-            dateTimeObj = datetime.datetime.now()
+            dateTimeObj = datetime.now()
             id_routine = dateTimeObj.microsecond
 
             self.process_conditions(vect_LR_fol[0], id_routine)
@@ -847,7 +844,7 @@ class assert_command(Action):
             self.process(vect_LR_fol)
 
     def process_conditions(self, vect_fol, id_routine):
-        dateTimeObj = datetime.datetime.now()
+        dateTimeObj = datetime.now()
         id_ground = dateTimeObj.microsecond
         for g in vect_fol:
             if len(g) == 3:
@@ -864,7 +861,7 @@ class assert_command(Action):
                 self.assert_belief(PRE_COND(str(id_routine), verb, g[1], g[2], g[3]))
 
     def process_routine(self, vect_fol, id_routine):
-        dateTimeObj = datetime.datetime.now()
+        dateTimeObj = datetime.now()
         id_ground = dateTimeObj.microsecond
         for g in vect_fol:
             if len(g) == 3:
@@ -944,7 +941,7 @@ class join_cond_grounds(Action):
 class join_routine_grounds(Action):
     """join ROUTINE_GROUNDS Beliefs, with concatenated variables"""
     def execute(self, *args):
-        dateTimeObj = datetime.datetime.now()
+        dateTimeObj = datetime.now()
         id_ground = dateTimeObj.microsecond
 
         union = self.get_arg(str(args[1])) + " " + self.get_arg(str(args[2]))

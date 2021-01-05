@@ -107,5 +107,14 @@ process_clause() / (DEF_CLAUSE(X) & LISTEN("ON") & RETRACT("ON")) >> [show_line(
 process_clause() / (DEF_CLAUSE(X) & LISTEN("ON")) >> [show_line("\nAsserting definite clause into Fol Kb."), -DEF_CLAUSE(X), new_clause(X), process_clause()]
 
 
+# Reasoning - testing mode
+process_clause() / (DEF_CLAUSE(X) & REASON("TEST") & IS_RULE("TRUE")) >> [show_line("\nReasoning...............\n"), -DEF_CLAUSE(X), -IS_RULE("TRUE"), reason(X), process_clause()]
+process_clause() / (DEF_CLAUSE(X) & REASON("TEST")) >> [show_line("\nReasoning...............\n"), -DEF_CLAUSE(X), reason(X), process_clause()]
+
+# Retracting definite clause - testing mode
+process_clause() / (DEF_CLAUSE(X) & LISTEN("TEST") & RETRACT("ON")) >> [show_line("\nRetracting clause."), -DEF_CLAUSE(X), -RETRACT("ON"), retract_clause(X), process_clause()]
+
+# Asserting definite clause - testing mode
+process_clause() / (DEF_CLAUSE(X) & LISTEN("TEST")) >> [show_line("\nAsserting definite clause into Fol Kb."), -DEF_CLAUSE(X), new_clause(X), process_clause()]
 
 
