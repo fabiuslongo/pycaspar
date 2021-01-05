@@ -34,7 +34,7 @@ You must also create the authentication keys by following the instructions in th
 > python -m pip install azure-cognitiveservices-speech
 ```
 You must also create the authentication keys by following the instructions in the above link.
-For Azure Speech-to-Text supported architectures, please refer [here](https://docs.microsoft.com/en-us/azure/cognitive-services/speech-service/speech-sdk?tabs=linux%2Cubuntu%2Cios-xcode%2Cmac-xcode%2Candroid-studio#get-the-speech-sdk):
+For Azure Speech-to-Text supported architectures, please refer [here](https://docs.microsoft.com/en-us/azure/cognitive-services/speech-service/speech-sdk?tabs=linux%2Cubuntu%2Cios-xcode%2Cmac-xcode%2Candroid-studio#get-the-speech-sdk).
  
 
 ### Phidias

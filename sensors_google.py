@@ -277,7 +277,7 @@ class UtteranceDetect(Sensor):
         while self.running:
 
             with self.mic_manager as stream:
-                while stream.closed is not True:
+                while stream.closed is False:
                     start_time = time.time()
                     sys.stdout.write(YELLOW)
                     sys.stdout.write(
