@@ -293,7 +293,7 @@ and queried with:
 * _Colonel West is a criminal?_
 
 We will show (by the command s()) the Clauses Knowlegde Base content after every assertion simulation:
-* _Nono is an hostile nation_
+* _Cuba is an hostile nation_
 
 ```sh
 Waiting for knowledge...
