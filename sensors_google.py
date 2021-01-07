@@ -188,6 +188,30 @@ class HotwordDetect(Sensor):
        self.running = True
        print("\nStarting Hotword detection...")
 
+       self.keywords = ["caspar"]
+       keyword_paths = [pvporcupine.KEYWORD_PATHS[x] for x in self.keywords]
+       self.sensitivities = [0.5] * len(keyword_paths)
+
+       self.keywords = list()
+       for x in keyword_paths:
+           self.keywords.append(os.path.basename(x).replace('.ppn', '').split('_')[0])
+
+       self.porcupine = pvporcupine.create(
+           library_path=pvporcupine.LIBRARY_PATH,
+           model_path=pvporcupine.MODEL_PATH,
+           keyword_paths=keyword_paths,
+           sensitivities=self.sensitivities)
+
+       self.pa = pyaudio.PyAudio()
+
+       self.audio_stream = self.pa.open(
+           rate=self.porcupine.sample_rate,
+           channels=1,
+           format=pyaudio.paInt16,
+           input=True,
+           frames_per_buffer=self.porcupine.frame_length,
+           input_device_index=None)
+
 
     def on_stop(self):
         print("\nStopping Hotword detection...")
@@ -203,54 +227,26 @@ class HotwordDetect(Sensor):
     def sense(self):
 
         sys.stdout.write(BLUE)
-        keywords = ["caspar"]
-        keyword_paths = [pvporcupine.KEYWORD_PATHS[x] for x in keywords]
-        sensitivities = [0.5] * len(keyword_paths)
-
-        keywords = list()
-        for x in keyword_paths:
-            keywords.append(os.path.basename(x).replace('.ppn', '').split('_')[0])
-
-        porcupine = pvporcupine.create(
-            library_path=pvporcupine.LIBRARY_PATH,
-            model_path=pvporcupine.MODEL_PATH,
-            keyword_paths=keyword_paths,
-            sensitivities=sensitivities)
-
-        pa = pyaudio.PyAudio()
-
-        audio_stream = pa.open(
-            rate=porcupine.sample_rate,
-            channels=1,
-            format=pyaudio.paInt16,
-            input=True,
-            frames_per_buffer=porcupine.frame_length,
-            input_device_index=None)
-
         print('\nListening {')
-        for keyword, sensitivity in zip(keywords, sensitivities):
+        for keyword, sensitivity in zip(self.keywords, self.sensitivities):
             print('  %s (%.2f)' % (keyword, sensitivity))
         print('}')
 
         while self.running:
 
-            pcm = audio_stream.read(porcupine.frame_length)
-            pcm = struct.unpack_from("h" * porcupine.frame_length, pcm)
+            pcm = self.audio_stream.read(self.porcupine.frame_length)
+            pcm = struct.unpack_from("h" * self.porcupine.frame_length, pcm)
 
-            result = porcupine.process(pcm)
+            result = self.porcupine.process(pcm)
             if result >= 0:
-                print('[%s] Detected %s' % (str(datetime.now()), keywords[result]))
+                print('[%s] Detected %s' % (str(datetime.now()), self.keywords[result]))
                 sys.stdout.write(CWHITE)
                 self.assert_belief(HOTWORD_DETECTED("ON"))
                 self.running = False
                 break
-        audio_stream.close()
-        pa.terminate()
-        porcupine.delete()
-
-
-
-
+        self.audio_stream.close()
+        self.pa.terminate()
+        self.porcupine.delete()
 
 
 
@@ -356,6 +352,8 @@ class UtteranceDetect(Sensor):
                             sys.stdout.write(str(corrected_time) + ": " + transcript + "\r")
 
                             stream.last_transcript_was_final = False
+
+
 
 
 class Timer(Sensor):

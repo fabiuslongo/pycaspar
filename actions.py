@@ -86,17 +86,10 @@ class check_conds(Procedure): pass
 class go(Procedure): pass
 
 # STT Front-End procedures
-class w(Procedure): pass
-class l(Procedure): pass
-class r(Procedure): pass
 class s(Procedure): pass
-class d(Procedure): pass
 
 # initialize Clauses Kb
 class c(Procedure): pass
-
-# test assertions
-class t(Procedure): pass
 
 # mode reactors
 class HOTWORD_DETECTED(Reactor): pass

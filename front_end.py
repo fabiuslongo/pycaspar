@@ -5,32 +5,31 @@ from actions import *
 #from sensors_azure import *
 from sensors_google import *
 
-
-
+# Clauses KB manual feeding beliefs
+class FEED(Reactor): pass
+class QUERY(Reactor): pass
 
 # Front-End STT
 
 # SIMULATING EVENTS
 
 # simulating routines
-r1() >> [+STT("turn off the lights in the living room, when the temperature is 25 and the time is 12")]
-r2() >> [+STT("set the cooler in the bedroom to 25 degrees and cut the grass in the garden, when the time is 12")]
+r1() >> [+WAKE("TEST"), +STT("turn off the lights in the living room, when the temperature is 25 and the time is 12")]
+r2() >> [+WAKE("TEST"), +STT("set the cooler in the bedroom to 25 degrees and cut the grass in the garden, when the time is 12")]
 
 # simulating direct commands
-d1() >> [+STT("set the cooler at 27 degrees in the bedroom")]
-d2() >> [+STT("turn off the alarm in the garage")]
+d1() >> [+WAKE("TEST"), +STT("set the cooler at 27 degrees in the bedroom")]
+d2() >> [+WAKE("TEST"), +STT("turn off the alarm in the garage")]
 
 # sentences for reasoning purposes
-c1() >> [+STT("Cuba is a hostile nation")]
-c2() >> [+STT("Colonel West is American")]
-c3() >> [+STT("missiles are weapons")]
-c4() >> [+STT("Colonel West sells missiles to Cuba")]
-c5() >> [+STT("When an American sells weapons to a hostile nation, that American is a criminal")]
+c1() >> [+FEED("Cuba is a hostile nation")]
+c2() >> [+FEED("Colonel West is American")]
+c3() >> [+FEED("missiles are weapons")]
+c4() >> [+FEED("Colonel West sells missiles to Cuba")]
+c5() >> [+FEED("When an American sells weapons to a hostile nation, that American is a criminal")]
 
 # Query
-q() >> [+STT("Colonel West is a criminal")]
-
-
+q() >> [+QUERY("Colonel West is a criminal")]
 
 
 # Start agent command
@@ -41,12 +40,6 @@ s() >> [show_fol_kb()]
 # initialize Clauses Kb
 c() >> [clear_clauses_kb()]
 
-# simulating keywords
-w() >> [+HOTWORD_DETECTED("ON")]
-# Google
-l() >> [+STT("listen")]
-r() >> [+STT("reason")]
-d() >> [+STT("done")]
 # Azure
 #l() >> [+STT("Listen.")]
 #r() >> [+STT("Reason.")]
@@ -56,8 +49,11 @@ d() >> [+STT("done")]
 s1() >> [simulate_sensor("Be", "Time", "12")]
 s2() >> [simulate_sensor("Be", "Temperature", "25")]
 
-# test assertions
-t() >> [go(), w(), l()]
+# testing rules
++FEED(X) >> [reset_ct(), parse_rules(X, "DISOK"), parse_deps(), feed_mst(), +PROCESS_STORED_MST("OK"), show_ct(), +LISTEN("TEST")]
++QUERY(X) >> [reset_ct(), parse_rules(X, "DISOK"), parse_deps(), feed_mst(), +PROCESS_STORED_MST("OK"), show_ct(), +REASON("TEST")]
++PROCESS_STORED_MST("OK") / LISTEN("TEST") >> [show_line("\nGot it.\n"), +GEN_MASK("BASE"), new_def_clause("MORE", "NOMINAL"), process_rule(), -LISTEN("TEST")]
++PROCESS_STORED_MST("OK") / REASON("TEST") >> [show_line("\nGot it.\n"), +GEN_MASK("FULL"), new_def_clause("ONE", "NOMINAL"), -REASON("TEST")]
 
 
 # Hotwords processing
@@ -93,6 +89,7 @@ new_def_clause(M, T) / WAIT(W) >> [show_line("\n------------- Done.\n"), Timer(W
 
 # Reactive Reasoning
 +STT(X) / WAKE("ON") >> [reset_ct(), UtteranceDetect().stop, -WAKE("ON"), show_line("\nProcessing domotic command...\n"), parse_rules(X, "NODIS"), parse_deps(), feed_mst(), assert_command(X), parse_command(), parse_routine(), HotwordDetect().start]
++STT(X) / WAKE("TEST") >> [reset_ct(), -WAKE("TEST"), show_line("\nProcessing domotic command...\n"), parse_rules(X, "NODIS"), parse_deps(), feed_mst(), assert_command(X), parse_command(), parse_routine()]
 
 +TIMEOUT("ON") / (WAKE("ON") & LISTEN("ON") & REASON("ON")) >> [show_line("\nReturning to idle state...\n"), -WAKE("ON"), -LISTEN("ON"), -REASON("ON"), UtteranceDetect().stop, HotwordDetect().start]
 +TIMEOUT("ON") / (WAKE("ON") & REASON("ON")) >> [show_line("\nReturning to idle state...\n"), -REASON("ON"), -WAKE("ON"), UtteranceDetect().stop, HotwordDetect().start]

@@ -133,23 +133,20 @@ eShell: main > Starting Caspar...
 
 Starting Hotword detection...
 
+Listening {
+  caspar (0.50)
+}
+
 eShell: main >
 ```
-Even without entities and Speech-To-Text interfaces definition, an agent's testing can be done as it follows by
-simulating vocal events:
 
 ### Waking agent
 
 ---------------
 
-Here we suppose the agent recognizes a proper waking word (_caspar_ for example) and exits from its idle state, by asserting the following belief:
+Here we suppose the agent recognizes the waking word (_caspar_ for this instance) and (after the beep soound) exits from its idle state:
 ```sh
-eShell: main > assert HOTWORD_DETECTED("ON")
-```
-Or more shortly:
-```sh
-eShell: main > +HOTWORD_DETECTED("ON")
-eShell: main > 
+2021-01-07 10:26:03.365313] Detected caspar
 
 Yes, I'm here!
 
@@ -177,9 +174,6 @@ By the means of two testing procedure IoT direct commands can be tested, whose e
 * set the cooler at 27 degrees in the bedroom
 
 ```sh
-eShell: main > +STT("set the cooler at 27 degrees in the bedroom")
-
-Stopping utterance detection...
 
 Processing domotic command...
 
@@ -196,9 +190,6 @@ Parameters: at 27 degree
 ```
 * turn off the lights in the living room
 ```sh
-eShell: main > +STT("turn off the lights in the living room")
-
-Stopping utterance detection...
 
 Processing domotic command...
 
@@ -217,7 +208,6 @@ Caspar is capable of parsing complex routines as it follow (the agent must be fi
 
 * turn off the lights in the living room, when the temperature is 25 and the time is 12.00
 ```sh
-eShell: main > +STT("turn off the lights in the living room, when the temperature is 25 and the time is 12.00")
 
 Stopping utterance detection...
 
@@ -288,6 +278,9 @@ hotwords (after the agent is awakened):
 and asserted in the Clauses Knowledge Base.
 * _reason_: the agent will wait (until timeout) for one utterance in natural language to be converted in a
 single positive literal for querying the Clauses Knowledge Base.
+* _done_: the agent will end the cognitive phase (either _listen_ of _reason_) and will return in its idle state.
+
+The Clauses KB can be also fed/queried by the means of keyboard, through respectively the FEED and QUERY beliefs.
 
 Next the Clauses Knowledge base will be fed by the following utterances:
 * _Cuba is an hostile nation_
@@ -296,17 +289,16 @@ Next the Clauses Knowledge base will be fed by the following utterances:
 * _Colonel West sells missiles to Cuba_
 * _When an American sells weapons to a hostile nation, that American is a criminal_
 
-and queried by:
+and queried with:
 * _Colonel West is a criminal?_
 
 We will show (by the command s()) the Clauses Knowlegde Base content after every assertion simulation:
 * _Nono is an hostile nation_
+
 ```sh
-eShell: main > +STT("listen")
-eShell: main > 
 Waiting for knowledge...
 
-eShell: main > +STT("Cuba is an hostile nation")
+eShell: main > +FEED("Cuba is an hostile nation")
 Got it.
 
 ------------- All generalizations asserted.
@@ -323,7 +315,7 @@ Be(Cuba(x1), Hostile(Nation(x2)))
 ```
 * _Colonel West is American_
 ```sh
-eShell: main > +STT("Colonel West is American")
+eShell: main > +FEED("Colonel West is American")
 Got it.
 
 ------------- All generalizations asserted.
@@ -341,7 +333,7 @@ Be(Colonel_West(x1), American(x2))
 ```
 * _missiles are weapons_
 ```sh
-eShell: main > +STT("missiles are weapons")
+eShell: main > +FEED("missiles are weapons")
 Got it.
 
 ------------- All generalizations asserted.
@@ -361,7 +353,7 @@ Be(Missile(x1), Weapon(x2))
 ```
 * _Colonel West sells missiles to Cuba_
 ```sh
-eShell: main > +STT("Colonel West sells missiles to Cuba")
+eShell: main > +FEED("Colonel West sells missiles to Cuba")
 Got it.
 
 ------------- All generalizations asserted.
@@ -397,7 +389,7 @@ To(Sell(Colonel_West(x1), Missile(x2)), Cuba(x3))
 ```
 * _When an American sells weapons to a hostile nation, that American is a criminal_
 ```sh
-eShell: main > +STT("When an American sells weapons to a hostile nation, that American is a criminal")
+eShell: main > +FEED("When an American sells weapons to a hostile nation, that American is a criminal")
 Got it.
 
 ------------- All generalizations asserted.
@@ -436,10 +428,7 @@ now it is time to query the Clauses Knowledge Base with the following utterance:
 * _Colonel West is a criminal?_
 
 ```sh
-eShell: main > +STT("reason")
-Waiting for query...
-
-eShell: main > +STT("Colonel West is a criminal")
+eShell: main > +QUERY("Colonel West is a criminal")
 Got it.
 
 Reasoning...............
