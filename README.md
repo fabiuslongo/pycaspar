@@ -473,7 +473,18 @@ Clauses KB properly, the execution will fail. While, when we feed the Clauses KB
 +FEED("Robert is at home")
 ```
 
-The execution of the above command will be successful. The logic reasoning achieved by eval_cls could also involve a _Nested Reasoning_, taking in
+After which, the Clauses KB will be as it follows:
+
+```sh
+Be_VBZ(Robert_NNP(x1), Inhabitant_NN(x2))
+(Robert_NNP(x) ==> Inhabitant_NN(x))
+(Be_VBZ(Robert_NNP(x3), __) ==> Be_VBZ(Inhabitant_NN(v_0), __))
+Be_VBZ(Robert_NNP(x3), __)
+(At_IN(Be_VBZ(Robert_NNP(x3), __), Home_NN(x5)) ==> At_IN(Be_VBZ(Inhabitant_NN(v_1), __), Home_NN(x5)))
+At_IN(Be_VBZ(Robert_NNP(x3), __), Home_NN(x5))
+```
+
+In the presence of such a clauses in the Clauses KB, the execution of the above command will be successful. The logic reasoning achieved by eval_cls could also involve a _Nested Reasoning_, taking in
 account of the config.ini setting.
 
 
