@@ -27,6 +27,8 @@ OBJ_JJ_TO_NOUN = config.getboolean('POS', 'OBJ_JJ_TO_NOUN')
 class Parse(object):
     def __init__(self, VERBOSE):
 
+        self.VERBOSE = VERBOSE
+
         # nlp engine instantiation
         os.environ.__setitem__("TERM", "xterm")
         print("\nNLP engine initializing. Please wait...")

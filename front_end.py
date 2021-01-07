@@ -52,8 +52,8 @@ s2() >> [simulate_sensor("Be", "Temperature", "25")]
 t() >> [go(), w(), l()]
 
 # testing rules
-+FEED(X) >> [reset_ct(), parse_rules(X, "DISOK"), parse_deps(), feed_mst(), +PROCESS_STORED_MST("OK"), show_ct(), +LISTEN("TEST")]
-+QUERY(X) >> [reset_ct(), parse_rules(X, "DISOK"), parse_deps(), feed_mst(), +PROCESS_STORED_MST("OK"), show_ct(), +REASON("TEST")]
++FEED(X) >> [reset_ct(), parse_rules(X, "DISOK"), parse_deps(), feed_mst(), +PROCESS_STORED_MST("OK"), log("Feed",X), show_ct(), +LISTEN("TEST")]
++QUERY(X) >> [reset_ct(), parse_rules(X, "DISOK"), parse_deps(), feed_mst(), +PROCESS_STORED_MST("OK"), log("Query",X), show_ct(), +REASON("TEST")]
 +PROCESS_STORED_MST("OK") / LISTEN("TEST") >> [show_line("\nGot it.\n"), +GEN_MASK("BASE"), new_def_clause("MORE", "NOMINAL"), process_rule(), -LISTEN("TEST")]
 +PROCESS_STORED_MST("OK") / REASON("TEST") >> [show_line("\nGot it.\n"), +GEN_MASK("FULL"), new_def_clause("ONE", "NOMINAL"), -REASON("TEST")]
 

@@ -188,6 +188,16 @@ class PROCESS_STORED_MST(Reactor): pass
 
 
 
+class log(Action):
+    """log direct assertions from keyboard"""
+    def execute(self, *args):
+        a = str(args).split("'")
+
+        if LOG_ACTIVE:
+            with open("log.txt", "a") as myfile:
+                myfile.write("\n"+a[1]+": "+a[5])
+
+
 class say(Action):
     """Text-to-Speech"""
     def execute(self, *args):
