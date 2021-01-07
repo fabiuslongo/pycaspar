@@ -484,7 +484,7 @@ Be_VBZ(Robert_NNP(x3), __)
 At_IN(Be_VBZ(Robert_NNP(x3), __), Home_NN(x5))
 ```
 
-In the presence of such a clauses in the Clauses KB, the execution of the above command will be successful. The logic reasoning achieved by eval_cls could also involve a _Nested Reasoning_, taking in
+In the presence of such a clauses in the Clauses KB, the execution of the above command will be successful. The logic reasoning achieved by eval_cls could also involve a Conceptual _Nested_ Reasoning, taking in
 account of the config.ini settings.
 
 
