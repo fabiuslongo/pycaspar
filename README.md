@@ -444,7 +444,7 @@ Result: False
 
 Result:  {v_219: v_129, v_220: x2, v_280: v_216, v_281: v_217, v_282: v_218, v_366: v_277, v_367: v_278, v_368: v_279}
 ```
-Above are showen both results of Nominal Reasoning by the Backward-Chaining argorithm and Nested Reasoning.
+Above, both results of Nominal Reasoning by the Backward-Chaining argorithm and Nested Reasoning are shown.
 
 
 ### Meta-Reasoning
@@ -473,7 +473,7 @@ Clauses KB properly, the execution will fail. While, when we feed the Clauses KB
 +FEED("Robert is at home")
 ```
 
-After which, the Clauses KB will be as it follows:
+after whom, the Clauses KB will be as it follows:
 
 ```sh
 Be_VBZ(Robert_NNP(x1), Inhabitant_NN(x2))
@@ -484,7 +484,7 @@ Be_VBZ(Robert_NNP(x3), __)
 At_IN(Be_VBZ(Robert_NNP(x3), __), Home_NN(x5))
 ```
 
-In the presence of such a clauses in the Clauses KB, the execution of the above command will be successful. The logic reasoning achieved by eval_cls could also involve a Conceptual _Nested_ Reasoning, taking in
+ the execution of the above command will be successful. The logic reasoning achieved by eval_cls could also involve a Conceptual _Nested_ Reasoning, taking in
 account of the config.ini settings.
 
 
