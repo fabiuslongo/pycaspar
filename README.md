@@ -473,7 +473,7 @@ Clauses KB properly, the execution will fail. While, when we feed the Clauses KB
 +FEED("Robert is at home")
 ```
 
-The execution of the above command will be successful. The logic reasoning achieved bye eval_cls could also involve a _Nested Reasoning_, taking in
+The execution of the above command will be successful. The logic reasoning achieved by eval_cls could also involve a _Nested Reasoning_, taking in
 account of the config.ini setting.
 
 
