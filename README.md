@@ -451,7 +451,7 @@ Above are showen both results of Nominal Reasoning by the Backward-Chaining argo
 
 ---------------
 
-The IoT Caspar's reasoning process is utterly expressed by the production rules system in the Smart Environment Interface (smart_env_int.py). 
+The IoT Caspar's reasoning capability are utterly expressed by the production rules system in the Smart Environment Interface (smart_env_int.py). 
 Each rule can be also subordinated by further conditions, whom will make the Beliefs KB and Clauses KB interact with each other, through a Meta-Reasoning process.
 For instance, the triggering conditions of the rule in line 20 of smart_env_int.py are:
 
