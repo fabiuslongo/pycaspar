@@ -447,6 +447,38 @@ Result:  {v_219: v_129, v_220: x2, v_280: v_216, v_281: v_217, v_282: v_218, v_3
 Above are showen both results of Nominal Reasoning by the Backward-Chaining argorithm and Nested Reasoning.
 
 
+### Meta-Reasoning
+
+---------------
+
+The IoT Caspar's reasoning process is utterly expressed by the production rules system in the Smart Environment Interface (smart_env_int.py). 
+Each rule can be also subordinated by further conditions, whom will make the Beliefs KB and Clauses KB interact with each other, through a Meta-Reasoning process.
+For instance, the triggering conditions of the rule in line 20 of smart_env_int.py are:
+
+```sh
++INTENT(X, "Alarm", "Garage", T) / (lemma_in_syn(X, "change_state.v.01") & eval_cls("At_IN(Be_VBZ(Inhabitant_NN(x1), __), Home_NN(x2))"))
+```
+
+Differently from others, such a rule contains the so-called _Active Belief_ eval_cls, which will query the Clauses KB with the clause: 
+
+```sh
+At_IN(Be_VBZ(Inhabitant_NN(x1), __), Home_NN(x2))
+```
+
+being the representation of the sentence: _An inhabitant is at home_. If we ask the agent _Turn off the Alarm in the garage_ without having fed the
+Clauses KB properly, the execution will fail. While, when we feed the Clauses KB as it follows (for example):
+
+```sh
++FEED("Robert is an inhabitant")
++FEED("Robert is at home")
+```
+
+The execution of the above command will be successful. The logic reasoning achieved bye eval_cls could also involve a _Nested Reasoning_, taking in
+account of the config.ini setting.
+
+
+
+
 ### Word Sense Disambiguation
 
 ---------------
