@@ -144,7 +144,7 @@ eShell: main >
 
 ---------------
 
-Here we suppose the agent recognizes the waking word (_caspar_ for this instance) and (after the beep soound) exits from its idle state:
+Here we suppose the agent recognizes the waking word (_caspar_ for this instance) and (after the beep sound) exits from its idle state:
 ```sh
 2021-01-07 10:26:03.365313] Detected caspar
 

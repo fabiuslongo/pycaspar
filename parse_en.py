@@ -27,21 +27,10 @@ OBJ_JJ_TO_NOUN = config.getboolean('POS', 'OBJ_JJ_TO_NOUN')
 class Parse(object):
     def __init__(self, VERBOSE):
 
-        self.FILTER = ['det', 'punct', 'aux', 'auxpass', 'cc', 'case', 'intj', 'dep', 'predet', 'advcl']
-
-        self.adv_adj_POS = ['RB', 'UH', 'RP', 'PRP', 'RBS', 'JJ', 'NN', 'RBR', 'DT']
-
-        self.POS_FILTER = []
-
         self.VERBOSE = VERBOSE
-
-        self.BLACK_LIST_WORDS = ['that', 'which', 'then']
 
         # nlp engine instantiation
         print("\nNLP engine initializing. Please wait...")
-
-        # python -m spacy download en_core_web_md
-        #self.nlp = spacy.load('en_core_web_md')  # 91 MB
 
         # python -m spacy download en_core_web_lg
         self.nlp = spacy.load('en_core_web_lg')  # 789 MB
