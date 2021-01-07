@@ -134,9 +134,10 @@ simulating vocal events:
 
 ---------------
 
-After the waking word _caspar_ is recognized the agent will exits from its idle state:
-
+Here we suppose the agent recognizes the waking word (_caspar_ for this instance) and (after the beep sound) exits from its idle state:
 ```sh
+INFO:snowboy:Keyword 1 detected at time: 2021-01-07 11:58:23
+
 Yes, I'm here!
 
 Stopping Hotword detection...
@@ -159,7 +160,7 @@ the amount of waiting seconds can be changed in the AGENT section of the config.
 ---------------
 
 By the means of two testing procedure IoT direct commands can be tested, whose entities are defined
- in the Smart Enviroment interface:
+ in the Smart Enviroment Interface:
  
 * _set the cooler at 27 degrees in the bedroom_
 
@@ -271,6 +272,10 @@ hotwords (after the agent is awakened):
 and asserted in the Clauses Knowledge Base.
 * _reason_: the agent will wait (until timeout) for one utterance in natural language to be converted in a
 single positive literal for querying the Clauses Knowledge Base.
+* _done_: the agent will end the cognitive phase (either _listen_ of _reason_) and will return in its idle state.
+
+The Clauses KB can be also fed/queried by the means of keyboard, through respectively the FEED and QUERY beliefs.
+
 
 Next the Clauses Knowledge base will be fed by the following utterances:
 * _Cuba is an hostile nation_
@@ -283,13 +288,13 @@ and queried by:
 * _Colonel West is a criminal?_
 
 We will show (by the command s()) the Clauses Knowlegde Base content after every assertion simulation:
-* _Nono is an hostile nation_
+* _Cuba is an hostile nation_
 
 ```sh
 
 Waiting for knowledge...
 
-eShell: main > +STT("Cuba is an hostile nation")
+eShell: main > +FEED("Cuba is an hostile nation")
 Got it.
 
 ------------- All generalizations asserted.
@@ -306,7 +311,7 @@ Be(Cuba(x1), Hostile(Nation(x2)))
 ```
 * _Colonel West is American_
 ```sh
-eShell: main > +STT("Colonel West is American")
+eShell: main > +FEED("Colonel West is American")
 Got it.
 
 ------------- All generalizations asserted.
@@ -324,7 +329,7 @@ Be(Colonel_West(x1), American(x2))
 ```
 * _missiles are weapons_
 ```sh
-eShell: main > +STT("missiles are weapons")
+eShell: main > +FEED("missiles are weapons")
 Got it.
 
 ------------- All generalizations asserted.
@@ -344,7 +349,7 @@ Be(Missile(x1), Weapon(x2))
 ```
 * _Colonel West sells missiles to Cuba_
 ```sh
-eShell: main > +STT("Colonel West sells missiles to Cuba")
+eShell: main > +FEED("Colonel West sells missiles to Cuba")
 Got it.
 
 ------------- All generalizations asserted.
@@ -380,7 +385,7 @@ To(Sell(Colonel_West(x1), Missile(x2)), Cuba(x3))
 ```
 * _When an American sells weapons to a hostile nation, that American is a criminal_
 ```sh
-eShell: main > +STT("When an American sells weapons to a hostile nation, that American is a criminal")
+eShell: main > +FEED("When an American sells weapons to a hostile nation, that American is a criminal")
 Got it.
 
 ------------- All generalizations asserted.
@@ -419,10 +424,9 @@ now it is time to query the Clauses Knowledge Base with the following utterance:
 * _Colonel West is a criminal?_
 
 ```sh
-eShell: main > +STT("reason")
 Waiting for query...
 
-eShell: main > +STT("Colonel West is a criminal")
+eShell: main > +QUERY("Colonel West is a criminal")
 Got it.
 
 Reasoning...............
@@ -438,8 +442,47 @@ Result: False
 
 Result:  {v_219: v_129, v_220: x2, v_280: v_216, v_281: v_217, v_282: v_218, v_366: v_277, v_367: v_278, v_368: v_279}
 ```
-Above are showen both results of Nominal Reasoning by the Backward-Chaining argorithm and Nested Reasoning.
+Above, both results of Nominal Reasoning by the Backward-Chaining argorithm and Nested Reasoning are shown.
 
+### Meta-Reasoning
+
+---------------
+
+The IoT Caspar's reasoning capabilities are utterly expressed by the production rules system in the Smart Environment Interface (smart_env_int.py). 
+Each rule can be also subordinated by further conditions, whom will make the Beliefs KB and Clauses KB interact with each other, through a Meta-Reasoning process.
+For instance, the triggering conditions of the rule in line 20 of smart_env_int.py are:
+
+```sh
++INTENT(X, "Alarm", "Garage", T) / (lemma_in_syn(X, "change_state.v.01") & eval_cls("At_IN(Be_VBZ(Inhabitant_NN(x1), __), Home_NN(x2))"))
+```
+
+Differently from others, such a rule contains the so-called _Active Belief_ eval_cls, which will query the Clauses KB with the clause: 
+
+```sh
+At_IN(Be_VBZ(Inhabitant_NN(x1), __), Home_NN(x2))
+```
+
+being the representation of the sentence: _An inhabitant is at home_. If we ask the agent _Turn off the Alarm in the garage_ without having fed the
+Clauses KB properly, the execution will fail. While, when we feed the Clauses KB as it follows (for example):
+
+```sh
++FEED("Robert is an inhabitant")
++FEED("Robert is at home")
+```
+
+After which, the Clauses KB will be as it follows:
+
+```sh
+Be_VBZ(Robert_NNP(x1), Inhabitant_NN(x2))
+(Robert_NNP(x) ==> Inhabitant_NN(x))
+(Be_VBZ(Robert_NNP(x3), __) ==> Be_VBZ(Inhabitant_NN(v_0), __))
+Be_VBZ(Robert_NNP(x3), __)
+(At_IN(Be_VBZ(Robert_NNP(x3), __), Home_NN(x5)) ==> At_IN(Be_VBZ(Inhabitant_NN(v_1), __), Home_NN(x5)))
+At_IN(Be_VBZ(Robert_NNP(x3), __), Home_NN(x5))
+```
+
+In the presence of such a clauses in the Clauses KB, the execution of the above command will be successful. The logic reasoning achieved by eval_cls could also involve a Conceptual _Nested_ Reasoning, taking in
+account of the config.ini settings.
 
 ### Word Sense Disambiguation
 

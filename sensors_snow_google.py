@@ -11,8 +11,7 @@ LOG_ACTIVE = config.getboolean('AGENT', 'LOG_ACTIVE')
 class TIMEOUT(Reactor): pass
 class STT(Reactor): pass
 class HOTWORD_DETECTED(Reactor): pass
-class FEED(Reactor): pass
-class QUERY(Reactor): pass
+
 
 
 # ----------- Google section

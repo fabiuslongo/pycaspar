@@ -1,10 +1,12 @@
 from phidias.Lib import *
 from actions import *
-
 from sensors_snow_google import *
 
-
 # Front-End STT
+
+# manual feeding of the Clauses KB
+class FEED(Reactor): pass
+class QUERY(Reactor): pass
 
 # SIMULATING EVENTS
 
