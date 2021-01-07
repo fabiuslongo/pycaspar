@@ -470,7 +470,7 @@ Clauses KB properly, the execution will fail. While, when we feed the Clauses KB
 +FEED("Robert is at home")
 ```
 
-After which, the Clauses KB will be as it follows:
+After whom, the Clauses KB will be as it follows:
 
 ```sh
 Be_VBZ(Robert_NNP(x1), Inhabitant_NN(x2))
@@ -481,7 +481,7 @@ Be_VBZ(Robert_NNP(x3), __)
 At_IN(Be_VBZ(Robert_NNP(x3), __), Home_NN(x5))
 ```
 
-In the presence of such a clauses in the Clauses KB, the execution of the above command will be successful. The logic reasoning achieved by eval_cls could also involve a Conceptual _Nested_ Reasoning, taking in
+the execution of the above command will be successful. The logic reasoning achieved by eval_cls could also involve a Conceptual _Nested_ Reasoning, taking in
 account of the config.ini settings.
 
 ### Word Sense Disambiguation
