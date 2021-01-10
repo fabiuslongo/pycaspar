@@ -49,12 +49,6 @@ class HotwordDetect(Sensor):
         self.running = False
 
 
-    def on_restart(self):
-
-        print("\nRestarting Hotword detection...")
-        self.running = True
-
-
     def sense(self):
 
         keywords = ["caspar"]
@@ -115,9 +109,6 @@ class UtteranceDetect(Sensor):
         speech_recognizer.stop_continuous_recognition()
         self.running = False
 
-    def on_restart(self, *args):
-        print("\nRestarting utterance detection...")
-        self.running = True
 
     def sense(self):
         while self.running:

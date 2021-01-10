@@ -263,7 +263,7 @@ class UtteranceDetect(Sensor):
         self.running = False
         self.mic_manager.closed = True
 
-    def on_restart(self, *args):
+    def on_restart(self):
         print("\nRestarting utterance detection...")
         self.running = True
         self.mic_manager.closed = False
