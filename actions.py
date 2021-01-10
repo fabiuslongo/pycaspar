@@ -102,6 +102,7 @@ class REASON(Belief): pass
 class RETRACT(Belief): pass
 class IS_RULE(Belief): pass
 class WAIT(Belief): pass
+class ANSWER(Reactor): pass
 
 # domotic reactive routines
 class r1(Procedure): pass
@@ -337,6 +338,7 @@ class preprocess_clause(Action):
         print("\nBefore dealing case:\n" + str(vect_LR_fol))
         if len(vect_LR_fol) == 0:
             print("\n --- IMPROPER VERBAL PHRASE COSTITUTION ---")
+            self.assert_belief(ANSWER("Improper verbal phrase"))
             return
 
         if type == "NOMINAL":
@@ -798,16 +800,20 @@ class reason(Action):
         print("Result: " + str(bc_result))
         print("Backward-Chaining Query time: ", parser.get_comp_time())
 
-        if bc_result is False:
+        if bc_result is not False:
+            self.assert_belief(ANSWER("True. By nominal reasoning"))
+        else:
 
             print("\n\n ---- NESTED REASONING ---")
             candidates = []
 
             nested_result = kb_fol.nested_ask(expr(q), candidates)
-            if nested_result is None:
-                print("\nClause present in kb. No substitutions needed.")
+            print("\nResult: ", nested_result)
+
+            if nested_result is False:
+                self.assert_belief(ANSWER("False. By nominal and nested reasoning"))
             else:
-                print("\nResult: ", nested_result)
+                self.assert_belief(ANSWER("True. By nested reasoning"))
 
 
 class assert_command(Action):
