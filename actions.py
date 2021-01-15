@@ -863,7 +863,7 @@ class assert_command(Action):
 
         if len(vect_LR_fol) > 0 and vect_LR_fol[1][0] == "==>":
 
-            dateTimeObj = datetime.datetime.now()
+            dateTimeObj = datetime.now()
             id_routine = dateTimeObj.microsecond
 
             self.process_conditions(vect_LR_fol[0], id_routine)
